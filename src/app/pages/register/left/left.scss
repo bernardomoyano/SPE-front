@@ -1,0 +1,56 @@
+.left-container{
+    background-color: rgb(13, 13, 32);
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    height: 100vh;
+    color: #fff;
+    padding: 50px;
+
+    &_logo{
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        &_title{
+            margin-left: 15px;
+            p{
+                margin: 0;
+                &:first-child{
+                    font-size: 24px;
+                    font-weight: 600;
+                }
+                &:last-child{
+                    font-size: 14px;
+                    font-weight: 400;
+                }
+            }
+        }
+    }
+
+    &_slogan{
+        margin-bottom: 20px;
+        p{
+            margin: 0;
+            font-size: 20px;
+            font-weight: 500;
+        }
+    }
+
+    &_subslogan{
+        margin-bottom: 40px;
+        p{
+            margin: 0;
+            font-size: 14px;
+            font-weight: 300;
+            color: #b6b6b6;
+        }
+    }
+
+    &_cards{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 20px; // optional gap between cards
+    }
+}

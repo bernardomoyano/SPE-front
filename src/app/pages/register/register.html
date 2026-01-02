@@ -1,1 +1,33 @@
-<p>register works!</p>
+<div class="register-container">
+    <div class="register-container_left">
+        <app-left></app-left>
+    </div>
+    <div class="register-container_right">
+        <div class="register-container_right_content">
+            <div>
+            <div class="register-container_right_welcome">
+            <p class="register-container_right_welcome_title">Bienvenido</p>
+            <p class="register-container_right_welcome_subtitle">Crea tu cuenta para comenzar a gestionar tus entrenamientos</p>
+        </div>
+        <div class="register-container_right_form">
+            <form>
+                <app-input label="Correo electrónico" type="email" placeholder="Ingresa tu correo"></app-input>
+                <app-input label="Contraseña" type="password" placeholder="Ingresa tu contraseña"></app-input>
+            </form>
+            <div>
+                <app-button label="Iniciar sesión" type="submit" variant="primary"></app-button>
+            </div>
+        </div>
+        <div class="register-container_right_separator">
+            <hr>
+        </div>
+        <div class="register-container_right_google">
+            <app-button label="Continuar con google" variant="secondary" icon="/assets/img/google.svg"></app-button>
+        </div>
+        <div class="register-container_right_register">
+            <p>No tienes una cuenta? <b>Regístrate</b></p>
+        </div>
+        </div>
+        </div>
+    </div>
+</div>
