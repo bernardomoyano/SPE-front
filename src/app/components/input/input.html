@@ -1,0 +1,16 @@
+<div class="input-container">
+  <label *ngIf="label" class="input-container_label">{{ label }}</label>
+  <div class="input-container_field">
+    <img *ngIf="icon" [src]="icon" alt="icon" class="input-container_field_icon">
+    <input
+      [type]="inputType"
+      [(ngModel)]="value"
+      [placeholder]="placeholder"
+      class="input-container_field_input"
+    >
+    <button *ngIf="type === 'password'" type="button" (click)="togglePasswordVisibility()" class="input-container_field_toggle">
+      {{ showPassword ? '🙈' : '👁️' }}
+    </button>
+  </div>
+  <span *ngIf="error" class="input-container_error">{{ error }}</span>
+</div>
