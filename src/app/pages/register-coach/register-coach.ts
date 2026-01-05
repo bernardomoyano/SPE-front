@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { InputComponent as Input } from "../../components/input/input";
 import { Left } from "../register/left/left";
 import { Button } from "../../components/button/button";
@@ -7,6 +7,7 @@ import { Logo } from "../../shared/components/logo/logo";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Coach } from '../../services/coach';
 import { CoachRegisterRequest } from '../../models/coach.model';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-register-coach',
@@ -20,7 +21,9 @@ export class RegisterCoach {
   errorMessage = '';
   constructor(
     private fb: FormBuilder,
-    private coachService: Coach
+    private coachService: Coach,
+    private alertService: AlertService,
+    private router: Router
   ){
     this.registerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -43,15 +46,21 @@ export class RegisterCoach {
         next: (response) => {
           this.isLoading = false;
           if (response.success) {
-            // Redirigir o mostrar éxito, e.g., router.navigate(['/login'])
-            alert('Registro exitoso. Revisa tu email.');
+            this.alertService.showSuccess('El coach fue registrado correctamente', () => {
+              this.registerForm.reset();
+              this.router.navigate(['/login']);
+            });
           } else {
             this.errorMessage = response.message;
           }
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorMessage = error.message;
+          // Habilitar controles del formulario
+          Object.keys(this.registerForm.controls).forEach(key => {
+            this.registerForm.get(key)?.enable();
+          });
+          this.alertService.showError('No se pudo completar el registro. Intenta nuevamente');
         }
       });
     }
