@@ -43,23 +43,28 @@ $bg-light: $color-gray-100;
 
 // Text Colors
 $text-primary: $color-text-dark;
-$text-secondary: $color-gray-600;
+$text-secondary: #666666;
 $text-on-dark: $color-white;
 $text-muted: $color-text-muted;
 $text-disabled: $color-gray-400;
+$text-link: $color-primary;
 
 // Form Elements
 $label-color: #4e4e4e;
 $input-border: #ddd;
-$input-border-focus: $color-accent;
+$input-border-focus: $color-primary;
 $input-background: $color-white;
 $input-text: $color-text-dark;
 
 // Borders
-$border-color: #ddd;
+$border-color: #dddddd;
 $border-color-light: $color-gray-200;
 $border-color-medium: $color-gray-300;
 $border-color-dark: $color-gray-400;
+
+// Dividers
+$divider-color: #dddddd;
+$divider-height: 1px;
 
 // Button Colors
 $btn-primary-bg: $color-primary;
@@ -141,3 +146,23 @@ $container-md: 720px;
 $container-lg: 960px;
 $container-xl: 1140px;
 $container-xxl: 1320px;
+
+// ======================
+// LAYOUT SPECIFIC
+// ======================
+// Page Content
+$page-content-max-width: 500px;
+$page-padding-desktop: 20px 60px;
+$page-padding-mobile: 20px 30px;
+
+// Mobile Header
+$mobile-header-bg: #f8f9fa;
+
+// Grid Pattern Background (para left panel)
+$grid-pattern-bg: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+$grid-pattern-size: 20px 20px;
+
+// Card Overlay
+$card-overlay-bg: rgba(255, 255, 255, 0.1);
+$card-border-radius: $radius-md;

@@ -34,7 +34,7 @@
   &.secondary {
     background-color: $btn-secondary-bg;
     color: $btn-secondary-text;
-    border: 1px solid $btn-secondary-border;
+    border: 1px solid $btn-primary-bg;
   }
 
   &.secondary:hover:not(:disabled) {
