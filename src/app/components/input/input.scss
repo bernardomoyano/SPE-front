@@ -1,12 +1,15 @@
+@import '../../../styles/variables';
+@import '../../../styles/typography';
+
 .input-container {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: $spacing-xs;
 
   &_label {
-    font-size: 12px;
-    font-weight: 500;
-    color: #4e4e4e;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $label-color;
   }
 
   &_field {
@@ -16,7 +19,7 @@
 
     &_icon {
       position: absolute;
-      left: 10px;
+      left: $spacing-sm;
       width: 20px;
       height: 20px;
       z-index: 1;
@@ -25,27 +28,29 @@
 
     &_input {
       width: 100%;
-      padding: 8px 40px; // space for icon and toggle
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 12px;
-      font-family: 'Poppins', sans-serif;
+      padding: $spacing-sm 40px; // space for icon and toggle
+      border: 1px solid $input-border;
+      border-radius: $radius-sm;
+      font-size: $font-size-sm;
+      font-family: $font-family-primary;
+      color: $input-text;
+      background-color: $input-background;
       outline: none;
-      transition: border-color 0.3s;
+      transition: border-color $transition-base;
 
       &:focus {
-        border-color: #007bff;
+        border-color: $input-border-focus;
       }
     }
 
     &_toggle {
       position: absolute;
-      right: 10px;
+      right: $spacing-sm;
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 18px;
-      color: #666;
+      font-size: $font-size-lg;
+      color: $color-gray-600;
       width: 33px;
       height: 33px;
 
@@ -59,33 +64,33 @@
   }
 
   &_error {
-    font-size: 12px;
-    color: #e74c3c;
+    font-size: $font-size-sm;
+    color: $color-error;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $breakpoint-md) {
   .input-container {
-    gap: 3px;
+    gap: $spacing-xs;
 
     .input-container_label {
-      font-size: 12px;
+      font-size: $font-size-sm;
     }
 
     .input-container_field {
       .input-container_field_icon {
         width: 16px;
         height: 16px;
-        left: 8px;
+        left: $spacing-sm;
       }
 
       .input-container_field_input {
-        padding: 8px 35px;
-        font-size: 12px;
+        padding: $spacing-sm 35px;
+        font-size: $font-size-sm;
       }
 
       .input-container_field_toggle {
-        right: 8px;
+        right: $spacing-sm;
         width: 25px;
         height: 25px;
 
@@ -97,7 +102,7 @@
     }
 
     .input-container_error {
-      font-size: 10px;
+      font-size: $font-size-xs;
     }
   }
 }

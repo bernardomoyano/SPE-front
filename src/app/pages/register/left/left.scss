@@ -1,49 +1,54 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/typography';
+
 .left-container{
-    background-color: rgb(13, 13, 32);
+    background-color: $bg-dark;
     background-image: 
         linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
     background-size: 20px 20px;
     height: 100vh;
-    color: #fff;
-    padding: 50px;
+    color: $text-on-dark;
+    padding: $spacing-xxxl;
 
     &_logo{
         display: flex;
         align-items: center;
-        margin-bottom: 30px;
+        margin-bottom: $spacing-xl;
         &_title{
-            margin-left: 15px;
+            margin-left: $spacing-md;
             p{
+                color: $text-on-dark;
                 margin: 0;
                 &:first-child{
-                    font-size: 24px;
-                    font-weight: 600;
+                    font-size: $font-size-h4;
+                    font-weight: $font-weight-semibold;
                 }
                 &:last-child{
-                    font-size: 14px;
-                    font-weight: 400;
+                    font-size: $font-size-base;
+                    font-weight: $font-weight-regular;
                 }
             }
         }
     }
 
     &_slogan{
-        margin-bottom: 20px;
+        margin-bottom: $spacing-lg;
         p{
             margin: 0;
-            font-size: 20px;
-            font-weight: 500;
+            font-size: $font-size-xl;
+            font-weight: $font-weight-medium;
+            color: $text-on-dark;
         }
     }
 
     &_subslogan{
-        margin-bottom: 40px;
+        margin-bottom: $spacing-lg;
         p{
             margin: 0;
-            font-size: 14px;
-            font-weight: 300;
-            color: #b6b6b6;
+            font-size: $font-size-base;
+            font-weight: $font-weight-light;
+            color: $text-muted;
         }
     }
 
@@ -51,6 +56,6 @@
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         grid-template-rows: repeat(2, 1fr);
-        gap: 20px; // optional gap between cards
+        gap: $spacing-lg;
     }
 }
