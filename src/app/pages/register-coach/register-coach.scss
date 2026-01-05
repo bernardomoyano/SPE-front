@@ -1,3 +1,5 @@
+@import '../../../styles/variables';
+
 .register-container{
     margin: 0;
     padding: 0;
@@ -25,11 +27,12 @@
                 font-size: 18px;
                 font-weight: 600;
                 margin: 0;
+                color: $text-on-dark;
             }
 
             p:last-child {
                 font-size: 12px;
-                color: #666;
+                color: $text-on-dark;
                 margin: 0;
             }
         }
@@ -41,6 +44,7 @@
                 font-size: 14px;
                 margin: 0;
                 font-weight: 500;
+                color: $text-on-dark;
             }
         }
     }
@@ -55,12 +59,13 @@
         padding: 20px 60px;
         margin: auto;
         overflow-y: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         &_content{
+            width: 100%;
             max-width: 500px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin: auto;
         }
         &_welcome{
             display: flex;

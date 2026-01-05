@@ -1,0 +1,203 @@
+@import './variables';
+
+// ======================
+// FONT FAMILY
+// ======================
+$font-family-primary: 'Poppins', sans-serif;
+$font-family-secondary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-family-monospace: 'Courier New', Courier, monospace;
+
+// ======================
+// FONT SIZES
+// ======================
+// Base size: 16px
+$font-size-xs: 10px;
+$font-size-sm: 12px;
+$font-size-base: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-xxl: 24px;
+
+// Headings
+$font-size-h1: 48px;
+$font-size-h2: 40px;
+$font-size-h3: 32px;
+$font-size-h4: 24px;
+$font-size-h5: 20px;
+$font-size-h6: 18px;
+
+// ======================
+// FONT WEIGHTS
+// ======================
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// ======================
+// LINE HEIGHTS
+// ======================
+$line-height-tight: 1.2;
+$line-height-base: 1.5;
+$line-height-relaxed: 1.75;
+$line-height-loose: 2;
+
+// ======================
+// LETTER SPACING
+// ======================
+$letter-spacing-tight: -0.5px;
+$letter-spacing-normal: 0;
+$letter-spacing-wide: 0.5px;
+$letter-spacing-wider: 1px;
+
+// ======================
+// TYPOGRAPHY UTILITIES
+// ======================
+
+// Heading Styles
+@mixin heading-base {
+  font-family: $font-family-primary;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  color: $text-primary;
+  margin: 0;
+  padding: 0;
+}
+
+@mixin h1 {
+  @include heading-base;
+  font-size: $font-size-h1;
+  font-weight: $font-weight-bold;
+  
+  @media (max-width: $breakpoint-md) {
+    font-size: $font-size-h2;
+  }
+}
+
+@mixin h2 {
+  @include heading-base;
+  font-size: $font-size-h2;
+  
+  @media (max-width: $breakpoint-md) {
+    font-size: $font-size-h3;
+  }
+}
+
+@mixin h3 {
+  @include heading-base;
+  font-size: $font-size-h3;
+  
+  @media (max-width: $breakpoint-md) {
+    font-size: $font-size-h4;
+  }
+}
+
+@mixin h4 {
+  @include heading-base;
+  font-size: $font-size-h4;
+  font-weight: $font-weight-medium;
+}
+
+@mixin h5 {
+  @include heading-base;
+  font-size: $font-size-h5;
+  font-weight: $font-weight-medium;
+}
+
+@mixin h6 {
+  @include heading-base;
+  font-size: $font-size-h6;
+  font-weight: $font-weight-medium;
+}
+
+// Text Styles
+@mixin text-base {
+  font-family: $font-family-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-base;
+  color: $text-primary;
+}
+
+@mixin text-small {
+  font-size: $font-size-sm;
+  line-height: $line-height-base;
+}
+
+@mixin text-large {
+  font-size: $font-size-lg;
+  line-height: $line-height-base;
+}
+
+@mixin text-muted {
+  color: $text-muted;
+}
+
+@mixin text-on-dark {
+  color: $text-on-dark;
+}
+
+// Utility Classes
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// ======================
+// GLOBAL TYPOGRAPHY CLASSES
+// ======================
+
+// Apply global styles
+h1 { @include h1; }
+h2 { @include h2; }
+h3 { @include h3; }
+h4 { @include h4; }
+h5 { @include h5; }
+h6 { @include h6; }
+
+p {
+  @include text-base;
+  margin: 0 0 $spacing-md 0;
+}
+
+a {
+  color: $color-accent;
+  text-decoration: none;
+  transition: color $transition-fast;
+  
+  &:hover {
+    color: $color-accent-hover;
+  }
+}
+
+// Utility classes
+.text-xs { font-size: $font-size-xs !important; }
+.text-sm { font-size: $font-size-sm !important; }
+.text-base { font-size: $font-size-base !important; }
+.text-md { font-size: $font-size-md !important; }
+.text-lg { font-size: $font-size-lg !important; }
+.text-xl { font-size: $font-size-xl !important; }
+.text-xxl { font-size: $font-size-xxl !important; }
+
+.font-light { font-weight: $font-weight-light !important; }
+.font-regular { font-weight: $font-weight-regular !important; }
+.font-medium { font-weight: $font-weight-medium !important; }
+.font-semibold { font-weight: $font-weight-semibold !important; }
+.font-bold { font-weight: $font-weight-bold !important; }
+
+.text-muted { color: $text-muted !important; }
+.text-on-dark { color: $text-on-dark !important; }
+.text-primary { color: $text-primary !important; }
+.text-secondary { color: $text-secondary !important; }
+
+.text-truncate { @include text-truncate; }
