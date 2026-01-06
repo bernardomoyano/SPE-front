@@ -3,14 +3,16 @@
   <div class="input-container_field">
     <img *ngIf="icon" [src]="icon" alt="icon" class="input-container_field_icon">
     <input
+      *ngIf="control"
       [type]="inputType"
-      [(ngModel)]="value"
+      [formControl]="control"
       [placeholder]="placeholder"
       class="input-container_field_input"
+      [class.input-container_field_input--error]="hasError"
     >
     <button *ngIf="type === 'password'" type="button" (click)="togglePasswordVisibility()" class="input-container_field_toggle">
       <img [src]="showPassword ? '/assets/icons/eye-slash.svg' : '/assets/icons/eye-alt.svg'" alt="toggle visibility">
     </button>
   </div>
-  <span *ngIf="error" class="input-container_error">{{ error }}</span>
+  <span *ngIf="errorMessage" class="input-container_error">{{ errorMessage }}</span>
 </div>

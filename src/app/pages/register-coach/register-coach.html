@@ -21,18 +21,18 @@
             <p class="register-container_right_welcome_subtitle">Crea tu cuenta como entrenador para comenzar a gestionar tus entrenamientos</p>
         </div>
         <div class="register-container_right_form">
-            <form>
-                <app-input label="Nombre" type="text" placeholder="Ingresa tu nombre" icon="assets/icons/person.svg"></app-input>
-                <app-input label="Correo electrónico" type="email" placeholder="Ingresa tu correo" icon="/assets/icons/mail.svg"></app-input>
-                <app-input label="Fecha de nacimiento" type="date" placeholder="Selecciona tu fecha de nacimiento" icon="assets/icons/date.svg"></app-input>
-                <app-input label="Teléfono" type="text" placeholder="Ingresa tu teléfono" icon="assets/icons/phone.svg"></app-input>
-                <app-input label="País" type="text" placeholder="Ingresa tu país" icon="assets/icons/world.svg"></app-input>
-                <app-input label="Contraseña" type="password" placeholder="Ingresa tu contraseña" icon="/assets/icons/padlock.svg"></app-input>
-                <app-input label="Repetir contraseña" type="password" placeholder="Repite tu contraseña" icon="assets/icons/padlock.svg"></app-input>
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                <app-input label="Nombre" type="text" placeholder="Ingresa tu nombre" icon="assets/icons/person.svg" [control]="nameControl"></app-input>
+                <app-input label="Correo electrónico" type="email" placeholder="Ingresa tu correo" icon="/assets/icons/mail.svg" [control]="emailControl" [backendError]="emailDuplicateError"></app-input>
+                <app-input label="Especialidad" type="text" placeholder="Ingresa tu especialidad" icon="assets/icons/person.svg" [control]="specialityControl"></app-input>
+                <app-input label="Teléfono" type="text" placeholder="Ingresa tu teléfono" icon="assets/icons/phone.svg" [control]="phoneControl" [backendError]="phoneDuplicateError"></app-input>
+                <app-input label="País" type="text" placeholder="Ingresa tu país" icon="assets/icons/world.svg" [control]="countryControl"></app-input>
+                <app-input label="Contraseña" type="password" placeholder="Ingresa tu contraseña" icon="/assets/icons/padlock.svg" [control]="passwordControl"></app-input>
+                <app-input label="Confirmar contraseña" type="password" placeholder="Confirma tu contraseña" icon="/assets/icons/padlock.svg" [control]="confirmPasswordControl"></app-input>
+                <div>
+                    <app-button label="Registrarse" type="submit" variant="primary" [disabled]="isLoading || !registerForm.valid"></app-button>
+                </div>
             </form>
-            <div>
-                <app-button label="Registrarse" type="submit" variant="primary"></app-button>
-            </div>
         </div>
         <div class="register-container_right_separator">
             <hr>
