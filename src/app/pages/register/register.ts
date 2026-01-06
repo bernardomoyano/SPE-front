@@ -51,56 +51,61 @@ export class Register {
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.isLoading = true;
-      const credentials: LoginRequest = this.loginForm.value;
+  if (this.loginForm.valid) {
+    this.isLoading = true;
+    const credentials: LoginRequest = this.loginForm.value;
 
-      this.authService.login(credentials).subscribe({
-        next: (response) => {
-          this.isLoading = false;
+    this.authService.login(credentials).subscribe({
+      next: (response) => {
+        this.isLoading = false;
 
-          if (response.success && response.data) {
-            console.log('Login exitoso:', response.data);
-            console.log('Token guardado:', response.data.token);
-            console.log('Usuario:', response.data.name);
-            console.log('Rol:', response.data.roleName);
-
-            this.alertService.showSuccess(response.data.message, () => {
-              // Redirigir según el rol del usuario
-              if (response.data?.roleName === 'COACH') {
-                this.router.navigate(['/dashboard-coach']);
-              } else {
-                this.router.navigate(['/dashboard']);
-              }
-            });
-          } else {
-            this.alertService.showError(response.message || 'Error al iniciar sesión');
-          }
-        },
-        error: (error) => {
-          this.isLoading = false;
-          console.error('Error en login:', error);
-
-          // Verificar si el error tiene estructura de ApiResponse
-          if (error.error && typeof error.error === 'object') {
-            const apiError = error.error;
-
-            // Errores de credenciales
-            if (apiError.errors && apiError.errors.length > 0) {
-              this.alertService.showError(apiError.errors.join(', '));
-            } else if (apiError.message) {
-              this.alertService.showError(apiError.message);
+        if (response.success && response.data) {
+          this.alertService.showSuccess(response.data.message, () => {
+            // Redirigir según el rol del usuario
+            if (response.data?.roleName === 'COACH') {
+              this.router.navigate(['/dashboard-coach']);
             } else {
-              this.alertService.showError('Credenciales incorrectas. Verifica tu email y contraseña');
+              this.router.navigate(['/dashboard']);
             }
-          } else {
-            // Error de servidor
-            this.alertService.showError('Error del servidor. Intenta nuevamente más tarde');
-          }
+          });
+        } else {
+          this.alertService.showError(response.message || 'Error al iniciar sesión');
         }
-      });
-    } else {
-      console.log('Formulario inválido');
-    }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error en login:', error);
+
+        // Error de red o servidor no disponible (status 0 o sin conexión)
+        if (error.status === 0 || !error.status) {
+          this.alertService.showError('No se pudo conectar con el servidor. Verifica tu conexión o intenta más tarde');
+          return;
+        }
+
+        // Error de servidor (500, 502, 503, etc.)
+        if (error.status >= 500) {
+          this.alertService.showError('Error del servidor. Intenta nuevamente más tarde');
+          return;
+        }
+
+        // Errores de validación o credenciales (400, 401, etc.)
+        if (error.error && typeof error.error === 'object') {
+          const apiError = error.error;
+
+          if (apiError.errors && apiError.errors.length > 0) {
+            this.alertService.showError(apiError.errors.join(', '));
+          } else if (apiError.message) {
+            this.alertService.showError(apiError.message);
+          } else {
+            this.alertService.showError('Credenciales incorrectas. Verifica tu email y contraseña');
+          }
+        } else {
+          this.alertService.showError('Credenciales incorrectas. Verifica tu email y contraseña');
+        }
+      }
+    });
+  } else {
+    console.log('Formulario inválido');
   }
+}
 }
