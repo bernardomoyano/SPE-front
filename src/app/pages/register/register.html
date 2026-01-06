@@ -1,0 +1,44 @@
+<div class="register-container">
+    <div class="register-mobile-header">
+        <app-logo></app-logo>
+        <div class="register-mobile-header_title">
+            <p>S.G.E</p>
+            <p>Sistema de Gestión de Entrenamiento</p>
+        </div>
+        <div class="register-mobile-header_slogan">
+            <p>Entrená con orden.</p>
+            <p>Gestioná con calidad.</p>
+        </div>
+    </div>
+    <div class="register-container_left">
+        <app-left></app-left>
+    </div>
+    <div class="register-container_right">
+        <div class="register-container_right_content">
+            <div>
+            <div class="register-container_right_welcome">
+            <p class="register-container_right_welcome_title">Bienvenido</p>
+            <p class="register-container_right_welcome_subtitle">Crea tu cuenta para comenzar a gestionar tus entrenamientos</p>
+        </div>
+        <div class="register-container_right_form">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <app-input label="Correo electrónico" type="email" placeholder="Ingresa tu correo" icon="/assets/icons/mail.svg" [control]="emailControl"></app-input>
+                <app-input label="Contraseña" type="password" placeholder="Ingresa tu contraseña" icon="/assets/icons/padlock.svg" [control]="passwordControl"></app-input>
+            </form>
+            <div>
+                <app-button label="Iniciar sesión" type="submit" variant="primary" [disabled]="isLoading || !loginForm.valid" (click)="onSubmit()"></app-button>
+            </div>
+        </div>
+        <div class="register-container_right_separator">
+            <hr>
+        </div>
+        <div class="register-container_right_google">
+            <app-button label="Continuar con google" variant="secondary" icon="/assets/img/google.svg"></app-button>
+        </div>
+        <div class="register-container_right_register">
+            <p>No tienes una cuenta? <a routerLink="/registro"><b>Regístrate</b></a></p>
+        </div>
+        </div>
+        </div>
+    </div>
+</div>

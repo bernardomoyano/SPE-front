@@ -1,0 +1,116 @@
+@import '../../../styles/variables';
+@import '../../../styles/typography';
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  &_label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $label-color;
+  }
+
+  &_field {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    &_icon {
+      position: absolute;
+      left: $spacing-sm;
+      width: 20px;
+      height: 20px;
+      z-index: 1;
+      opacity: 0.5;
+    }
+
+    &_input {
+      width: 100%;
+      padding: $spacing-sm 40px; // space for icon and toggle
+      border: 1px solid $input-border;
+      border-radius: $radius-sm;
+      font-size: $font-size-sm;
+      font-family: $font-family-primary;
+      color: $input-text;
+      background-color: $input-background;
+      outline: none;
+      transition: border-color $transition-base;
+
+      &:focus {
+        border-color: $input-border-focus;
+      }
+
+      &--error {
+        border-color: $color-error;
+        
+        &:focus {
+          border-color: $color-error;
+        }
+      }
+    }
+
+    &_toggle {
+      position: absolute;
+      right: $spacing-sm;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: $font-size-lg;
+      color: $color-gray-600;
+      width: 33px;
+      height: 33px;
+
+      img{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  &_error {
+    font-size: $font-size-sm;
+    color: $color-error;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .input-container {
+    gap: $spacing-xs;
+
+    .input-container_label {
+      font-size: $font-size-sm;
+    }
+
+    .input-container_field {
+      .input-container_field_icon {
+        width: 16px;
+        height: 16px;
+        left: $spacing-sm;
+      }
+
+      .input-container_field_input {
+        padding: $spacing-sm 35px;
+        font-size: $font-size-sm;
+      }
+
+      .input-container_field_toggle {
+        right: $spacing-sm;
+        width: 25px;
+        height: 25px;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+
+    .input-container_error {
+      font-size: $font-size-xs;
+    }
+  }
+}

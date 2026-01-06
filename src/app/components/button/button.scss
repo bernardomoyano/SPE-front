@@ -1,0 +1,71 @@
+@import '../../../styles/variables';
+@import '../../../styles/typography';
+
+.button {
+  width: 100%;
+  border-radius: $radius-lg;
+  padding: $spacing-sm $spacing-lg;
+  font-family: $font-family-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all $transition-base;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+
+  .button-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  &.primary {
+    background-color: $btn-primary-bg;
+    color: $btn-primary-text;
+  }
+
+  &.primary:hover:not(:disabled) {
+    background-color: $btn-primary-hover;
+  }
+
+  &.secondary {
+    background-color: $btn-secondary-bg;
+    color: $btn-secondary-text;
+    border: 1px solid $btn-primary-bg;
+  }
+
+  &.secondary:hover:not(:disabled) {
+    background-color: $btn-secondary-hover;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.primary:disabled {
+    background-color: $color-gray-600;
+    color: $color-gray-300;
+  }
+
+  &.secondary:disabled {
+    background-color: $color-gray-200;
+    color: $color-gray-500;
+    border-color: $color-gray-500;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .button {
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-sm;
+
+    .button-icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}

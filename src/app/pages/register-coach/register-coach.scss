@@ -1,0 +1,202 @@
+@import '../../../styles/variables';
+@import '../../../styles/typography';
+
+.register-container{
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+
+    .register-mobile-header {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        padding: $spacing-lg;
+        background-color: $mobile-header-bg;
+        border-bottom: 1px solid $border-color;
+
+        app-logo {
+            margin-bottom: $spacing-sm;
+        }
+
+        &_title {
+            text-align: center;
+            margin-bottom: $spacing-sm;
+
+            p:first-child {
+                font-size: $font-size-mobile-header-title;
+                font-weight: $font-weight-semibold;
+                margin: 0;
+                color: $text-on-dark;
+            }
+
+            p:last-child {
+                font-size: $font-size-mobile-header-small;
+                color: $text-on-dark;
+                margin: 0;
+            }
+        }
+
+        &_slogan {
+            text-align: center;
+
+            p {
+                font-size: $font-size-mobile-header-text;
+                margin: 0;
+                font-weight: $font-weight-medium;
+                color: $text-on-dark;
+            }
+        }
+    }
+
+    &_left{
+        width: 50%;
+        height: 100%;
+    }
+    &_right{
+        width: 50%;
+        height: 100%;
+        padding: $page-padding-desktop;
+        margin: auto;
+        overflow-y: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &_content{
+            width: 100%;
+            max-width: $page-content-max-width;
+            margin: auto;
+        }
+        &_welcome{
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            width: 100%;
+            &_title{
+            font-size: $font-size-page-title;
+            font-weight: $font-weight-semibold;
+            margin-bottom: 0;
+        }
+        &_subtitle{
+            margin-top: 0;
+            font-size: $font-size-page-subtitle;
+            color: $text-secondary;
+        }
+        }
+        &_form{
+            width: 100%;
+            margin-top: $spacing-md;
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-lg;
+            form{
+                display: flex;
+                flex-direction: column;
+                gap: $spacing-lg;
+            }
+            div{
+                display: flex;
+                justify-content: center;
+                app-button{
+                    width: 100%;
+                }
+            }
+        }
+        &_separator{
+            text-align: center;
+            margin: $spacing-xl 0;
+            hr {
+                border: none;
+                height: $divider-height;
+                background-color: $divider-color;
+                margin: 0;
+            }
+        }
+        &_google{
+            width: 100%;
+            margin-top: $spacing-lg;
+            display: flex;
+            justify-content: center;
+            app-button{
+                    width: 100%;
+                }
+        }
+        &_register{
+            width: 100%;
+            font-size: $font-size-page-subtitle;
+            margin-top: $spacing-lg;
+            text-align: center;
+
+            a {
+                color: $text-link;
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+@media (max-width: $breakpoint-md) {
+    .register-container {
+        flex-direction: column;
+        height: auto;
+
+        .register-mobile-header {
+            display: flex;
+                background-color: $color-primary;
+                background-image: $grid-pattern-bg;
+                background-size: $grid-pattern-size;
+                color: $text-on-dark;
+                &_title {
+                    p:last-child{
+                        color: $text-on-dark;
+                    }
+                }
+            }
+
+        .register-container_left {
+            display: none;
+        }
+
+        .register-container_right {
+            width: 100%;
+            padding: $page-padding-mobile;
+
+            .register-container_right_content {
+                max-width: 100%;
+            }
+
+            .register-container_right_welcome_title {
+                font-size: $font-size-page-title-mobile;
+            }
+
+            .register-container_right_welcome_subtitle {
+                font-size: $font-size-page-subtitle-mobile;
+            }
+
+            .register-container_right_form {
+                gap: $spacing-md;
+
+                form {
+                    gap: $spacing-md;
+                }
+            }
+
+            .register-container_right_separator {
+                margin: $spacing-lg 0;
+            }
+
+            .register-container_right_google {
+                margin-top: $spacing-md;
+            }
+
+            .register-container_right_register {
+                font-size: $font-size-page-subtitle-mobile;
+                margin-top: $spacing-md;
+                p {
+                    font-size: $font-size-page-subtitle-mobile;
+                }
+            }
+        }
+    }
+}
