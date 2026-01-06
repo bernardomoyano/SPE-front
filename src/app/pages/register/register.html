@@ -21,12 +21,12 @@
             <p class="register-container_right_welcome_subtitle">Crea tu cuenta para comenzar a gestionar tus entrenamientos</p>
         </div>
         <div class="register-container_right_form">
-            <form>
-                <app-input label="Correo electrónico" type="email" placeholder="Ingresa tu correo" icon="/assets/icons/mail.svg"></app-input>
-                <app-input label="Contraseña" type="password" placeholder="Ingresa tu contraseña" icon="/assets/icons/padlock.svg"></app-input>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <app-input label="Correo electrónico" type="email" placeholder="Ingresa tu correo" icon="/assets/icons/mail.svg" [control]="emailControl"></app-input>
+                <app-input label="Contraseña" type="password" placeholder="Ingresa tu contraseña" icon="/assets/icons/padlock.svg" [control]="passwordControl"></app-input>
             </form>
             <div>
-                <app-button label="Iniciar sesión" type="submit" variant="primary"></app-button>
+                <app-button label="Iniciar sesión" type="submit" variant="primary" [disabled]="isLoading || !loginForm.valid" (click)="onSubmit()"></app-button>
             </div>
         </div>
         <div class="register-container_right_separator">
