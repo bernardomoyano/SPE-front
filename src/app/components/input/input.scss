@@ -41,6 +41,14 @@
       &:focus {
         border-color: $input-border-focus;
       }
+
+      &--error {
+        border-color: $color-error;
+        
+        &:focus {
+          border-color: $color-error;
+        }
+      }
     }
 
     &_toggle {

@@ -1,25 +1,18 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CoachRegisterRequest } from '../models/coach.model';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ApiResponse } from '../models/api-response.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Coach {
-  private apiUrl = 'https://tu-backend-url/api/coach/register'; // Reemplaza con la URL real
+  private apiUrl = 'https://localhost:7281/api/Coaches';
 
   constructor(private http: HttpClient) {}
 
-  registerCoach(data: CoachRegisterRequest): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data)
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    console.error('Error en registro de coach:', error);
-    return throwError(() => new Error('Error al registrar coach. Inténtalo de nuevo.'));
+  registerCoach(data: CoachRegisterRequest): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(this.apiUrl, data);
   }
 }
