@@ -74,7 +74,6 @@ export class Register {
       },
       error: (error) => {
         this.isLoading = false;
-        console.error('Error en login:', error);
 
         // Error de red o servidor no disponible (status 0 o sin conexión)
         if (error.status === 0 || !error.status) {
