@@ -1,0 +1,77 @@
+@import '../../../../styles/variables.scss';
+
+.sidebar {
+  width: 260px;
+  height: calc(100vh - 70px); // Resta la altura del navbar
+  background-color: $color-white;
+  border-right: 1px solid $border-color-light;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 70px; // Debajo del navbar
+  z-index: 100;
+
+  @media (max-width: $breakpoint-md) {
+    display: none; // Ocultar en mobile
+  }
+
+  &__nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacing-lg $spacing-md;
+  }
+
+  &__menu-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $color-gray-500;
+    letter-spacing: 0.5px;
+    margin: 0 0 $spacing-md $spacing-sm;
+    text-transform: uppercase;
+  }
+
+  &__menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    &-item {
+      margin-bottom: $spacing-xs;
+    }
+
+    &-link {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      padding: $spacing-md;
+      color: $text-secondary;
+      text-decoration: none;
+      border-radius: $radius-md;
+      transition: all 0.2s ease;
+      font-size: 0.9375rem;
+      font-weight: 500;
+
+      i {
+        font-size: 1.125rem;
+        width: 20px;
+        text-align: center;
+      }
+
+      &:hover {
+        background-color: $bg-light;
+        color: $color-primary;
+      }
+
+      &--active {
+        background-color: $color-primary;
+        color: $color-white;
+
+        &:hover {
+          background-color: $btn-primary-hover;
+          color: $color-white;
+        }
+      }
+    }
+  }
+}

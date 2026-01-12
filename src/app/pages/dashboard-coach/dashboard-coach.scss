@@ -1,0 +1,23 @@
+@import '../../../styles/variables.scss';
+
+.dashboard-coach {
+  height: 100%;
+
+  &__header {
+    margin-bottom: $spacing-xl;
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: $color-primary;
+    margin: 0;
+  }
+
+  &__content {
+    background-color: $color-white;
+    border-radius: $radius-md;
+    padding: $spacing-xl;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+}

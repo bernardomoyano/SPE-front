@@ -1,0 +1,63 @@
+<nav class="navbar">
+  <div class="navbar__container">
+    <!-- Logo y Brand -->
+    <div class="navbar__brand">
+      <app-logo></app-logo>
+      <span class="navbar__brand-text">S.G.E</span>
+    </div>
+
+    <!-- User Info Mobile (centro) -->
+    <div class="navbar__user-mobile">
+      <span class="navbar__user-mobile-name">{{ userName() }}</span>
+      <span class="navbar__user-mobile-role" *ngIf="userRole() === 'COACH'">Coach</span>
+    </div>
+
+    <!-- User Info Desktop -->
+    <div class="navbar__user">
+      <div class="navbar__user-info">
+        <span class="navbar__user-name">{{ userName() }}</span>
+        <span class="navbar__user-role" *ngIf="userRole() === 'COACH'">Coach</span>
+      </div>
+      <button class="navbar__logout" (click)="logout()" title="Cerrar sesión">
+        <i class="pi pi-sign-out"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="navbar__menu-toggle" (click)="toggleMobileMenu()" [attr.aria-expanded]="isMobileMenuOpen()">
+      <i class="pi pi-bars"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu" [class.mobile-menu--open]="isMobileMenuOpen()">
+  <div class="mobile-menu__overlay" (click)="closeMobileMenu()"></div>
+  
+  <div class="mobile-menu__drawer">
+    <div class="mobile-menu__header">
+      <h3 class="mobile-menu__title">MENÚ</h3>
+      <button class="mobile-menu__close" (click)="closeMobileMenu()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <nav class="mobile-menu__nav">
+      <ul class="mobile-menu__list">
+        <li class="mobile-menu__item" *ngFor="let item of menuItems">
+          <a (click)="navigateTo(item.route)" class="mobile-menu__link">
+            <i [class]="item.icon"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="mobile-menu__footer">
+      <button class="mobile-menu__logout" (click)="logout()">
+        <i class="pi pi-sign-out"></i>
+        <span>Cerrar Sesión</span>
+      </button>
+    </div>
+  </div>
+</div>
