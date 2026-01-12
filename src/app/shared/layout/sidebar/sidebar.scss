@@ -2,47 +2,18 @@
 
 .sidebar {
   width: 260px;
-  height: 100vh;
+  height: calc(100vh - 70px); // Resta la altura del navbar
   background-color: $color-white;
   border-right: 1px solid $border-color-light;
   display: flex;
   flex-direction: column;
   position: fixed;
   left: 0;
-  top: 0;
+  top: 70px; // Debajo del navbar
   z-index: 100;
 
-  &__header {
-    padding: $spacing-lg $spacing-md;
-    border-bottom: 1px solid $border-color-light;
-  }
-
-  &__brand {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-
-    &-text {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      height: 50px; // Altura del logo
-    }
-
-    &-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: $color-primary;
-      letter-spacing: 0.5px;
-      line-height: 1.2;
-    }
-
-    &-subtitle {
-      font-size: 0.875rem;
-      color: $text-secondary;
-      font-weight: 500;
-      line-height: 1.2;
-    }
+  @media (max-width: $breakpoint-md) {
+    display: none; // Ocultar en mobile
   }
 
   &__nav {
