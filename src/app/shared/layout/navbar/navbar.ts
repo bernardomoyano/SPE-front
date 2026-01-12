@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Logo } from '../../components/logo/logo';
+import { MenuService, MenuItem } from '../../../services/menu.service';
 import { StorageService } from '../../../services/storage.service';
 import { AuthService } from '../../../services/auth.service';
 
@@ -15,15 +16,10 @@ export class Navbar implements OnInit {
   userName = signal<string>('Usuario');
   userRole = signal<string>('');
   isMobileMenuOpen = signal<boolean>(false);
-
-  menuItems = [
-    { label: 'Planificaciones', icon: 'pi pi-calendar', route: '/planificaciones' },
-    { label: 'Atletas', icon: 'pi pi-users', route: '/atletas' },
-    { label: 'Ejercicios', icon: 'pi pi-list', route: '/ejercicios' },
-    { label: 'Mi Perfil', icon: 'pi pi-user', route: '/mi-perfil' }
-  ];
+  menuItems = signal<MenuItem[]>([]);
 
   constructor(
+    private menuService: MenuService,
     private storageService: StorageService,
     private authService: AuthService,
     private router: Router
@@ -31,6 +27,7 @@ export class Navbar implements OnInit {
 
   ngOnInit(): void {
     this.loadUserData();
+    this.loadMenuItems();
   }
 
   loadUserData(): void {
@@ -39,6 +36,11 @@ export class Navbar implements OnInit {
       this.userRole.set(userData.roleName || '');
       this.userName.set(userData.name || 'Usuario');
     }
+  }
+
+  loadMenuItems(): void {
+    const userRole = this.userRole();
+    this.menuItems.set(this.menuService.getMenuItems(userRole));
   }
 
   toggleMobileMenu(): void {

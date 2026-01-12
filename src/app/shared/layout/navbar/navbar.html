@@ -44,7 +44,7 @@
 
     <nav class="mobile-menu__nav">
       <ul class="mobile-menu__list">
-        <li class="mobile-menu__item" *ngFor="let item of menuItems">
+        <li class="mobile-menu__item" *ngFor="let item of menuItems()">
           <a (click)="navigateTo(item.route)" class="mobile-menu__link">
             <i [class]="item.icon"></i>
             <span>{{ item.label }}</span>
