@@ -1,0 +1,17 @@
+<div class="my-exercises">
+  <div class="my-exercises__header">
+    <h1 class="my-exercises__title">Mis Ejercicios</h1>
+  </div>
+
+  <div class="my-exercises__content">
+    <app-data-table
+      [config]="tableConfig"
+      [data]="exercises()"
+      [loading]="loading()"
+      [currentPage]="currentPage()"
+      [totalItems]="totalItems()"
+      (pageChange)="onPageChange($event)"
+      (sortChange)="onSortChange($event)"
+    ></app-data-table>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+@import '../../../styles/variables.scss';
+
+.my-exercises {
+  height: 100%;
+
+  &__header {
+    margin-bottom: $spacing-xl;
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: $color-primary;
+    margin: 0;
+
+    @media (max-width: $breakpoint-md) {
+      font-size: 1.5rem;
+    }
+  }
+
+}
