@@ -17,6 +17,14 @@
     display: flex;
     align-items: center;
 
+    &.has-icon .input-container_field_input {
+      padding-left: 40px;
+    }
+
+    &.has-toggle .input-container_field_input {
+      padding-right: 40px;
+    }
+
     &_icon {
       position: absolute;
       left: $spacing-sm;
@@ -28,7 +36,7 @@
 
     &_input {
       width: 100%;
-      padding: $spacing-sm 40px; // space for icon and toggle
+      padding: $spacing-sm $spacing-md; // default padding without icon
       border: 1px solid $input-border;
       border-radius: $radius-sm;
       font-size: $font-size-sm;
@@ -86,6 +94,14 @@
     }
 
     .input-container_field {
+      &.has-icon .input-container_field_input {
+        padding-left: 35px;
+      }
+
+      &.has-toggle .input-container_field_input {
+        padding-right: 35px;
+      }
+
       .input-container_field_icon {
         width: 16px;
         height: 16px;
@@ -93,7 +109,7 @@
       }
 
       .input-container_field_input {
-        padding: $spacing-sm 35px;
+        padding: $spacing-sm $spacing-md;
         font-size: $font-size-sm;
       }
 

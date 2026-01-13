@@ -3,7 +3,7 @@ export interface Exercise {
   name: string;
   description: string;
   linkVideo: string;
-  isCommon: boolean;
+  isCommon?: boolean;
   muscleGroupId: number;
-  muscleGroupName: string;
+  muscleGroupName?: string;
 }

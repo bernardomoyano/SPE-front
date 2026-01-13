@@ -1,0 +1,36 @@
+<div class="exercise-filters">
+  <form [formGroup]="filtersForm" class="exercise-filters__form">
+    <div class="exercise-filters__search">
+      <app-input
+        label=""
+        placeholder="Buscar por nombre..."
+        [control]="searchTermControl"
+      ></app-input>
+    </div>
+
+    <div class="exercise-filters__selects">
+      <app-select
+        label=""
+        placeholder="Grupo muscular"
+        [options]="muscleGroupOptions"
+        [control]="muscleGroupControl"
+      ></app-select>
+
+      <app-select
+        label=""
+        placeholder="Tipo de ejercicio"
+        [options]="commonOptions"
+        [control]="isCommonControl"
+      ></app-select>
+    </div>
+
+    <button
+      *ngIf="hasActiveFilters"
+      type="button"
+      (click)="clearFilters()"
+      class="exercise-filters__clear"
+    >
+      Limpiar filtros
+    </button>
+  </form>
+</div>

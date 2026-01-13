@@ -1,61 +1,53 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
 import { Exercise } from '../models/exercise.model';
+import { CreateExerciseRequest } from '../models/create-exercise-request.model';
+import { PaginatedResponse } from '../models/paginated-response.model';
+import { ExerciseFilters } from '../models/exercise-filters.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExerciseService {
-  private readonly url = 'https://localhost:7281/api/Exercises/my-exercises';
+  private readonly url = 'https://localhost:7281/api/Exercises';
 
   constructor(private http: HttpClient) {}
 
   /**
-   * Obtiene los ejercicios del coach actual
-   * @returns Observable con la lista de ejercicios
+   * Obtiene los ejercicios del coach actual con paginación y filtros
+   * @param filters Filtros y parámetros de paginación
+   * @returns Observable con la respuesta paginada
    */
-  getMyExercises(): Observable<ApiResponse<Exercise[]>> {
+  getMyExercises(filters: ExerciseFilters): Observable<ApiResponse<PaginatedResponse<Exercise>>> {
+    let params = new HttpParams()
+      .set('pageNumber', filters.pageNumber.toString())
+      .set('pageSize', filters.pageSize.toString())
+      .set('sortBy', filters.sortBy)
+      .set('sortDescending', filters.sortDescending.toString());
 
-    return this.http.get<ApiResponse<Exercise[]>>(this.url);
+    if (filters.searchTerm) {
+      params = params.set('searchTerm', filters.searchTerm);
+    }
+
+    if (filters.isCommon !== undefined && filters.isCommon !== null) {
+      params = params.set('isCommon', filters.isCommon.toString());
+    }
+
+    if (filters.muscleGroupId) {
+      params = params.set('muscleGroupId', filters.muscleGroupId.toString());
+    }
+
+    return this.http.get<ApiResponse<PaginatedResponse<Exercise>>>(`${this.url}/my-exercises`, { params });
   }
 
   /**
-   * Manejo centralizado de errores HTTP
-   * @param error Error de la petición HTTP
-   * @returns Observable que emite el error
+   * Crea un nuevo ejercicio
+   * @param request Datos del ejercicio a crear
+   * @returns Observable con la respuesta de la API
    */
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'Ha ocurrido un error desconocido';
-
-    if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
-      errorMessage = `Error del cliente: ${error.error.message}`;
-    } else {
-      // Error del lado del servidor
-      if (error.status === 0) {
-        errorMessage = 'No se pudo conectar con el servidor. Verifica tu conexión.';
-      } else if (error.status >= 500) {
-        errorMessage = 'Error del servidor. Inténtalo de nuevo más tarde.';
-      } else if (error.status === 401) {
-        errorMessage = 'No autorizado. Inicia sesión nuevamente.';
-      } else if (error.status === 403) {
-        errorMessage = 'No tienes permisos para acceder a este recurso.';
-      } else if (error.status === 404) {
-        errorMessage = 'Recurso no encontrado.';
-      } else if (error.error && typeof error.error === 'object') {
-        const apiError = error.error as ApiResponse<any>;
-        if (apiError.errors && apiError.errors.length > 0) {
-          errorMessage = apiError.errors.join(', ');
-        } else if (apiError.message) {
-          errorMessage = apiError.message;
-        }
-      }
-    }
-
-    console.error('ExerciseService Error:', error);
-    return throwError(() => new Error(errorMessage));
+  createExercise(request: CreateExerciseRequest): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(this.url, request);
   }
 }

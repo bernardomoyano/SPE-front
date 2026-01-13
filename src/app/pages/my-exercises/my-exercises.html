@@ -1,17 +1,33 @@
 <div class="my-exercises">
   <div class="my-exercises__header">
     <h1 class="my-exercises__title">Mis Ejercicios</h1>
+    <app-button
+      label="Nuevo Ejercicio"
+      variant="primary"
+      (click)="openFormModal()"
+    ></app-button>
   </div>
+
+  <app-exercise-filters
+    (filterChange)="onFilterChange($event)"
+  ></app-exercise-filters>
 
   <div class="my-exercises__content">
     <app-data-table
       [config]="tableConfig"
       [data]="exercises()"
       [loading]="loading()"
-      [currentPage]="currentPage()"
+      [currentPage]="currentPage"
       [totalItems]="totalItems()"
       (pageChange)="onPageChange($event)"
       (sortChange)="onSortChange($event)"
     ></app-data-table>
+  </div>
+
+  <!-- Modal para crear ejercicio -->
+  <div *ngIf="showFormModal()" class="my-exercises__modal-overlay" (click)="closeFormModal()">
+    <div class="my-exercises__modal-content" (click)="$event.stopPropagation()">
+      <app-form-exercise (close)="closeFormModal()"></app-form-exercise>
+    </div>
   </div>
 </div>

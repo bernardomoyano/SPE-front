@@ -1,30 +1,42 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DataTableComponent, TableConfig, TableAction } from '../../components/data-table/data-table';
+import { DataTableComponent, TableConfig } from '../../components/data-table/data-table';
+import { Button } from '../../components/button/button';
+import { FormExerciseComponent } from '../../components/form-exercise/form-exercise';
+import { ExerciseFiltersComponent } from '../../components/exercise-filters/exercise-filters';
 import { ExerciseService } from '../../services/exercise.service';
 import { Exercise } from '../../models/exercise.model';
 import { ApiResponse } from '../../models/api-response.model';
+import { PaginatedResponse } from '../../models/paginated-response.model';
+import { ExerciseFilters } from '../../models/exercise-filters.model';
 import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-my-exercises',
-  imports: [CommonModule, DataTableComponent],
+  imports: [CommonModule, DataTableComponent, Button, FormExerciseComponent, ExerciseFiltersComponent],
   templateUrl: './my-exercises.html',
   styleUrl: './my-exercises.scss',
 })
 export class MyExercises implements OnInit {
   exercises = signal<Exercise[]>([]);
   loading = signal<boolean>(false);
-  currentPage = signal<number>(1);
   totalItems = signal<number>(0);
+  showFormModal = signal<boolean>(false);
+
+  filters: ExerciseFilters = {
+    pageNumber: 1,
+    pageSize: 10,
+    sortBy: 'name',
+    sortDescending: false
+  };
 
   tableConfig: TableConfig = {
     columns: [
       { key: 'name', label: 'Nombre', sortable: true },
       { key: 'description', label: 'Descripción', sortable: false },
-      { key: 'muscleGroupName', label: 'Grupo Muscular', sortable: true },
+      { key: 'muscleGroupName', label: 'Grupo Muscular', sortable: false },
       { key: 'linkVideo', label: 'Video', sortable: false, width: '120px' },
-      { key: 'isCommon', label: 'Común', sortable: true, width: '80px' }
+      { key: 'isCommon', label: 'Común', sortable: false, width: '80px' }
     ],
     actions: [
       {
@@ -42,7 +54,7 @@ export class MyExercises implements OnInit {
     ],
     showPagination: true,
     pageSize: 10,
-    emptyMessage: 'No tienes ejercicios registrados aún',
+    emptyMessage: 'No se encontraron ejercicios',
     showCardsOnMobile: true,
     cardTitleKey: 'name',
     cardSubtitleKey: 'muscleGroupName',
@@ -60,17 +72,18 @@ export class MyExercises implements OnInit {
 
   loadExercises(): void {
     this.loading.set(true);
+    
 
-    this.exerciseService.getMyExercises().subscribe({
-      next: (response: ApiResponse<Exercise[]>) => {
-        
+    this.exerciseService.getMyExercises(this.filters).subscribe({
+      next: (response: ApiResponse<PaginatedResponse<Exercise>>) => {
         this.loading.set(false);
 
         if (response.success && response.data) {
-          this.exercises.set(response.data);
-          this.totalItems.set(response.data.length);
-        } else {
-          this.alertService.showError(response.message || 'Error al obtener ejercicios');
+          this.exercises.set(response.data.data);
+          console.log('dfdfd', response);
+          this.totalItems.set(response.data.totalCount);
+          this.filters.pageNumber = response.data.pageNumber;
+          this.filters.pageSize = response.data.pageSize;
         }
       },
       error: (error) => {
@@ -80,14 +93,26 @@ export class MyExercises implements OnInit {
     });
   }
 
+  onFilterChange(filterValues: any): void {
+    this.filters = {
+      ...this.filters,
+      pageNumber: 1, // Reset to first page on filter change
+      searchTerm: filterValues.searchTerm,
+      muscleGroupId: filterValues.muscleGroupId,
+      isCommon: filterValues.isCommon
+    };
+    this.loadExercises();
+  }
+
   onPageChange(page: number): void {
-    this.currentPage.set(page);
-    // Aquí irá la lógica de paginación cuando se implemente en el backend
+    this.filters.pageNumber = page;
+    this.loadExercises();
   }
 
   onSortChange(sort: { column: string; direction: 'asc' | 'desc' }): void {
-    // Aquí irá la lógica de ordenamiento cuando se implemente en el backend
-    console.log('Ordenar por:', sort);
+    this.filters.sortBy = sort.column;
+    this.filters.sortDescending = sort.direction === 'desc';
+    this.loadExercises();
   }
 
   editExercise(exercise: Exercise): void {
@@ -100,5 +125,18 @@ export class MyExercises implements OnInit {
     // TODO: Implementar eliminación de ejercicio
     console.log('Eliminar ejercicio:', exercise);
     this.alertService.showError(`Funcionalidad de eliminación próximamente - ${exercise.name}`);
+  }
+
+  openFormModal(): void {
+    this.showFormModal.set(true);
+  }
+
+  closeFormModal(): void {
+    this.showFormModal.set(false);
+    this.loadExercises(); // Recargar la lista después de crear
+  }
+
+  get currentPage(): number {
+    return this.filters.pageNumber;
   }
 }
