@@ -6,6 +6,7 @@ import { Exercise } from '../models/exercise.model';
 import { CreateExerciseRequest } from '../models/create-exercise-request.model';
 import { PaginatedResponse } from '../models/paginated-response.model';
 import { ExerciseFilters } from '../models/exercise-filters.model';
+import { UpdateExerciseRequest } from '../models/update-exercise-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -49,5 +50,15 @@ export class ExerciseService {
    */
   createExercise(request: CreateExerciseRequest): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>(this.url, request);
+  }
+
+  /**
+   * Actualiza un ejercicio existente
+   * @param id ID del ejercicio a actualizar
+   * @param request Datos del ejercicio a actualizar
+   * @returns Observable con la respuesta de la API
+   */
+  updateExercise(id: number, request: UpdateExerciseRequest): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`${this.url}/${id}`, request);
   }
 }

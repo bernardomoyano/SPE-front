@@ -22,6 +22,7 @@ export class MyExercises implements OnInit {
   loading = signal<boolean>(false);
   totalItems = signal<number>(0);
   showFormModal = signal<boolean>(false);
+  exerciseToEdit = signal<Exercise | null>(null);
 
   filters: ExerciseFilters = {
     pageNumber: 1,
@@ -116,9 +117,8 @@ export class MyExercises implements OnInit {
   }
 
   editExercise(exercise: Exercise): void {
-    // TODO: Implementar navegación a edición de ejercicio
-    console.log('Editar ejercicio:', exercise);
-    this.alertService.showSuccess(`Funcionalidad de edición próximamente - ${exercise.name}`);
+    this.exerciseToEdit.set(exercise);
+    this.showFormModal.set(true);
   }
 
   deleteExercise(exercise: Exercise): void {
@@ -128,12 +128,14 @@ export class MyExercises implements OnInit {
   }
 
   openFormModal(): void {
+    this.exerciseToEdit.set(null);
     this.showFormModal.set(true);
   }
 
   closeFormModal(): void {
     this.showFormModal.set(false);
-    this.loadExercises(); // Recargar la lista después de crear
+    this.exerciseToEdit.set(null);
+    this.loadExercises(); // Recargar la lista después de crear o editar
   }
 
   get currentPage(): number {

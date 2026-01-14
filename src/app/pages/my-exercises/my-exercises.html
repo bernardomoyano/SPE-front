@@ -27,7 +27,7 @@
   <!-- Modal para crear ejercicio -->
   <div *ngIf="showFormModal()" class="my-exercises__modal-overlay" (click)="closeFormModal()">
     <div class="my-exercises__modal-content" (click)="$event.stopPropagation()">
-      <app-form-exercise (close)="closeFormModal()"></app-form-exercise>
+      <app-form-exercise [exerciseToEdit]="exerciseToEdit()" (close)="closeFormModal()"></app-form-exercise>
     </div>
   </div>
 </div>

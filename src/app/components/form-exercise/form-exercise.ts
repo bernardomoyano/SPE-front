@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, signal, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Button } from '../button/button';
@@ -10,6 +10,8 @@ import { AlertService } from '../../services/alert.service';
 import { ApiResponse } from '../../models/api-response.model';
 import { MuscleGroup } from '../../models/muscle-group.model';
 import { CreateExerciseRequest } from '../../models/create-exercise-request.model';
+import { UpdateExerciseRequest } from '../../models/update-exercise-request.model';
+import { Exercise } from '../../models/exercise.model';
 
 @Component({
   selector: 'app-form-exercise',
@@ -18,12 +20,17 @@ import { CreateExerciseRequest } from '../../models/create-exercise-request.mode
   styleUrl: './form-exercise.scss',
 })
 export class FormExerciseComponent implements OnInit {
+  @Input() exerciseToEdit: Exercise | null = null;
   @Output() close = new EventEmitter<void>();
 
   form: FormGroup;
   muscleGroups = signal<MuscleGroup[]>([]);
   loading = signal<boolean>(false);
   submitting = signal<boolean>(false);
+
+  get isEditing(): boolean {
+    return this.exerciseToEdit !== null;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +48,14 @@ export class FormExerciseComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMuscleGroups();
+    if (this.isEditing && this.exerciseToEdit) {
+      this.form.patchValue({
+        name: this.exerciseToEdit.name,
+        description: this.exerciseToEdit.description,
+        linkVideo: this.exerciseToEdit.linkVideo,
+        muscleGroupId: this.exerciseToEdit.muscleGroupId
+      });
+    }
   }
 
   loadMuscleGroups(): void {
@@ -75,26 +90,53 @@ export class FormExerciseComponent implements OnInit {
   onSubmit(): void {
     if (this.form.valid) {
       this.submitting.set(true);
-      const request: CreateExerciseRequest = {
-        ...this.form.value,
-        coachId: 0
-      };
-      
-      this.exerciseService.createExercise(request).subscribe({
-        next: (response: ApiResponse<any>) => {
-          this.submitting.set(false);
-          if (response.success) {
-            this.alertService.showSuccess(response.message || 'Ejercicio creado exitosamente');
-            this.close.emit();
-          } else {
-            this.alertService.showError(response.message || 'Error al crear el ejercicio');
+
+      if (this.isEditing && this.exerciseToEdit) {        if (!this.exerciseToEdit.id) {
+          this.alertService.showError('ID del ejercicio no encontrado');
+          return;
+        }        const request: UpdateExerciseRequest = {
+          exerciseId: this.exerciseToEdit.id,
+          coachId: 0,
+          ...this.form.value
+        };
+
+        this.exerciseService.updateExercise(this.exerciseToEdit!.id, request).subscribe({
+          next: (response: ApiResponse<any>) => {
+            this.submitting.set(false);
+            if (response.success) {
+              this.alertService.showSuccess(response.message || 'Ejercicio actualizado exitosamente');
+              this.close.emit();
+            } else {
+              this.alertService.showError(response.message || 'Error al actualizar el ejercicio');
+            }
+          },
+          error: () => {
+            this.submitting.set(false);
+            this.alertService.showError('Error al actualizar el ejercicio');
           }
-        },
-        error: () => {
-          this.submitting.set(false);
-          this.alertService.showError('Error al crear el ejercicio');
-        }
-      });
+        });
+      } else {
+        const request: CreateExerciseRequest = {
+          ...this.form.value,
+          coachId: 0
+        };
+
+        this.exerciseService.createExercise(request).subscribe({
+          next: (response: ApiResponse<any>) => {
+            this.submitting.set(false);
+            if (response.success) {
+              this.alertService.showSuccess(response.message || 'Ejercicio creado exitosamente');
+              this.close.emit();
+            } else {
+              this.alertService.showError(response.message || 'Error al crear el ejercicio');
+            }
+          },
+          error: () => {
+            this.submitting.set(false);
+            this.alertService.showError('Error al crear el ejercicio');
+          }
+        });
+      }
     } else {
       this.form.markAllAsTouched();
     }
