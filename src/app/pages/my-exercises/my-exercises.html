@@ -30,4 +30,20 @@
       <app-form-exercise [exerciseToEdit]="exerciseToEdit()" (close)="closeFormModal()"></app-form-exercise>
     </div>
   </div>
+
+  <!-- Modal de confirmación de eliminación -->
+  <div *ngIf="showDeleteConfirmation()" class="my-exercises__modal-overlay" (click)="cancelDelete()">
+    <div class="my-exercises__modal-content my-exercises__modal-content--confirmation" (click)="$event.stopPropagation()">
+      <app-confirmation
+        type="danger"
+        title="Eliminar Ejercicio"
+        [message]="'¿Estás seguro de que quieres eliminar el ejercicio &quot;' + exerciseToDelete()?.name + '&quot;? Esta acción no se puede deshacer.'"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        [loading]="deleting()"
+        (confirm)="confirmDelete()"
+        (cancel)="cancelDelete()"
+      ></app-confirmation>
+    </div>
+  </div>
 </div>

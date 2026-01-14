@@ -17,7 +17,7 @@
   }
 
   &__title {
-    font-size: 2rem;
+    font-size: 1.7rem;
     font-weight: 600;
     color: $color-primary;
     margin: 0;
@@ -43,5 +43,10 @@
   &__modal-content {
     max-height: 90vh;
     overflow-y: auto;
+
+    &--confirmation {
+      max-width: 450px;
+      width: 100%;
+    }
   }
 }

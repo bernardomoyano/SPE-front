@@ -4,6 +4,7 @@ import { DataTableComponent, TableConfig } from '../../components/data-table/dat
 import { Button } from '../../components/button/button';
 import { FormExerciseComponent } from '../../components/form-exercise/form-exercise';
 import { ExerciseFiltersComponent } from '../../components/exercise-filters/exercise-filters';
+import { ConfirmationComponent } from '../../components/confirmation/confirmation';
 import { ExerciseService } from '../../services/exercise.service';
 import { Exercise } from '../../models/exercise.model';
 import { ApiResponse } from '../../models/api-response.model';
@@ -13,7 +14,7 @@ import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-my-exercises',
-  imports: [CommonModule, DataTableComponent, Button, FormExerciseComponent, ExerciseFiltersComponent],
+  imports: [CommonModule, DataTableComponent, Button, FormExerciseComponent, ExerciseFiltersComponent, ConfirmationComponent],
   templateUrl: './my-exercises.html',
   styleUrl: './my-exercises.scss',
 })
@@ -23,6 +24,9 @@ export class MyExercises implements OnInit {
   totalItems = signal<number>(0);
   showFormModal = signal<boolean>(false);
   exerciseToEdit = signal<Exercise | null>(null);
+  showDeleteConfirmation = signal<boolean>(false);
+  exerciseToDelete = signal<Exercise | null>(null);
+  deleting = signal<boolean>(false);
 
   filters: ExerciseFilters = {
     pageNumber: 1,
@@ -122,24 +126,47 @@ export class MyExercises implements OnInit {
   }
 
   deleteExercise(exercise: Exercise): void {
-    if (!exercise.id) {
+    this.exerciseToDelete.set(exercise);
+    this.showDeleteConfirmation.set(true);
+  }
+
+  confirmDelete(): void {
+    const exercise = this.exerciseToDelete();
+    if (!exercise || !exercise.id) {
       this.alertService.showError('ID del ejercicio no encontrado');
+      this.closeDeleteConfirmation();
       return;
     }
 
+    this.deleting.set(true);
     this.exerciseService.deleteExercise(exercise.id).subscribe({
       next: (response: ApiResponse<any>) => {
+        this.deleting.set(false);
         if (response.success) {
           this.alertService.showSuccess(response.message || 'Ejercicio eliminado exitosamente');
           this.loadExercises(); // Recargar la lista después de eliminar
+          this.closeDeleteConfirmation();
         } else {
           this.alertService.showError(response.message || 'Error al eliminar el ejercicio');
+          this.closeDeleteConfirmation();
         }
       },
       error: () => {
+        this.deleting.set(false);
         this.alertService.showError('Error al eliminar el ejercicio');
+        this.closeDeleteConfirmation();
       }
     });
+  }
+
+  cancelDelete(): void {
+    this.closeDeleteConfirmation();
+  }
+
+  closeDeleteConfirmation(): void {
+    this.showDeleteConfirmation.set(false);
+    this.exerciseToDelete.set(null);
+    this.deleting.set(false);
   }
 
   openFormModal(): void {

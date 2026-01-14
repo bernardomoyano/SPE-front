@@ -16,7 +16,8 @@
     flex: 1;
     overflow-y: auto;
     padding: $spacing-xl;
-    background-color: $bg-tertiary;
+    // background-color: $bg-tertiary;
+    background-color: aqua;
     
     @media (min-width: calc($breakpoint-md + 1px)) {
       margin-left: 260px; // Ancho del sidebar en desktop
