@@ -61,4 +61,13 @@ export class ExerciseService {
   updateExercise(id: number, request: UpdateExerciseRequest): Observable<ApiResponse<any>> {
     return this.http.put<ApiResponse<any>>(`${this.url}/${id}`, request);
   }
+
+  /**
+   * Elimina un ejercicio existente
+   * @param id ID del ejercicio a eliminar
+   * @returns Observable con la respuesta de la API
+   */
+  deleteExercise(id: number): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(`${this.url}/${id}`);
+  }
 }

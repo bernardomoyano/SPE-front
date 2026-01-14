@@ -122,9 +122,24 @@ export class MyExercises implements OnInit {
   }
 
   deleteExercise(exercise: Exercise): void {
-    // TODO: Implementar eliminación de ejercicio
-    console.log('Eliminar ejercicio:', exercise);
-    this.alertService.showError(`Funcionalidad de eliminación próximamente - ${exercise.name}`);
+    if (!exercise.id) {
+      this.alertService.showError('ID del ejercicio no encontrado');
+      return;
+    }
+
+    this.exerciseService.deleteExercise(exercise.id).subscribe({
+      next: (response: ApiResponse<any>) => {
+        if (response.success) {
+          this.alertService.showSuccess(response.message || 'Ejercicio eliminado exitosamente');
+          this.loadExercises(); // Recargar la lista después de eliminar
+        } else {
+          this.alertService.showError(response.message || 'Error al eliminar el ejercicio');
+        }
+      },
+      error: () => {
+        this.alertService.showError('Error al eliminar el ejercicio');
+      }
+    });
   }
 
   openFormModal(): void {
