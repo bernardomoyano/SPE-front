@@ -212,6 +212,12 @@
         background-color: darken($color-warning, 8%);
       }
     }
+
+    &--disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
   }
 
   &__empty {

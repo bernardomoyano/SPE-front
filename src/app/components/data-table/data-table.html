@@ -68,9 +68,10 @@
             <div class="data-table__actions">
               <button
                 *ngFor="let action of config.actions"
-                [class]="getActionButtonClass(action)"
+                [class]="getActionButtonClass(action, item)"
                 (click)="action.action(item)"
                 [title]="action.label"
+                [disabled]="action.disabled && action.disabled(item)"
               >
                 <i *ngIf="action.icon" [class]="action.icon"></i>
               </button>
@@ -109,9 +110,10 @@
               >
                 <button
                   *ngFor="let action of config.actions"
-                  [class]="getActionButtonClass(action)"
+                  [class]="getActionButtonClass(action, item)"
                   (click)="executeAction(action, item)"
                   [title]="action.label"
+                  [disabled]="action.disabled && action.disabled(item)"
                 >
                   <span>{{ action.label }}</span>
                 </button>

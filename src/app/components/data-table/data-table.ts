@@ -30,6 +30,7 @@ export interface TableAction {
   icon?: string;
   color?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning';
   action: (item: any) => void;
+  disabled?: (item: any) => boolean;
 }
 
 export interface TableConfig {
@@ -147,10 +148,11 @@ export class DataTableComponent {
     return this.currentSort.direction === 'asc' ? 'pi pi-sort-up' : 'pi pi-sort-down';
   }
 
-  getActionButtonClass(action: TableAction): string {
+  getActionButtonClass(action: TableAction, item?: any): string {
     const baseClass = 'data-table__action-btn';
     const colorClass = action.color ? `${baseClass}--${action.color}` : '';
-    return `${baseClass} ${colorClass}`.trim();
+    const disabledClass = item && action.disabled && action.disabled(item) ? `${baseClass}--disabled` : '';
+    return `${baseClass} ${colorClass} ${disabledClass}`.trim();
   }
 
   trackByFn(index: number, item: any): any {

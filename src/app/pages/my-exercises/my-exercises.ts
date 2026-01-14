@@ -43,7 +43,8 @@ export class MyExercises implements OnInit {
         label: 'Editar',
         icon: 'pi pi-pencil',
         color: 'success',
-        action: (exercise: Exercise) => this.editExercise(exercise)
+        action: (exercise: Exercise) => this.editExercise(exercise),
+        disabled: (exercise: Exercise) => !!exercise.isCommon
       },
       {
         label: 'Eliminar',
@@ -80,7 +81,6 @@ export class MyExercises implements OnInit {
 
         if (response.success && response.data) {
           this.exercises.set(response.data.data);
-          console.log('dfdfd', response);
           this.totalItems.set(response.data.totalCount);
           this.filters.pageNumber = response.data.pageNumber;
           this.filters.pageSize = response.data.pageSize;
