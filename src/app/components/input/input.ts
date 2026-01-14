@@ -29,6 +29,14 @@ export class InputComponent {
     return this.type;
   }
 
+  get hasIcon(): boolean {
+    return !!this.icon;
+  }
+
+  get hasToggle(): boolean {
+    return this.type === 'password';
+  }
+
   get hasError(): boolean {
     return !!(this.backendError || (this.control?.invalid && this.control?.touched));
   }

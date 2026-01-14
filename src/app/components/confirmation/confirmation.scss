@@ -1,0 +1,114 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/typography.scss';
+
+.confirmation {
+  background-color: $color-white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  max-width: 400px;
+  width: 100%;
+  overflow: hidden;
+
+  &__header {
+    padding: $spacing-xl $spacing-xl $spacing-lg;
+    text-align: center;
+    border-bottom: 1px solid $border-color-light;
+  }
+
+  &__icon {
+    margin-bottom: $spacing-md;
+
+    i {
+      font-size: 3rem;
+      color: $color-primary;
+    }
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0;
+  }
+
+  &__body {
+    padding: $spacing-xl;
+  }
+
+  &__message {
+    font-size: $font-size-base;
+    color: $text-secondary;
+    line-height: 1.5;
+    margin: 0;
+    text-align: center;
+  }
+
+  &__actions {
+    padding: $spacing-lg $spacing-xl $spacing-xl;
+    display: flex;
+    gap: $spacing-md;
+    justify-content: center;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column-reverse;
+      gap: $spacing-sm;
+    }
+
+    app-button {
+      flex: 1;
+      min-width: 120px;
+
+      @media (max-width: $breakpoint-sm) {
+        width: 100%;
+      }
+    }
+  }
+
+  // Variants
+  &--success &__icon i {
+    color: $color-success;
+  }
+
+  &--danger {
+    border: 2px solid $color-error;
+
+    &__header {
+      background-color: rgba($color-error, 0.1);
+      border-bottom-color: $color-error;
+    }
+
+    &__icon i {
+      color: $color-error;
+    }
+
+    &__title {
+      color: $color-error;
+    }
+  }
+
+  // Responsive adjustments
+  @media (max-width: $breakpoint-sm) {
+    max-width: 90vw;
+    margin: $spacing-md;
+
+    &__header {
+      padding: $spacing-lg $spacing-lg $spacing-md;
+    }
+
+    &__body {
+      padding: $spacing-lg;
+    }
+
+    &__actions {
+      padding: $spacing-md $spacing-lg $spacing-lg;
+    }
+
+    &__title {
+      font-size: $font-size-lg;
+    }
+
+    &__icon i {
+      font-size: 2.5rem;
+    }
+  }
+}

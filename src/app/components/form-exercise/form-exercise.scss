@@ -1,0 +1,73 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/typography.scss';
+
+.form-exercise {
+  background-color: $bg-secondary;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-lg;
+  width: 430px;
+
+  &__header {
+    margin-bottom: $spacing-xl;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0;
+    text-align: left; // Align to left
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: $text-muted;
+    cursor: pointer;
+    padding: $spacing-xs;
+    border-radius: $radius-sm;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: $bg-tertiary;
+      color: $text-primary;
+    }
+
+    span {
+      line-height: 1;
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xl;
+  }
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-md;
+    justify-content: center;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column-reverse;
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg;
+    margin: $spacing-md;
+    max-width: 90vw; // Responsive width
+  }
+}

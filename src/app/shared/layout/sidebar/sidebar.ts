@@ -1,12 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
-interface MenuItem {
-  label: string;
-  icon: string;
-  route: string;
-}
+import { MenuService, MenuItem } from '../../../services/menu.service';
+import { StorageService } from '../../../services/storage.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,19 +13,19 @@ interface MenuItem {
 export class Sidebar implements OnInit {
   menuItems: MenuItem[] = [];
 
-  constructor(private router: Router) {}
+  constructor(
+    private menuService: MenuService,
+    private storageService: StorageService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadMenuItems();
   }
 
   loadMenuItems(): void {
-    // Por ahora solo para COACH, se puede expandir para otros roles
-    this.menuItems = [
-      { label: 'Planificaciones', icon: 'pi pi-calendar', route: '/planificaciones' },
-      { label: 'Atletas', icon: 'pi pi-users', route: '/atletas' },
-      { label: 'Ejercicios', icon: 'pi pi-list', route: '/ejercicios' },
-      { label: 'Mi Perfil', icon: 'pi pi-user', route: '/mi-perfil' }
-    ];
+    const userData = this.storageService.getUserData();
+    const userRole = userData?.roleName;
+    this.menuItems = this.menuService.getMenuItems(userRole);
   }
 }

@@ -1,0 +1,52 @@
+<div class="form-exercise">
+  <div class="form-exercise__header">
+    <h2 class="form-exercise__title">{{ isEditing ? 'Editar Ejercicio' : 'Nuevo Ejercicio' }}</h2>
+    <button type="button" class="form-exercise__close" (click)="onCancel()" aria-label="Cerrar">
+      <span>&times;</span>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-exercise__form">
+    <div class="form-exercise__fields">
+      <app-input
+        label="Nombre"
+        placeholder="Ingrese el nombre del ejercicio"
+        [control]="nameControl"
+      ></app-input>
+
+      <app-input
+        label="Descripción"
+        placeholder="Ingrese la descripción del ejercicio"
+        [control]="descriptionControl"
+      ></app-input>
+
+      <app-input
+        label="Link de Video"
+        placeholder="https://ejemplo.com/video"
+        [control]="linkVideoControl"
+      ></app-input>
+
+      <app-select
+        label="Grupo Muscular"
+        placeholder="Seleccione un grupo muscular"
+        [options]="muscleGroupOptions"
+        [control]="muscleGroupControl"
+      ></app-select>
+    </div>
+
+    <div class="form-exercise__actions">
+      <app-button
+        label="Cancelar"
+        variant="secondary"
+        type="button"
+        (click)="onCancel()"
+      ></app-button>
+      <app-button
+        [label]="isEditing ? 'Editar Ejercicio' : 'Crear Ejercicio'"
+        variant="primary"
+        type="submit"
+        [disabled]="submitting() || form.invalid"
+      ></app-button>
+    </div>
+  </form>
+</div>

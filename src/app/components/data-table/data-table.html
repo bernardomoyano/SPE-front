@@ -1,0 +1,208 @@
+<div class="data-table">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="data-table__loading">
+    <div class="data-table__loading-spinner">
+      <i class="pi pi-spin pi-spinner"></i>
+    </div>
+    <p>Cargando datos...</p>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!loading" class="data-table__container">
+    <!-- Desktop Table View -->
+    <table class="data-table__table data-table__table--desktop" *ngIf="data.length > 0 && (!config.showCardsOnMobile || !isMobile()); else cardView">
+      <!-- Table Header -->
+      <thead class="data-table__header">
+        <tr class="data-table__header-row">
+          <th
+            *ngFor="let column of config.columns"
+            class="data-table__header-cell"
+            [style.width]="column.width"
+            [class.data-table__header-cell--sortable]="column.sortable"
+            (click)="onSort(column)"
+          >
+            <div class="data-table__header-content">
+              <span>{{ column.label }}</span>
+              <i *ngIf="column.sortable" [class]="getSortIcon(column)"></i>
+            </div>
+          </th>
+          <th class="data-table__header-cell data-table__header-cell--actions" *ngIf="config.actions && config.actions.length > 0">
+            Acciones
+          </th>
+        </tr>
+      </thead>
+
+      <!-- Table Body -->
+      <tbody class="data-table__body">
+        <tr
+          *ngFor="let item of paginatedData; trackBy: trackByFn"
+          class="data-table__body-row"
+        >
+          <td
+            *ngFor="let column of config.columns"
+            class="data-table__body-cell"
+          >
+            <ng-container *ngIf="column.key === 'isCommon'; else defaultCell">
+              <span [class]="item[column.key] ? 'data-table__badge data-table__badge--success' : 'data-table__badge data-table__badge--secondary'">
+                {{ item[column.key] ? 'Sí' : 'No' }}
+              </span>
+            </ng-container>
+            <ng-template #defaultCell>
+              <ng-container *ngIf="column.key === 'linkVideo'; else textCell">
+                <a
+                  [href]="item[column.key]"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="data-table__link"
+                  title="Ver video"
+                >
+                  <i class="pi pi-external-link"></i>
+                </a>
+              </ng-container>
+              <ng-template #textCell>
+                {{ item[column.key] }}
+              </ng-template>
+            </ng-template>
+          </td>
+          <td class="data-table__body-cell data-table__body-cell--actions" *ngIf="config.actions && config.actions.length > 0">
+            <div class="data-table__actions">
+              <button
+                *ngFor="let action of config.actions"
+                [class]="getActionButtonClass(action, item)"
+                (click)="action.action(item)"
+                [title]="action.label"
+                [disabled]="action.disabled && action.disabled(item)"
+              >
+                <i *ngIf="action.icon" [class]="action.icon"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Mobile Card View -->
+    <ng-template #cardView>
+      <div class="data-table__cards" *ngIf="data.length > 0; else emptyState">
+        <div
+          *ngFor="let item of paginatedData; trackBy: trackByFn"
+          class="data-table__card"
+        >
+          <div class="data-table__card-header">
+            <div class="data-table__card-title">
+              <h3>{{ item[config.cardTitleKey || 'name'] }}</h3>
+              <span class="data-table__card-subtitle" *ngIf="config.cardSubtitleKey">
+                {{ item[config.cardSubtitleKey] }}
+              </span>
+            </div>
+            <div class="data-table__card-actions" *ngIf="config.actions && config.actions.length > 0">
+              <button
+                class="data-table__card-menu-btn"
+                (click)="toggleActionsMenu(item)"
+                [title]="'Acciones'"
+              >
+                <i class="pi pi-ellipsis-v"></i>
+              </button>
+              <div
+                class="data-table__card-menu"
+                *ngIf="showActionsMenu()[item.id || item]"
+                (clickOutside)="closeActionsMenu(item)"
+              >
+                <button
+                  *ngFor="let action of config.actions"
+                  [class]="getActionButtonClass(action, item)"
+                  (click)="executeAction(action, item)"
+                  [title]="action.label"
+                  [disabled]="action.disabled && action.disabled(item)"
+                >
+                  <span>{{ action.label }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="data-table__card-content">
+            <div
+              *ngFor="let key of config.cardDescriptionKeys || []"
+              class="data-table__card-field"
+            >
+              <span class="data-table__card-label">
+                {{ getColumnLabel(key) }}:
+              </span>
+              <span class="data-table__card-value">
+                <ng-container *ngIf="key === 'isCommon'; else normalValue">
+                  <span [class]="item[key] ? 'data-table__badge data-table__badge--success' : 'data-table__badge data-table__badge--secondary'">
+                    {{ item[key] ? 'Sí' : 'No' }}
+                  </span>
+                </ng-container>
+                <ng-template #normalValue>
+                  <ng-container *ngIf="key === 'linkVideo'; else textValue">
+                    <a
+                      [href]="item[key]"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="data-table__link"
+                      title="Ver video"
+                    >
+                      <i class="pi pi-external-link"></i>
+                    </a>
+                  </ng-container>
+                  <ng-template #textValue>
+                    {{ item[key] }}
+                  </ng-template>
+                </ng-template>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- Empty State -->
+    <ng-template #emptyState>
+      <div class="data-table__empty">
+        <i class="pi pi-info-circle data-table__empty-icon"></i>
+        <p class="data-table__empty-message">{{ config.emptyMessage || 'No hay datos para mostrar' }}</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="config.showPagination && data.length > 0 && totalPages > 1" class="data-table__pagination">
+    <div class="data-table__pagination-info">
+      Mostrando {{ ((currentPage - 1) * (config.pageSize || 10)) + 1 }} -
+      {{ getMin(currentPage * (config.pageSize || 10), totalItems) }} de {{ totalItems }} resultados
+    </div>
+
+    <div class="data-table__pagination-controls">
+      <button
+        class="data-table__pagination-btn"
+        [disabled]="currentPage === 1"
+        (click)="onPageChange(currentPage - 1)"
+      >
+        <i class="pi pi-chevron-left"></i>
+        Anterior
+      </button>
+
+      <div class="data-table__pagination-pages">
+        <button
+          *ngFor="let page of visiblePages"
+          class="data-table__pagination-page"
+          [class.data-table__pagination-page--active]="page === currentPage"
+          (click)="onPageChange(page)"
+        >
+          {{ page }}
+        </button>
+      </div>
+
+      <button
+        class="data-table__pagination-btn"
+        [disabled]="currentPage === totalPages"
+        (click)="onPageChange(currentPage + 1)"
+      >
+        Siguiente
+        <i class="pi pi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
