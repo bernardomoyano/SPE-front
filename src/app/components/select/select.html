@@ -1,0 +1,17 @@
+<div class="select-container">
+  <label *ngIf="label" class="select-container_label">{{ label }}</label>
+  <div class="select-container_field">
+    <select
+      *ngIf="control"
+      [formControl]="control"
+      class="select-container_field_select"
+      [class.select-container_field_select--error]="hasError"
+    >
+      <option value="" disabled>{{ placeholder }}</option>
+      <option *ngFor="let option of options" [value]="option.value">
+        {{ option.label }}
+      </option>
+    </select>
+  </div>
+  <span *ngIf="errorMessage" class="select-container_error">{{ errorMessage }}</span>
+</div>

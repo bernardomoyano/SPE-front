@@ -1,0 +1,29 @@
+@import '../../../../styles/variables.scss';
+
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+
+  &__body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &__main {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacing-xl;
+    background-color: $bg-tertiary;
+    
+    @media (min-width: calc($breakpoint-md + 1px)) {
+      margin-left: 260px; // Ancho del sidebar en desktop
+    }
+
+    @media (max-width: $breakpoint-md) {
+      padding: $spacing-lg; // Menos padding en mobile
+    }
+  }
+}

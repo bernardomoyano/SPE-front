@@ -1,0 +1,30 @@
+<div [class]="containerClass">
+  <div class="confirmation__header">
+    <div class="confirmation__icon">
+      <i [class]="iconClass"></i>
+    </div>
+    <h2 class="confirmation__title">{{ title }}</h2>
+  </div>
+
+  <div class="confirmation__body">
+    <p class="confirmation__message">{{ message }}</p>
+  </div>
+
+  <div class="confirmation__actions">
+    <app-button
+      [label]="cancelText"
+      variant="secondary"
+      type="button"
+      (click)="onCancel()"
+      [disabled]="loading"
+    ></app-button>
+    <app-button
+      [label]="confirmText"
+      [variant]="confirmVariant"
+      type="button"
+      (click)="onConfirm()"
+      [disabled]="loading"
+      [icon]="loading ? 'pi pi-spin pi-spinner' : ''"
+    ></app-button>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 <div class="input-container">
   <label *ngIf="label" class="input-container_label">{{ label }}</label>
-  <div class="input-container_field">
+  <div class="input-container_field" [class.has-icon]="hasIcon" [class.has-toggle]="hasToggle">
     <img *ngIf="icon" [src]="icon" alt="icon" class="input-container_field_icon">
     <input
       *ngIf="control"
