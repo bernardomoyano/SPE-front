@@ -69,8 +69,21 @@
     color: $color-success;
   }
 
-  &--danger &__icon i {
-    color: $color-error;
+  &--danger {
+    border: 2px solid $color-error;
+
+    &__header {
+      background-color: rgba($color-error, 0.1);
+      border-bottom-color: $color-error;
+    }
+
+    &__icon i {
+      color: $color-error;
+    }
+
+    &__title {
+      color: $color-error;
+    }
   }
 
   // Responsive adjustments

@@ -1,7 +1,6 @@
 @import '../../../styles/variables.scss';
 
 .my-exercises {
-  height: 100%;
 
   &__header {
     margin-bottom: $spacing-xl;
@@ -10,8 +9,6 @@
     align-items: center;
 
     @media (max-width: $breakpoint-md) {
-      flex-direction: column;
-      align-items: flex-start;
       gap: $spacing-md;
     }
   }
@@ -23,7 +20,7 @@
     margin: 0;
 
     @media (max-width: $breakpoint-md) {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
     }
   }
 
