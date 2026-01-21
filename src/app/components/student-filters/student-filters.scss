@@ -1,0 +1,47 @@
+@import '../../../styles/variables.scss';
+
+.student-filters {
+  margin-bottom: $spacing-lg;
+
+  &__form {
+    display: flex;
+    gap: $spacing-md;
+    align-items: end;
+    flex-wrap: wrap;
+  }
+
+  &__search {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  &__selects {
+    display: flex;
+    gap: $spacing-md;
+  }
+
+  &__clear {
+    padding: $spacing-sm $spacing-md;
+    background-color: $color-gray-200;
+    color: $text-primary;
+    border: 1px solid $border-color;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: $transition-base;
+
+    &:hover {
+      background-color: $color-gray-300;
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    &__form {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__selects {
+      flex-direction: column;
+    }
+  }
+}
