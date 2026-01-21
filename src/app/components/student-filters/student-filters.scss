@@ -20,19 +20,7 @@
     gap: $spacing-md;
   }
 
-  &__clear {
-    padding: $spacing-sm $spacing-md;
-    background-color: $color-gray-200;
-    color: $text-primary;
-    border: 1px solid $border-color;
-    border-radius: $radius-sm;
-    cursor: pointer;
-    transition: $transition-base;
-
-    &:hover {
-      background-color: $color-gray-300;
-    }
-  }
+  // &__clear removido, ahora usa app-button secondary
 
   @media (max-width: $breakpoint-md) {
     &__form {

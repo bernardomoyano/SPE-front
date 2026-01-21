@@ -71,27 +71,7 @@
     }
   }
 
-  &__clear {
-    padding: $spacing-sm $spacing-lg;
-    border: 1px solid $color-error;
-    border-radius: $radius-sm;
-    background-color: transparent;
-    color: $color-error;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    cursor: pointer;
-    transition: all $transition-base;
-    white-space: nowrap;
-
-    &:hover {
-      background-color: $color-error;
-      color: $color-white;
-    }
-
-    @media (max-width: $breakpoint-md) {
-      width: 100%;
-    }
-  }
+  // &__clear removido, ahora usa app-button secondary
 
   @media (max-width: $breakpoint-md) {
     margin-bottom: $spacing-lg;

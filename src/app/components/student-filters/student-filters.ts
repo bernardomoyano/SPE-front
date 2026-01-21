@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { SelectComponent } from '../select/select';
 import { InputComponent } from '../input/input';
+import { Button } from '../button/button';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-student-filters',
-  imports: [CommonModule, ReactiveFormsModule, SelectComponent, InputComponent],
+  imports: [CommonModule, ReactiveFormsModule, SelectComponent, InputComponent, Button],
   templateUrl: './student-filters.html',
   styleUrl: './student-filters.scss',
 })

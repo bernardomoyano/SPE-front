@@ -24,13 +24,11 @@
       ></app-select>
     </div>
 
-    <button
+    <app-button
       *ngIf="hasActiveFilters"
-      type="button"
+      label="Limpiar filtros"
+      variant="secondary"
       (click)="clearFilters()"
-      class="exercise-filters__clear"
-    >
-      Limpiar filtros
-    </button>
+    ></app-button>
   </form>
 </div>

@@ -35,25 +35,33 @@ export class MyStudents implements OnInit {
 
   tableConfig: TableConfig = {
     columns: [
-      { key: 'userName', label: 'Nombre de Usuario', sortable: true },
+      { key: 'userName', label: 'Nombre', sortable: true },
       { key: 'email', label: 'Email', sortable: true },
-      { key: 'dateOfBirth', label: 'Fecha de Nacimiento', sortable: true },
-      { key: 'gender', label: 'Género', sortable: false },
-      { key: 'heightCm', label: 'Altura (cm)', sortable: false },
-      { key: 'weightKg', label: 'Peso (kg)', sortable: false },
-      { key: 'trainingLevel', label: 'Nivel de Entrenamiento', sortable: false },
+      { key: 'dateOfBirthFormatted', label: 'Fecha de Nacimiento', sortable: false },
       { key: 'phone', label: 'Teléfono', sortable: false },
-      { key: 'country', label: 'País', sortable: false },
-      { key: 'coachName', label: 'Entrenador', sortable: false }
+      { key: 'gender', label: 'Género', sortable: false }
     ],
-    actions: [],
+    actions: [
+      {
+        label: 'Editar',
+        icon: 'pi pi-pencil',
+        color: 'success',
+        action: (student: StudentDto) => this.editStudent(student)
+      },
+      {
+        label: 'Eliminar',
+        icon: 'pi pi-trash',
+        color: 'danger',
+        action: (student: StudentDto) => this.deleteStudent(student)
+      }
+    ],
     showPagination: true,
     pageSize: 10,
     emptyMessage: 'No se encontraron atletas',
     showCardsOnMobile: true,
     cardTitleKey: 'userName',
     cardSubtitleKey: 'email',
-    cardDescriptionKeys: ['trainingLevel', 'country']
+    cardDescriptionKeys: ['phone', 'gender']
   };
 
   constructor(
@@ -74,7 +82,12 @@ export class MyStudents implements OnInit {
         this.loading.set(false);
 
         if (response.success && response.data) {
-          this.students.set(response.data.data);
+          // Formatear las fechas para display
+          const formattedData = response.data.data.map(student => ({
+            ...student,
+            dateOfBirthFormatted: this.formatDate(student.dateOfBirth)
+          }));
+          this.students.set(formattedData);
           this.totalItems.set(response.data.totalCount);
           this.filters.pageNumber = response.data.pageNumber;
           this.filters.pageSize = response.data.pageSize;
@@ -104,6 +117,30 @@ export class MyStudents implements OnInit {
     this.filters.sortDescending = sort.direction === 'desc';
     this.filters.pageNumber = 1; // Reset to first page
     this.loadStudents();
+  }
+
+  editStudent(student: StudentDto): void {
+    // TODO: Implementar edición de estudiante
+    console.log('Editar estudiante:', student);
+  }
+
+  deleteStudent(student: StudentDto): void {
+    // TODO: Implementar eliminación de estudiante
+    console.log('Eliminar estudiante:', student);
+  }
+
+  private formatDate(date: Date | string | null | undefined): string {
+    if (!date) return '';
+
+    const d = typeof date === 'string' ? new Date(date) : date;
+
+    if (isNaN(d.getTime())) return '';
+
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const year = d.getFullYear();
+
+    return `${day}/${month}/${year}`;
   }
 
   openFormModal(): void {
