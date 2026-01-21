@@ -1,0 +1,28 @@
+@import '../../../styles/variables.scss';
+
+.my-students {
+
+  &__header {
+    margin-bottom: $spacing-xl;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    @media (max-width: $breakpoint-md) {
+      gap: $spacing-md;
+    }
+  }
+
+  &__title {
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: $color-primary;
+    margin: 0;
+
+    @media (max-width: $breakpoint-md) {
+      font-size: 1.3rem;
+    }
+  }
+
+
+}

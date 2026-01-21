@@ -1,0 +1,27 @@
+<div class="student-filters">
+  <form [formGroup]="filtersForm" class="student-filters__form">
+    <div class="student-filters__search">
+      <app-input
+        label=""
+        placeholder="Buscar por nombre o email..."
+        [control]="searchTermControl"
+      ></app-input>
+    </div>
+
+    <div class="student-filters__selects">
+      <app-select
+        label=""
+        placeholder="Género"
+        [options]="genderOptions"
+        [control]="genderControl"
+      ></app-select>
+    </div>
+
+    <app-button
+      *ngIf="hasActiveFilters"
+      label="Limpiar filtros"
+      variant="secondary"
+      (click)="clearFilters()"
+    ></app-button>
+  </form>
+</div>

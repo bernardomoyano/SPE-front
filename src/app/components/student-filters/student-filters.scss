@@ -1,0 +1,35 @@
+@import '../../../styles/variables.scss';
+
+.student-filters {
+  margin-bottom: $spacing-lg;
+
+  &__form {
+    display: flex;
+    gap: $spacing-md;
+    align-items: end;
+    flex-wrap: wrap;
+  }
+
+  &__search {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  &__selects {
+    display: flex;
+    gap: $spacing-md;
+  }
+
+  // &__clear removido, ahora usa app-button secondary
+
+  @media (max-width: $breakpoint-md) {
+    &__form {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__selects {
+      flex-direction: column;
+    }
+  }
+}
