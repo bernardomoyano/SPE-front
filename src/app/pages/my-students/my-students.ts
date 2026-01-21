@@ -37,7 +37,7 @@ export class MyStudents implements OnInit {
     columns: [
       { key: 'userName', label: 'Nombre', sortable: true },
       { key: 'email', label: 'Email', sortable: true },
-      { key: 'dateOfBirthFormatted', label: 'Fecha de Nacimiento', sortable: false },
+      { key: 'dateOfBirthFormatted', label: 'Fecha de Nacimiento', sortable: true },
       { key: 'phone', label: 'Teléfono', sortable: false },
       { key: 'gender', label: 'Género', sortable: false }
     ],
@@ -113,7 +113,9 @@ export class MyStudents implements OnInit {
   }
 
   onSortChange(sort: { column: string; direction: 'asc' | 'desc' }): void {
-    this.filters.sortBy = sort.column;
+    // Mapear dateOfBirthFormatted a dateOfBirth para el backend
+    const sortBy = sort.column === 'dateOfBirthFormatted' ? 'dateOfBirth' : sort.column;
+    this.filters.sortBy = sortBy;
     this.filters.sortDescending = sort.direction === 'desc';
     this.filters.pageNumber = 1; // Reset to first page
     this.loadStudents();
