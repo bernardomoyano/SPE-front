@@ -103,7 +103,45 @@ export class InputComponent {
     if (errors['passwordMismatch']) {
       return 'Las contraseñas no coinciden';
     }
+    // Errores de altura
+    if (errors['minHeight']) {
+      return 'La altura no puede ser negativa o cero';
+    }
 
+    if (errors['maxHeight']) {
+      return 'La altura debe tener como máximo 3 cifras (999 cm)';
+    }
+
+    // Errores de peso
+    if (errors['minWeight']) {
+      return 'El peso no puede ser negativo o cero';
+    }
+
+    if (errors['maxWeight']) {
+      return 'El peso máximo es 999.99 kg';
+    }
+
+    if (errors['maxDecimals']) {
+      return 'El peso puede tener como máximo 2 decimales';
+    }
+
+    // Errores de teléfono
+    if (errors['notNumeric']) {
+      return 'Solo se permiten números';
+    }
+
+    if (errors['minPhoneLength']) {
+      return 'El teléfono debe tener entre 7 y 15 dígitos';
+    }
+
+    if (errors['maxPhoneLength']) {
+      return 'El teléfono debe tener entre 7 y 15 dígitos';
+    }
+
+    // Errores de fecha
+    if (errors['futureDate']) {
+      return 'La fecha debe ser anterior a hoy';
+    }
     return '';
   }
 }

@@ -109,4 +109,103 @@ export class CustomValidators {
       }
     };
   }
+
+  /**
+   * Validador para fecha de nacimiento: debe ser anterior a hoy
+   */
+  static pastDateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const inputDate = new Date(control.value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      return inputDate < today ? null : { futureDate: true };
+    };
+  }
+
+  /**
+   * Validador para altura en centímetros: máximo 3 dígitos, mayor a 0
+   */
+  static heightValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const height = Number(control.value);
+
+      if (height <= 0) {
+        return { minHeight: true };
+      }
+
+      if (height > 999) {
+        return { maxHeight: true };
+      }
+
+      return null;
+    };
+  }
+
+  /**
+   * Validador para peso en kg: máximo 999.99, mayor a 0
+   */
+  static weightValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const weight = Number(control.value);
+
+      if (weight <= 0) {
+        return { minWeight: true };
+      }
+
+      if (weight > 999.99) {
+        return { maxWeight: true };
+      }
+
+      // Validar máximo 2 decimales
+      const decimalPart = control.value.toString().split('.')[1];
+      if (decimalPart && decimalPart.length > 2) {
+        return { maxDecimals: true };
+      }
+
+      return null;
+    };
+  }
+
+  /**
+   * Validador para teléfono: solo números, entre 7 y 15 dígitos
+   */
+  static phoneNumberValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const phoneValue = control.value.toString().trim();
+
+      // Validar que solo contenga números
+      const numericRegex = /^[0-9]+$/;
+      if (!numericRegex.test(phoneValue)) {
+        return { notNumeric: true };
+      }
+
+      // Validar longitud entre 7 y 15 dígitos
+      if (phoneValue.length < 7) {
+        return { minPhoneLength: true };
+      }
+
+      if (phoneValue.length > 15) {
+        return { maxPhoneLength: true };
+      }
+
+      return null;
+    };
+  }
 }

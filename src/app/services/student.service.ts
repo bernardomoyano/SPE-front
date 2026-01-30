@@ -5,6 +5,7 @@ import { ApiResponse } from '../models/api-response.model';
 import { StudentDto } from '../models/student.model';
 import { PaginatedResponse } from '../models/paginated-response.model';
 import { StudentFilters } from '../models/student-filters.model';
+import { CreateStudentRequest } from '../models/create-student-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -36,4 +37,13 @@ export class StudentService {
 
     return this.http.get<ApiResponse<PaginatedResponse<StudentDto>>>(`${this.url}/my-students`, { params });
   }
+
+    /**
+     * Crea un nuevo estudiante
+     * @param request Datos del estudiante a crear
+     * @returns Observable con ApiResponse
+     */
+    createStudent(request: CreateStudentRequest): Observable<ApiResponse<StudentDto>> {
+      return this.http.post<ApiResponse<StudentDto>>(this.url, request);
+    }
 }
