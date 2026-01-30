@@ -24,3 +24,12 @@
     ></app-data-table>
   </div>
 </div>
+
+<!-- Modal para crear nuevo estudiante -->
+@if (showFormModal()) {
+  <div class="my-students__modal-overlay" (click)="closeFormModal()">
+    <div class="my-students__modal-content" (click)="$event.stopPropagation()">
+      <app-form-student (close)="closeFormModal()"></app-form-student>
+    </div>
+  </div>
+}

@@ -1,8 +1,12 @@
 <div class="form-exercise">
   <div class="form-exercise__header">
     <h2 class="form-exercise__title">{{ isEditing ? 'Editar Ejercicio' : 'Nuevo Ejercicio' }}</h2>
-    <button type="button" class="form-exercise__close" (click)="onCancel()" aria-label="Cerrar">
-      <span>&times;</span>
+    <button
+      type="button"
+      class="form-exercise__close"
+      (click)="onCancel()"
+    >
+      ✕
     </button>
   </div>
 

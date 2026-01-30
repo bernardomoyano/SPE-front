@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DataTableComponent, TableConfig } from '../../components/data-table/data-table';
 import { Button } from '../../components/button/button';
 import { StudentFiltersComponent } from '../../components/student-filters/student-filters';
+import { FormStudentComponent } from '../../components/form-student/form-student';
 import { StudentService } from '../../services/student.service';
 import { StudentDto } from '../../models/student.model';
 import { ApiResponse } from '../../models/api-response.model';
@@ -12,7 +13,7 @@ import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-my-students',
-  imports: [CommonModule, DataTableComponent, Button, StudentFiltersComponent],
+  imports: [CommonModule, DataTableComponent, Button, StudentFiltersComponent, FormStudentComponent],
   templateUrl: './my-students.html',
   styleUrl: './my-students.scss',
 })
@@ -146,7 +147,11 @@ export class MyStudents implements OnInit {
   }
 
   openFormModal(): void {
-    // TODO: Implementar modal para nuevo atleta
-    console.log('Abrir modal para nuevo atleta');
+    this.showFormModal.set(true);
+  }
+
+  closeFormModal(): void {
+    this.showFormModal.set(false);
+    this.loadStudents(); // Recargar la lista después de crear un estudiante
   }
 }
