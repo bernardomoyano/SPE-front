@@ -1,0 +1,110 @@
+<div class="form-student">
+  <div class="form-student__header">
+    <h2 class="form-student__title">{{ isEditing ? 'Editar Atleta' : 'Nuevo Atleta' }}</h2>
+    <button
+      type="button"
+      class="form-student__close"
+      (click)="close.emit()"
+    >
+      ✕
+    </button>
+  </div>
+
+  <form [formGroup]="form" class="form-student__form" (ngSubmit)="onSubmit()">
+    <div class="form-student__fields">
+      <div class="form-student__field">
+        <app-input
+          label="Nombre"
+          placeholder="Ingresa el nombre"
+          [control]="nameControl"
+        ></app-input>
+      </div>
+
+      <div class="form-student__field">
+        <app-input
+          label="Email"
+          type="email"
+          placeholder="Ingresa el email"
+          [control]="emailControl"
+        ></app-input>
+      </div>
+
+      <div class="form-student__field">
+        <app-input
+          label="Fecha de Nacimiento"
+          type="date"
+          [control]="dateOfBirthControl"
+        ></app-input>
+      </div>
+
+      <div class="form-student__field">
+        <app-select
+          label="Género"
+          placeholder="Selecciona el género"
+          [options]="genderOptions"
+          [control]="genderControl"
+        ></app-select>
+      </div>
+
+      <div class="form-student__field">
+        <app-input
+          label="Altura (cm)"
+          type="number"
+          placeholder="Ingresa la altura"
+          [control]="heightCmControl"
+        ></app-input>
+      </div>
+
+      <div class="form-student__field">
+        <app-input
+          label="Peso (kg)"
+          type="number"
+          placeholder="Ingresa el peso"
+          [control]="weightKgControl"
+        ></app-input>
+      </div>
+
+      <div class="form-student__field">
+        <app-select
+          label="Nivel de Entrenamiento"
+          placeholder="Selecciona el nivel"
+          [options]="trainingLevelOptions"
+          [control]="trainingLevelControl"
+        ></app-select>
+      </div>
+
+      <div class="form-student__field">
+        <app-input
+          label="Teléfono"
+          type="text"
+          placeholder="Ingresa el teléfono"
+          [control]="phoneControl"
+        ></app-input>
+      </div>
+
+      <div class="form-student__field">
+        <app-input
+          label="País"
+          placeholder="Ingresa el país"
+          [control]="countryControl"
+        ></app-input>
+      </div>
+    </div>
+
+    <div class="form-student__actions">
+      <app-button
+        label="Cancelar"
+        variant="secondary"
+        type="button"
+        (click)="close.emit()"
+      ></app-button>
+
+      <app-button
+        [label]="isEditing ? 'Editar Atleta' : 'Crear Atleta'"
+        variant="primary"
+        type="submit"
+        [disabled]="submitting || form.invalid"
+      ></app-button>
+    </div>
+  </form>
+</div>

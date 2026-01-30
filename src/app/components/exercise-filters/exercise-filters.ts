@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SelectComponent } from '../select/select';
 import { InputComponent } from '../input/input';
+import { Button } from '../button/button';
 import { MuscleGroupsService } from '../../services/muscle-groups.service';
 import { AlertService } from '../../services/alert.service';
 import { MuscleGroup } from '../../models/muscle-group.model';
@@ -11,7 +12,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-exercise-filters',
-  imports: [CommonModule, ReactiveFormsModule, SelectComponent, InputComponent],
+  imports: [CommonModule, ReactiveFormsModule, SelectComponent, InputComponent, Button],
   templateUrl: './exercise-filters.html',
   styleUrl: './exercise-filters.scss',
 })

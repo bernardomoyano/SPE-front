@@ -1,0 +1,52 @@
+<div class="my-students">
+  <div class="my-students__header">
+    <h1 class="my-students__title">Mis Atletas</h1>
+    <app-button
+      label="Nuevo Atleta"
+      variant="primary"
+      (click)="openFormModal()"
+    ></app-button>
+  </div>
+
+  <app-student-filters
+    (filterChange)="onFilterChange($event)"
+  ></app-student-filters>
+
+  <div class="my-students__content">
+    <app-data-table
+      [config]="tableConfig"
+      [data]="students()"
+      [loading]="loading()"
+      [currentPage]="filters.pageNumber"
+      [totalItems]="totalItems()"
+      (pageChange)="onPageChange($event)"
+      (sortChange)="onSortChange($event)"
+    ></app-data-table>
+  </div>
+</div>
+
+<!-- Modal para crear/editar estudiante -->
+@if (showFormModal()) {
+  <div class="my-students__modal-overlay" (click)="closeFormModal()">
+    <div class="my-students__modal-content" (click)="$event.stopPropagation()">
+      <app-form-student [student]="studentToEdit()" (close)="closeFormModal()"></app-form-student>
+    </div>
+  </div>
+}
+
+<!-- Modal de confirmación para eliminar -->
+@if (showDeleteConfirmation()) {
+  <div class="my-students__modal-overlay" (click)="cancelDelete()">
+    <div class="my-students__modal-content my-students__modal-content--confirmation" (click)="$event.stopPropagation()">
+      <app-confirmation
+        title="Eliminar Atleta"
+        [message]="'¿Estás seguro de que deseas eliminar a ' + studentToDelete()?.userName + '?'"
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        [loading]="deleting()"
+        (confirm)="confirmDelete()"
+        (cancel)="cancelDelete()"
+      ></app-confirmation>
+    </div>
+  </div>
+}

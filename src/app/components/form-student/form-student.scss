@@ -1,7 +1,7 @@
 @import '../../../styles/variables.scss';
 @import '../../../styles/typography.scss';
 
-.form-exercise {
+.form-student {
   width: 100%;
   background-color: $color-white;
   border-radius: $radius-lg;
@@ -52,8 +52,8 @@
   }
 
   &__fields {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: $spacing-lg;
 
     @media (max-width: $breakpoint-md) {

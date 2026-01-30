@@ -3,6 +3,7 @@ import { Register } from './pages/register/register';
 import { RegisterCoach } from './pages/register-coach/register-coach';
 import { DashboardCoach } from './pages/dashboard-coach/dashboard-coach';
 import { MyExercises } from './pages/my-exercises/my-exercises';
+import { MyStudents } from './pages/my-students/my-students';
 import { MainLayout } from './shared/layout/main-layout/main-layout';
 
 export const routes: Routes = [
@@ -17,6 +18,7 @@ export const routes: Routes = [
         children: [
             { path: 'dashboard-coach', component: DashboardCoach },
             { path: 'ejercicios', component: MyExercises },
+            { path: 'atletas', component: MyStudents },
             // Aquí irán las demás rutas protegidas
             { path: '', redirectTo: 'dashboard-coach', pathMatch: 'full' }
         ]
