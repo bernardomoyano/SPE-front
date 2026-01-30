@@ -4,6 +4,7 @@ import { DataTableComponent, TableConfig } from '../../components/data-table/dat
 import { Button } from '../../components/button/button';
 import { StudentFiltersComponent } from '../../components/student-filters/student-filters';
 import { FormStudentComponent } from '../../components/form-student/form-student';
+import { ConfirmationComponent } from '../../components/confirmation/confirmation';
 import { StudentService } from '../../services/student.service';
 import { StudentDto } from '../../models/student.model';
 import { ApiResponse } from '../../models/api-response.model';
@@ -13,7 +14,7 @@ import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-my-students',
-  imports: [CommonModule, DataTableComponent, Button, StudentFiltersComponent, FormStudentComponent],
+  imports: [CommonModule, DataTableComponent, Button, StudentFiltersComponent, FormStudentComponent, ConfirmationComponent],
   templateUrl: './my-students.html',
   styleUrl: './my-students.scss',
 })
@@ -123,13 +124,52 @@ export class MyStudents implements OnInit {
   }
 
   editStudent(student: StudentDto): void {
-    // TODO: Implementar edición de estudiante
-    console.log('Editar estudiante:', student);
+    this.studentToEdit.set(student);
+    this.showFormModal.set(true);
   }
 
   deleteStudent(student: StudentDto): void {
-    // TODO: Implementar eliminación de estudiante
-    console.log('Eliminar estudiante:', student);
+    this.studentToDelete.set(student);
+    this.showDeleteConfirmation.set(true);
+  }
+
+  confirmDelete(): void {
+    const student = this.studentToDelete();
+    if (!student || !student.id) {
+      this.alertService.showError('ID del estudiante no encontrado');
+      this.closeDeleteConfirmation();
+      return;
+    }
+
+    this.deleting.set(true);
+    this.studentService.deleteStudent(student.id).subscribe({
+      next: (response: ApiResponse<any>) => {
+        this.deleting.set(false);
+        if (response.success) {
+          this.alertService.showSuccess(response.message || 'Estudiante eliminado exitosamente');
+          this.loadStudents(); // Recargar la lista después de eliminar
+          this.closeDeleteConfirmation();
+        } else {
+          this.alertService.showError(response.message || 'Error al eliminar el estudiante');
+          this.closeDeleteConfirmation();
+        }
+      },
+      error: () => {
+        this.deleting.set(false);
+        this.alertService.showError('Error al eliminar el estudiante');
+        this.closeDeleteConfirmation();
+      }
+    });
+  }
+
+  cancelDelete(): void {
+    this.closeDeleteConfirmation();
+  }
+
+  closeDeleteConfirmation(): void {
+    this.showDeleteConfirmation.set(false);
+    this.studentToDelete.set(null);
+    this.deleting.set(false);
   }
 
   private formatDate(date: Date | string | null | undefined): string {
@@ -147,11 +187,13 @@ export class MyStudents implements OnInit {
   }
 
   openFormModal(): void {
+    this.studentToEdit.set(null);
     this.showFormModal.set(true);
   }
 
   closeFormModal(): void {
     this.showFormModal.set(false);
-    this.loadStudents(); // Recargar la lista después de crear un estudiante
+    this.studentToEdit.set(null);
+    this.loadStudents(); // Recargar la lista después de crear/editar un estudiante
   }
 }

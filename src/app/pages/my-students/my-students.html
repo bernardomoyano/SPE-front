@@ -25,11 +25,28 @@
   </div>
 </div>
 
-<!-- Modal para crear nuevo estudiante -->
+<!-- Modal para crear/editar estudiante -->
 @if (showFormModal()) {
   <div class="my-students__modal-overlay" (click)="closeFormModal()">
     <div class="my-students__modal-content" (click)="$event.stopPropagation()">
-      <app-form-student (close)="closeFormModal()"></app-form-student>
+      <app-form-student [student]="studentToEdit()" (close)="closeFormModal()"></app-form-student>
+    </div>
+  </div>
+}
+
+<!-- Modal de confirmación para eliminar -->
+@if (showDeleteConfirmation()) {
+  <div class="my-students__modal-overlay" (click)="cancelDelete()">
+    <div class="my-students__modal-content my-students__modal-content--confirmation" (click)="$event.stopPropagation()">
+      <app-confirmation
+        title="Eliminar Atleta"
+        [message]="'¿Estás seguro de que deseas eliminar a ' + studentToDelete()?.userName + '?'"
+        confirmLabel="Eliminar"
+        cancelLabel="Cancelar"
+        [loading]="deleting()"
+        (confirm)="confirmDelete()"
+        (cancel)="cancelDelete()"
+      ></app-confirmation>
     </div>
   </div>
 }
