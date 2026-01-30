@@ -5,7 +5,7 @@ import { ApiResponse } from '../models/api-response.model';
 import { StudentDto } from '../models/student.model';
 import { PaginatedResponse } from '../models/paginated-response.model';
 import { StudentFilters } from '../models/student-filters.model';
-import { CreateStudentRequest } from '../models/create-student-request.model';
+import { CreateStudentRequest, UpdateStudentRequest } from '../models/create-student-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -45,5 +45,23 @@ export class StudentService {
      */
     createStudent(request: CreateStudentRequest): Observable<ApiResponse<StudentDto>> {
       return this.http.post<ApiResponse<StudentDto>>(this.url, request);
+    }
+
+    /**
+     * Actualiza un estudiante existente
+     * @param request Datos del estudiante a actualizar
+     * @returns Observable con ApiResponse
+     */
+    updateStudent(request: UpdateStudentRequest): Observable<ApiResponse<StudentDto>> {
+      return this.http.put<ApiResponse<StudentDto>>(`${this.url}/${request.id}`, request);
+    }
+
+    /**
+     * Elimina un estudiante existente
+     * @param id ID del estudiante a eliminar
+     * @returns Observable con la respuesta de la API
+     */
+    deleteStudent(id: number): Observable<ApiResponse<any>> {
+      return this.http.delete<ApiResponse<any>>(`${this.url}/${id}`);
     }
 }

@@ -1,6 +1,6 @@
 <div class="form-student">
   <div class="form-student__header">
-    <h2 class="form-student__title">Nuevo Atleta</h2>
+    <h2 class="form-student__title">{{ isEditing ? 'Editar Atleta' : 'Nuevo Atleta' }}</h2>
     <button
       type="button"
       class="form-student__close"
@@ -100,7 +100,7 @@
       ></app-button>
 
       <app-button
-        label="Crear Atleta"
+        [label]="isEditing ? 'Editar Atleta' : 'Crear Atleta'"
         variant="primary"
         type="submit"
         [disabled]="submitting || form.invalid"

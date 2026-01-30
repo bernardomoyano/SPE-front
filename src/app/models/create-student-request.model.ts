@@ -10,3 +10,7 @@ export interface CreateStudentRequest {
   country: string;
   coachId: number;
 }
+
+export interface UpdateStudentRequest extends CreateStudentRequest {
+  id: number;
+}

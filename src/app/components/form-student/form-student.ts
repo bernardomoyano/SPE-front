@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Button } from '../button/button';
@@ -7,7 +7,7 @@ import { SelectComponent } from '../select/select';
 import { AlertService } from '../../services/alert.service';
 import { ApiResponse } from '../../models/api-response.model';
 import { StudentDto } from '../../models/student.model';
-import { CreateStudentRequest } from '../../models/create-student-request.model';
+import { CreateStudentRequest, UpdateStudentRequest } from '../../models/create-student-request.model';
 import { StudentService } from '../../services/student.service';
 import { CustomValidators } from '../../shared/validators/custom-validators';
 
@@ -18,10 +18,12 @@ import { CustomValidators } from '../../shared/validators/custom-validators';
   styleUrl: './form-student.scss',
 })
 export class FormStudentComponent implements OnInit {
+  @Input() student: StudentDto | null = null;
   @Output() close = new EventEmitter<void>();
 
   form: FormGroup;
   submitting = false;
+  isEditing = false;
 
   genderOptions = [
     { value: 'Masculino', label: 'Masculino' },
@@ -53,7 +55,31 @@ export class FormStudentComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.student) {
+      this.isEditing = true;
+      this.loadStudentData();
+    }
+  }
+
+  private loadStudentData(): void {
+    if (!this.student) return;
+
+    // Formatear la fecha para el input date
+    const dateOfBirth = this.student.dateOfBirth ? new Date(this.student.dateOfBirth).toISOString().split('T')[0] : '';
+
+    this.form.patchValue({
+      name: this.student.userName,
+      email: this.student.email,
+      dateOfBirth: dateOfBirth,
+      gender: this.student.gender,
+      heightCm: this.student.heightCm,
+      weightKg: this.student.weightKg,
+      trainingLevel: this.student.trainingLevel,
+      phone: this.student.phone,
+      country: this.student.country
+    });
+  }
 
   get nameControl(): FormControl {
     return this.form.get('name') as FormControl;
@@ -94,26 +120,53 @@ export class FormStudentComponent implements OnInit {
   onSubmit(): void {
     if (this.form.valid) {
       this.submitting = true;
-      const request: CreateStudentRequest = {
-        ...this.form.value,
-        coachId: 0
-      };
 
-      this.studentsService.createStudent(request).subscribe({
-        next: (response: ApiResponse<StudentDto>) => {
-          this.submitting = false;
-          if (response.success) {
-            this.alertService.showSuccess(response.message || 'Estudiante creado exitosamente');
-            this.close.emit();
-          } else {
-            this.alertService.showError(response.message || 'Error al crear el estudiante');
+      if (this.isEditing && this.student) {
+        // Actualizar estudiante existente
+        const request: UpdateStudentRequest = {
+          id: this.student.id,
+          ...this.form.value,
+          coachId: 0
+        };
+
+        this.studentsService.updateStudent(request).subscribe({
+          next: (response: ApiResponse<StudentDto>) => {
+            this.submitting = false;
+            if (response.success) {
+              this.alertService.showSuccess(response.message || 'Estudiante actualizado exitosamente');
+              this.close.emit();
+            } else {
+              this.alertService.showError(response.message || 'Error al actualizar el estudiante');
+            }
+          },
+          error: () => {
+            this.submitting = false;
+            this.alertService.showError('Error al actualizar el estudiante');
           }
-        },
-        error: () => {
-          this.submitting = false;
-          this.alertService.showError('Error al crear el estudiante');
-        }
-      });
+        });
+      } else {
+        // Crear nuevo estudiante
+        const request: CreateStudentRequest = {
+          ...this.form.value,
+          coachId: 0
+        };
+
+        this.studentsService.createStudent(request).subscribe({
+          next: (response: ApiResponse<StudentDto>) => {
+            this.submitting = false;
+            if (response.success) {
+              this.alertService.showSuccess(response.message || 'Estudiante creado exitosamente');
+              this.close.emit();
+            } else {
+              this.alertService.showError(response.message || 'Error al crear el estudiante');
+            }
+          },
+          error: () => {
+            this.submitting = false;
+            this.alertService.showError('Error al crear el estudiante');
+          }
+        });
+      }
     } else {
       this.form.markAllAsTouched();
     }
