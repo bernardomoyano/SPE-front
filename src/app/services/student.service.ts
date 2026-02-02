@@ -38,6 +38,15 @@ export class StudentService {
     return this.http.get<ApiResponse<PaginatedResponse<StudentDto>>>(`${this.url}/my-students`, { params });
   }
 
+  /**
+   * Obtiene un estudiante por su ID
+   * @param id ID del estudiante
+   * @returns Observable con ApiResponse<StudentDto>
+   */
+  getStudentById(id: number): Observable<ApiResponse<StudentDto>> {
+    return this.http.get<ApiResponse<StudentDto>>(`${this.url}/${id}`);
+  }
+
     /**
      * Crea un nuevo estudiante
      * @param request Datos del estudiante a crear
