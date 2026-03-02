@@ -1,0 +1,15 @@
+<div class="week-tabs">
+  <div class="week-tabs__container">
+    <button
+      *ngFor="let week of weeks"
+      class="week-tabs__tab"
+      [class.week-tabs__tab--active]="week === activeWeek"
+      (click)="selectWeek(week)"
+      [attr.aria-selected]="week === activeWeek"
+      [attr.aria-label]="'Semana ' + week"
+    >
+      <span class="week-tabs__label">Semana</span>
+      <span class="week-tabs__number">{{ week }}</span>
+    </button>
+  </div>
+</div>

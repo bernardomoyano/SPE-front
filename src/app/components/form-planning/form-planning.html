@@ -1,0 +1,98 @@
+<div class="form-planning">
+  <div class="form-planning__header">
+    <h2 class="form-planning__title">Nueva Planificación</h2>
+    <button
+      type="button"
+      class="form-planning__close"
+      (click)="close.emit()"
+    >
+      ✕
+    </button>
+  </div>
+
+  <form [formGroup]="form" class="form-planning__form" (ngSubmit)="onSubmit()">
+    <div class="form-planning__fields">
+      <div class="form-planning__field">
+        <app-input
+          label="Nombre"
+          placeholder="Ingresa el nombre de la planificación"
+          [control]="nameControl"
+        ></app-input>
+      </div>
+
+      <div class="form-planning__field">
+        <app-input
+          label="Objetivos"
+          placeholder="Describe los objetivos"
+          [control]="goalsControl"
+        ></app-input>
+      </div>
+
+      <div class="form-planning__field">
+        <app-input
+          label="Fase"
+          placeholder="Ingresa la fase"
+          [control]="phaseControl"
+        ></app-input>
+      </div>
+
+      <div class="form-planning__field">
+        <app-input
+          label="Fecha de Inicio"
+          type="date"
+          [control]="startDateControl"
+        ></app-input>
+      </div>
+
+      <div class="form-planning__field">
+        <app-input
+          label="Duración (semanas)"
+          type="number"
+          placeholder="Ingresa la duración en semanas"
+          [control]="durationWeeksControl"
+        ></app-input>
+      </div>
+
+      <div class="form-planning__field">
+        <app-select
+          label="Estado"
+          placeholder="Selecciona el estado"
+          [options]="statusOptions"
+          [control]="statusControl"
+        ></app-select>
+      </div>
+
+      <div class="form-planning__field">
+        <app-select
+          label="Tipo"
+          placeholder="Selecciona el tipo"
+          [options]="typeOptions"
+          [control]="typeControl"
+        ></app-select>
+      </div>
+
+      <div class="form-planning__field form-planning__field--full">
+        <app-input
+          label="Notas"
+          placeholder="Ingresa notas adicionales"
+          [control]="notesControl"
+        ></app-input>
+      </div>
+    </div>
+
+    <div class="form-planning__actions">
+      <app-button
+        label="Cancelar"
+        variant="secondary"
+        type="button"
+        (click)="close.emit()"
+      ></app-button>
+
+      <app-button
+        label="Guardar"
+        type="submit"
+        [disabled]="submitting"
+      ></app-button>
+    </div>
+  </form>
+</div>

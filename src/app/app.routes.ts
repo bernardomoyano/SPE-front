@@ -5,6 +5,7 @@ import { DashboardCoach } from './pages/dashboard-coach/dashboard-coach';
 import { MyExercises } from './pages/my-exercises/my-exercises';
 import { MyStudents } from './pages/my-students/my-students';
 import { Planifications } from './pages/planifications/planifications';
+import { DetailsPlanifications } from './pages/details-planifications/details-planifications';
 import { MainLayout } from './shared/layout/main-layout/main-layout';
 
 export const routes: Routes = [
@@ -21,6 +22,7 @@ export const routes: Routes = [
             { path: 'ejercicios', component: MyExercises },
             { path: 'atletas', component: MyStudents },
             { path: 'atletas/planificaciones/:id', component: Planifications },
+            { path: 'atletas/planificaciones/:id/detalles', component: DetailsPlanifications },
             // Aquí irán las demás rutas protegidas
             { path: '', redirectTo: 'dashboard-coach', pathMatch: 'full' }
         ]

@@ -1,0 +1,504 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/typography.scss';
+
+.session-item {
+  background-color: $bg-secondary;
+  border: 1px solid $border-color-light;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+  overflow: hidden;
+  transition: all $transition-base;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md $spacing-lg;
+    background-color: $color-gray-50;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color $transition-base;
+
+    &:hover {
+      background-color: $color-gray-100;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-sm $spacing-md;
+    }
+  }
+
+  &__title-section {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    flex: 1;
+  }
+
+  &__collapse-btn {
+    background: none;
+    border: none;
+    padding: $spacing-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-secondary;
+    transition: transform $transition-base;
+
+    svg {
+      transition: transform $transition-base;
+
+      &.rotated {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-sm;
+    }
+  }
+
+  &__subtitle {
+    font-weight: $font-weight-regular;
+    color: $text-secondary;
+    font-size: $font-size-sm;
+
+    @media (max-width: $breakpoint-sm) {
+      display: none;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-xs;
+    align-items: center;
+  }
+
+  &__action-btn {
+    background: none;
+    border: none;
+    padding: $spacing-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-sm;
+    transition: all $transition-fast;
+
+    &--edit {
+      color: $color-accent;
+
+      &:hover {
+        background-color: rgba($color-accent, 0.1);
+      }
+    }
+
+    &--delete {
+      color: $color-error;
+
+      &:hover {
+        background-color: rgba($color-error, 0.1);
+      }
+    }
+  }
+
+  &__content {
+    max-height: 2000px;
+    overflow: hidden;
+    transition: max-height $transition-base, opacity $transition-base;
+    opacity: 1;
+
+    &.collapsed {
+      max-height: 0;
+      opacity: 0;
+    }
+  }
+
+  &__body {
+    padding: $spacing-lg;
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-md;
+    }
+  }
+
+  &__field {
+    margin-bottom: $spacing-lg;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  &__label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $text-secondary;
+    margin-bottom: $spacing-xs;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+  }
+
+  &__input,
+  &__textarea {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-base;
+    font-family: $font-family-primary;
+    color: $text-primary;
+    background-color: $input-background;
+    border: 2px solid $input-border;
+    border-radius: $radius-sm;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $input-border-focus;
+    }
+
+    &::placeholder {
+      color: $text-muted;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-sm;
+      padding: $spacing-xs $spacing-sm;
+    }
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  &__text {
+    font-size: $font-size-base;
+    color: $text-primary;
+    line-height: $line-height-relaxed;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-sm;
+    }
+  }
+
+  &__exercises {
+    margin-top: $spacing-lg;
+    padding-top: $spacing-lg;
+    border-top: 1px solid $border-color-light;
+  }
+
+  &__exercises-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+    gap: $spacing-sm;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__add-exercise-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-md;
+    background-color: $color-primary;
+    color: $color-white;
+    border: none;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+      background-color: $color-primary-dark;
+      transform: translateY(-1px);
+      box-shadow: $shadow-sm;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+      justify-content: center;
+      padding: $spacing-sm $spacing-md;
+    }
+  }
+
+  &__exercises-empty {
+    text-align: center;
+    padding: $spacing-xl;
+    color: $text-muted;
+    font-size: $font-size-sm;
+    font-style: italic;
+    background-color: $color-gray-50;
+    border-radius: $radius-sm;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &__exercises-table {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  &__edit-actions {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: $spacing-lg;
+    padding-top: $spacing-lg;
+    border-top: 1px solid $border-color-light;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+    }
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-lg;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: all $transition-base;
+    flex: 1;
+
+    &--save {
+      background-color: $color-success;
+      color: $color-white;
+
+      &:hover {
+        background-color: darken($color-success, 10%);
+        transform: translateY(-1px);
+        box-shadow: $shadow-sm;
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    &--cancel {
+      background-color: transparent;
+      color: $text-secondary;
+      border: 2px solid $border-color-medium;
+
+      &:hover {
+        background-color: $color-gray-100;
+        border-color: $border-color-dark;
+      }
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-sm $spacing-md;
+    }
+  }
+}
+
+.exercise-row {
+  display: grid;
+  grid-template-columns: 2fr 70px 90px 90px 100px;
+  gap: $spacing-sm;
+  align-items: center;
+  padding: $spacing-sm;
+  background-color: $bg-secondary;
+  border-radius: $radius-sm;
+  transition: background-color $transition-fast;
+
+  &:not(&--header):hover {
+    background-color: $color-gray-50;
+  }
+
+  &--header {
+    background-color: $color-gray-100;
+    font-weight: $font-weight-semibold;
+    margin-bottom: $spacing-xs;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr 60px 70px 70px 80px;
+    gap: $spacing-xs;
+    padding: $spacing-xs;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+    padding: $spacing-sm;
+  }
+
+  &__cell {
+    font-size: $font-size-sm;
+    color: $text-primary;
+
+    @media (max-width: $breakpoint-sm) {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: $spacing-xs;
+
+      &::before {
+        content: attr(data-label);
+        font-weight: $font-weight-semibold;
+        color: $text-secondary;
+        font-size: $font-size-xs;
+        text-transform: uppercase;
+      }
+
+      &--exercise::before {
+        content: 'Ejercicio:';
+      }
+
+      &--sets::before {
+        content: 'Series:';
+      }
+
+      &--reps::before {
+        content: 'Reps:';
+      }
+
+      &--rest::before {
+        content: 'Descanso:';
+      }
+
+      &--actions::before {
+        content: 'Acciones:';
+      }
+    }
+  }
+
+  &__select,
+  &__input {
+    width: 100%;
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+    font-family: $font-family-primary;
+    color: $text-primary;
+    background-color: $input-background;
+    border: 1px solid $input-border;
+    border-radius: $radius-sm;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $input-border-focus;
+    }
+
+    &:disabled {
+      background-color: $color-gray-100;
+      color: $text-muted;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    &--small {
+      padding: $spacing-xs;
+      font-size: $font-size-xs;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      flex: 1;
+    }
+  }
+
+  &__select {
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &__text {
+    font-size: $font-size-sm;
+    color: $text-primary;
+    word-break: break-word;
+  }
+
+  &__cell--actions {
+    display: flex;
+    gap: $spacing-xs;
+    justify-content: flex-end;
+
+    @media (max-width: $breakpoint-sm) {
+      justify-content: flex-start;
+
+      &::before {
+        flex: 1;
+      }
+    }
+  }
+
+  &__action-btn {
+    background: none;
+    border: none;
+    padding: $spacing-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-sm;
+    transition: all $transition-fast;
+
+    &--save {
+      color: $color-success;
+
+      &:hover {
+        background-color: rgba($color-success, 0.1);
+      }
+    }
+
+    &--edit {
+      color: $color-accent;
+
+      &:hover {
+        background-color: rgba($color-accent, 0.1);
+      }
+    }
+
+    &--delete {
+      color: $color-error;
+
+      &:hover {
+        background-color: rgba($color-error, 0.1);
+      }
+    }
+  }
+}
