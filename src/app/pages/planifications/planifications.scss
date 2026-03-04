@@ -1,0 +1,192 @@
+@import '../../../styles/variables';
+@import '../../../styles/typography';
+
+.planifications-container {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+//   .page-title {
+//     font-size: 2rem;
+//     font-weight: 700;
+//     color: $text-primary;
+//     margin-bottom: 2rem;
+//     text-align: center;
+//   }
+
+  .content {
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: $text-secondary;
+    }
+
+    .student-info {
+      background: $bg-secondary;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+
+        @media (min-width: 768px) {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (min-width: 1024px) {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .info-item {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+
+          .label {
+            font-weight: 600;
+            color: $text-secondary;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+          }
+
+          .value {
+            color: $text-primary;
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+
+    .plannings-section {
+      margin-top: 3rem;
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: $color-primary;
+        margin: 0;
+      }
+
+      .plannings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+
+        @media (max-width: $breakpoint-md) {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+      }
+
+      .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem 1rem;
+        color: $color-text-muted;
+        font-size: $font-size-base;
+
+        p {
+          margin: 0;
+        }
+      }
+    }
+
+    .error {
+      text-align: center;
+      padding: 2rem;
+      color: $color-gray-600;
+    }
+  }
+
+  &__modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: $spacing-md;
+  }
+
+  &__modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    max-width: 600px;
+    width: 100%;
+
+    @media (max-width: $breakpoint-md) {
+      padding: 0 20px;
+    }
+  }
+}
+
+// Mobile adjustments
+@media (max-width: 767px) {
+  .planifications-container {
+    padding: 0.5rem;
+
+    .content{
+        .page-title {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .student-info {
+      padding: 1rem;
+
+      .student-name {
+        font-size: 1.1rem;
+      }
+
+      .info-grid {
+        gap: 0.75rem;
+
+        .info-item {
+          .label {
+            font-size: 0.75rem;
+          }
+
+          .value {
+            font-size: 0.85rem;
+          }
+        }
+      }
+    }
+
+    .plannings-section {
+      margin-top: 2rem;
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $color-primary;
+        margin: 0;
+      }
+    }
+    }
+  }
+}

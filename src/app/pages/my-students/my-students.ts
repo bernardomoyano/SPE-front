@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { DataTableComponent, TableConfig } from '../../components/data-table/data-table';
 import { Button } from '../../components/button/button';
 import { StudentFiltersComponent } from '../../components/student-filters/student-filters';
@@ -55,6 +56,12 @@ export class MyStudents implements OnInit {
         icon: 'pi pi-trash',
         color: 'danger',
         action: (student: StudentDto) => this.deleteStudent(student)
+      },
+      {
+        label: 'Planificaciones',
+        icon: 'pi pi-calendar',
+        color: 'primary',
+        action: (student: StudentDto) => this.navigateToPlanifications(student)
       }
     ],
     showPagination: true,
@@ -68,7 +75,8 @@ export class MyStudents implements OnInit {
 
   constructor(
     private studentService: StudentService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -195,5 +203,9 @@ export class MyStudents implements OnInit {
     this.showFormModal.set(false);
     this.studentToEdit.set(null);
     this.loadStudents(); // Recargar la lista después de crear/editar un estudiante
+  }
+
+  navigateToPlanifications(student: StudentDto): void {
+    this.router.navigate(['/atletas/planificaciones', student.id]);
   }
 }

@@ -1,0 +1,265 @@
+<div class="details-container">
+  <div *ngIf="planning()" class="content">
+    <!-- Header with back button -->
+
+    <!-- Planning info section -->
+    <div class="planning-info">
+      <div class="planning-info__header">
+        <span class="planning-info__title">Datos de la planificación</span>
+        <button
+          class="lock-btn"
+          [class.lock-btn--unlocked]="isEditingPlanning()"
+          (click)="togglePlanningEdit()"
+          type="button"
+          [attr.aria-label]="isEditingPlanning() ? 'Cerrar edición' : 'Editar planificación'"
+        >
+          @if (!isEditingPlanning()) {
+            <!-- Candado cerrado -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          } @else {
+            <!-- Candado abierto -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+            </svg>
+          }
+        </button>
+      </div>
+
+      <!-- VIEW MODE -->
+      @if (!isEditingPlanning()) {
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Nombre</span>
+            <span class="value">{{ planning()?.name || 'Sin nombre' }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Estado</span>
+            <span class="value">
+              <span class="status-badge status-badge--{{ planning()?.status }}">
+                {{ getStatusLabel(planning()?.status || '') }}
+              </span>
+            </span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Tipo</span>
+            <span class="value">{{ getTypeLabel(planning()?.type || '') }}</span>
+          </div>
+
+          <div class="info-item" *ngIf="planning()?.phase">
+            <span class="label">Fase</span>
+            <span class="value">{{ planning()?.phase }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Fecha de Inicio</span>
+            <span class="value">{{ formatDate(planning()?.startDate) }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Fecha de Fin</span>
+            <span class="value">{{ formatDate(planning()?.endDate) }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Duración</span>
+            <span class="value">{{ planning()?.durationWeeks }} semanas</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Estudiante</span>
+            <span class="value">{{ planning()?.studentName }}</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Coach</span>
+            <span class="value">{{ planning()?.coachName }}</span>
+          </div>
+
+          <div class="info-item full-width" *ngIf="planning()?.goals">
+            <span class="label">Objetivos</span>
+            <span class="value">{{ planning()?.goals }}</span>
+          </div>
+
+          <div class="info-item full-width" *ngIf="planning()?.notes">
+            <span class="label">Notas</span>
+            <span class="value">{{ planning()?.notes }}</span>
+          </div>
+        </div>
+      }
+
+      <!-- EDIT MODE -->
+      @if (isEditingPlanning()) {
+        <form [formGroup]="planningForm" class="info-grid info-grid--edit" (ngSubmit)="savePlanningChanges()">
+          <!-- Nombre -->
+          <div class="info-item info-item--field">
+            <app-input
+              label="Nombre"
+              placeholder="Nombre de la planificación"
+              [control]="nameControl"
+            ></app-input>
+          </div>
+
+          <!-- Estado -->
+          <div class="info-item info-item--field">
+            <label class="field-label">Estado</label>
+            <select class="field-select" formControlName="status">
+              <option value="active">Activo</option>
+              <option value="paused">Pausado</option>
+              <option value="finished">Finalizado</option>
+            </select>
+          </div>
+
+          <!-- Tipo -->
+          <div class="info-item info-item--field">
+            <label class="field-label">Tipo</label>
+            <select class="field-select" formControlName="type">
+              <option value="training">Entrenamiento</option>
+              <option value="nutrition">Nutrición</option>
+              <option value="complete">Completo</option>
+            </select>
+          </div>
+
+          <!-- Fase -->
+          <div class="info-item info-item--field">
+            <app-input
+              label="Fase"
+              placeholder="Fase de la planificación"
+              [control]="phaseControl"
+            ></app-input>
+          </div>
+
+          <!-- Fecha de inicio -->
+          <div class="info-item info-item--field">
+            <label class="field-label">Fecha de Inicio</label>
+            <input class="field-input" type="date" formControlName="startDate" />
+          </div>
+
+          <!-- Duración -->
+          <div class="info-item info-item--field">
+            <label class="field-label">Duración (semanas)</label>
+            <input class="field-input" type="number" min="1" formControlName="durationWeeks" />
+          </div>
+
+          <!-- Estudiante (solo lectura) -->
+          <div class="info-item info-item--field">
+            <label class="field-label">Estudiante</label>
+            <input class="field-input field-input--readonly" type="text" [value]="planning()?.studentName || ''" readonly />
+          </div>
+
+          <!-- Coach (solo lectura) -->
+          <div class="info-item info-item--field">
+            <label class="field-label">Coach</label>
+            <input class="field-input field-input--readonly" type="text" [value]="planning()?.coachName || ''" readonly />
+          </div>
+
+          <!-- Objetivos -->
+          <div class="info-item info-item--field full-width">
+            <label class="field-label">Objetivos</label>
+            <textarea
+              class="field-textarea"
+              formControlName="goals"
+              placeholder="Objetivos de la planificación"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <!-- Notas -->
+          <div class="info-item info-item--field full-width">
+            <label class="field-label">Notas</label>
+            <textarea
+              class="field-textarea"
+              formControlName="notes"
+              placeholder="Notas adicionales"
+              rows="3"
+            ></textarea>
+          </div>
+        </form>
+
+        <!-- Footer con botón guardar -->
+        <div class="planning-info__footer">
+          <button class="btn-save-planning" type="button" (click)="savePlanningChanges()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            <span>Guardar</span>
+          </button>
+        </div>
+      }
+    </div>
+
+    <!-- Weeks section -->
+    <div class="weeks-section">
+      <h2 class="section-title">Semanas</h2>
+      
+      <app-week-tabs
+        [totalWeeks]="planning()?.durationWeeks || 0"
+        [activeWeek]="activeWeek()"
+        (weekChange)="onWeekChange($event)"
+      ></app-week-tabs>
+
+      <!-- Week content placeholder -->
+      <div class="week-content">
+        <div class="week-content__header">
+          <h3>Semana {{ activeWeek() }}</h3>
+          <button class="add-session-btn" (click)="addSession()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Añadir Sesión</span>
+          </button>
+        </div>
+        <div class="week-content__body">
+          @if (!activeSessions().length) {
+            <div class="empty-sessions">
+              <p class="placeholder-text">No hay sesiones creadas para esta semana.</p>
+              <p class="placeholder-hint">Haz clic en "Añadir Sesión" para comenzar.</p>
+            </div>
+          }
+
+          <div class="sessions-list" [class.has-sessions]="activeSessions().length > 0">
+            @for (session of activeSessions(); track session.numberSession; let i = $index) {
+              <app-session-item
+                [session]="session"
+                [sessionNumber]="session.numberSession"
+                [microcycleId]="activeMicrocycleId()"
+                (save)="saveSession(i, $event)"
+                (delete)="deleteSession(i)"
+              ></app-session-item>
+            }
+          </div>
+
+          <!-- Botón de guardar cambios -->
+          @if (activeSessions().length > 0) {
+            <div class="save-section">
+              <button 
+                class="btn-save-changes"
+                (click)="saveAllSessions()"
+                type="button"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                <span>Guardar Cambios</span>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!planning()" class="error">
+    <p>No se encontraron datos de la planificación.</p>
+  </div>
+</div>

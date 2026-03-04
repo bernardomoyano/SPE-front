@@ -1,0 +1,111 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/typography.scss';
+
+.week-tabs {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  // Hide scrollbar but keep functionality
+  scrollbar-width: thin;
+  scrollbar-color: $color-gray-400 transparent;
+  
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: $color-gray-400;
+    border-radius: $radius-round;
+  }
+
+  &__container {
+    display: flex;
+    gap: $spacing-sm;
+    padding: $spacing-sm 0;
+    min-width: min-content;
+
+    @media (max-width: $breakpoint-md) {
+      gap: $spacing-xs;
+    }
+  }
+
+  &__tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-xs;
+    padding: $spacing-md $spacing-lg;
+    background-color: $bg-secondary;
+    border: 2px solid $color-gray-300;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: all $transition-base;
+    min-width: 100px;
+    flex-shrink: 0;
+
+    &:hover {
+      background-color: $color-gray-100;
+      border-color: $color-primary;
+      transform: translateY(-2px);
+      box-shadow: $shadow-md;
+    }
+
+    &--active {
+      background-color: $color-primary;
+      border-color: $color-primary;
+      color: $color-white;
+      box-shadow: $shadow-md;
+
+      .week-tabs__label,
+      .week-tabs__number {
+        color: $color-white;
+      }
+
+      &:hover {
+        background-color: $color-primary-dark;
+        transform: translateY(-2px);
+      }
+    }
+
+    @media (max-width: $breakpoint-md) {
+      min-width: 80px;
+      padding: $spacing-sm $spacing-md;
+      gap: 2px;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      min-width: 70px;
+      padding: $spacing-sm $spacing-sm;
+    }
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color $transition-base;
+
+    @media (max-width: $breakpoint-md) {
+      font-size: $font-size-xs;
+    }
+  }
+
+  &__number {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+    transition: color $transition-base;
+
+    @media (max-width: $breakpoint-md) {
+      font-size: $font-size-lg;
+    }
+  }
+}
