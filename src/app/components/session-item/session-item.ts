@@ -4,9 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ExerciseService } from '../../services/exercise.service';
 import { TrainingSessionService } from '../../services/microcycle.service';
 import { ExerciseSelectDto } from '../../models/exercise-select-dto.model';
-import { CreateTrainingSessions } from '../../models/training-session/create-training-sessions.model';
-import { CreateTrainingSessionDto } from '../../models/training-session/create-training-session-dto.model';
-import { CreateExerciseSessionDto } from '../../models/training-session/create-exercise-session-dto.model';
+import { TrainingSession } from '../../models/training-session/training-session.model';
+import { ExerciseSession } from '../../models/training-session/exercise-session.model';
 
 export interface TrainingSessionData {
   id?: number;
@@ -234,9 +233,9 @@ export class SessionItemComponent implements OnInit {
   }
 
   // Método público para obtener los datos de la sesión en formato DTO
-  getTrainingSessionDto(): CreateTrainingSessionDto | null {
+  getTrainingSessionDto(): TrainingSession | null {
     // Construir ejercicios de la sesión
-    const exerciseSessions: CreateExerciseSessionDto[] = this.exercises()
+    const exerciseSessions: ExerciseSession[] = this.exercises()
       .filter(ex => ex.exerciseId !== null) // Solo ejercicios con ejercicio seleccionado
       .map(ex => ({
         exerciseId: ex.exerciseId!,
@@ -249,7 +248,7 @@ export class SessionItemComponent implements OnInit {
       }));
 
     // Construir sesión de entrenamiento
-    const trainingSession: CreateTrainingSessionDto = {
+    const trainingSession: TrainingSession = {
       heating: this.editedSession().heating || undefined,
       title: this.editedSession().title,
       numberSession: this.session.numberSession,

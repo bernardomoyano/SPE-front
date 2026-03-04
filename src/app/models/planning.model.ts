@@ -2,14 +2,14 @@ export interface PlanningDto {
   id: number;
   studentId: number;
   studentName?: string;
-  coachId: number;
+  coachId?: number;
   coachName: string;
   name?: string;
   goals?: string;
   phase?: string;
   startDate: Date;
   durationWeeks: number;
-  endDate: Date; // Calculated as StartDate + DurationWeeks * 7 days
+  endDate?: Date; // Calculated as StartDate + DurationWeeks * 7 days
   status: 'active' | 'paused' | 'finished';
   type: 'training' | 'nutrition' | 'complete';
   notes?: string;

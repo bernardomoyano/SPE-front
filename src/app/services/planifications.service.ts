@@ -63,4 +63,13 @@ export class PlanificationsService {
   getPlanningsByStudentId(studentId: number): Observable<ApiResponse<PlanningWithMicrocyclesDto[]>> {
     return this.http.get<ApiResponse<PlanningWithMicrocyclesDto[]>>(`${this.url}/student/${studentId}`);
   }
+
+  /**
+   * Actualiza una planificación existente
+   * @param planning Datos actualizados de la planificación (debe incluir id)
+   * @returns Observable con la respuesta de la API
+   */
+  updatePlanning(planning: PlanningDto): Observable<ApiResponse<object>> {
+    return this.http.put<ApiResponse<object>>(`${this.url}/${planning.id}`, planning);
+  }
 }

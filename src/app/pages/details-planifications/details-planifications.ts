@@ -1,17 +1,21 @@
 import { Component, OnInit, signal, computed, ViewChildren, QueryList, effect } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PlanningWithMicrocyclesDto } from '../../models/planning-with-microcycles.model';
 import { WeekTabsComponent } from '../../components/week-tabs/week-tabs';
 import { SessionItemComponent, TrainingSessionData } from '../../components/session-item/session-item';
-import { TrainingSessionService } from '../../services/training-session.service';
+import { InputComponent } from '../../components/input/input';
 import { TrainingSessionService as MicrocycleService } from '../../services/microcycle.service';
+import { PlanificationsService } from '../../services/planifications.service';
 import { AlertService } from '../../services/alert.service';
-import { CreateTrainingSessions } from '../../models/training-session/create-training-sessions.model';
+import { PlanningDto } from '../../models/planning.model';
+import { TrainingSession } from '../../models/training-session/training-session.model';
+import { Microcycle } from '../../models/microcycles/microcycle.model';
 
 @Component({
   selector: 'app-details-planifications',
-  imports: [CommonModule, WeekTabsComponent, SessionItemComponent],
+  imports: [CommonModule, ReactiveFormsModule, WeekTabsComponent, SessionItemComponent, InputComponent],
   templateUrl: './details-planifications.html',
   styleUrl: './details-planifications.scss',
 })
@@ -20,7 +24,16 @@ export class DetailsPlanifications implements OnInit {
 
   planning = signal<PlanningWithMicrocyclesDto | null>(null);
   activeWeek = signal<number>(1);
-  
+  isEditingPlanning = signal<boolean>(false);
+
+  // Reactive form for editing planning info
+  planningForm: FormGroup;
+
+  get nameControl() { return this.planningForm.get('name') as FormControl; }
+  get phaseControl() { return this.planningForm.get('phase') as FormControl; }
+  get goalsControl() { return this.planningForm.get('goals') as FormControl; }
+  get notesControl() { return this.planningForm.get('notes') as FormControl; }
+
   // Sessions grouped by week number
   sessionsByWeek = signal<Map<number, TrainingSessionData[]>>(new Map());
   
@@ -45,10 +58,21 @@ export class DetailsPlanifications implements OnInit {
   constructor(
     private router: Router,
     private location: Location,
-    private trainingSessionService: TrainingSessionService,
+    private fb: FormBuilder,
     private microcycleService: MicrocycleService,
+    private planificationsService: PlanificationsService,
     private alertService: AlertService
   ) {
+    this.planningForm = this.fb.group({
+      name: [''],
+      status: [''],
+      type: [''],
+      phase: [''],
+      startDate: [''],
+      durationWeeks: [0],
+      goals: [''],
+      notes: ['']
+    });
     // Get planning data from navigation state
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras?.state || this.location.getState() as any;
@@ -145,6 +169,77 @@ export class DetailsPlanifications implements OnInit {
     return labels[type] || type;
   }
 
+  private toInputDate(date: Date | string | null | undefined): string {
+    if (!date) return '';
+    const d = typeof date === 'string' ? new Date(date) : date;
+    if (isNaN(d.getTime())) return '';
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  togglePlanningEdit(): void {
+    if (!this.isEditingPlanning()) {
+      const p = this.planning();
+      this.planningForm.patchValue({
+        name: p?.name || '',
+        status: p?.status || 'active',
+        type: p?.type || 'training',
+        phase: p?.phase || '',
+        startDate: this.toInputDate(p?.startDate),
+        durationWeeks: p?.durationWeeks || 0,
+        goals: p?.goals || '',
+        notes: p?.notes || ''
+      });
+    }
+    this.isEditingPlanning.set(!this.isEditingPlanning());
+  }
+
+  savePlanningChanges(): void {
+    const current = this.planning();
+    if (!current) return;
+
+    const v = this.planningForm.value;
+
+    const payload: PlanningDto = {
+      id: current.id,
+      studentId: current.studentId,
+      studentName: current.studentName,
+      coachId: current.coachId,
+      coachName: current.coachName,
+      name: v.name || undefined,
+      status: v.status,
+      type: v.type,
+      phase: v.phase || undefined,
+      startDate: v.startDate ? new Date(v.startDate) : current.startDate,
+      durationWeeks: Number(v.durationWeeks),
+      goals: v.goals || undefined,
+      notes: v.notes || undefined
+    };
+
+    this.planificationsService.updatePlanning(payload).subscribe({
+      next: (response) => {
+        if (response.success) {
+          const updated: PlanningWithMicrocyclesDto = {
+            ...current,
+            ...payload,
+            microcycles: current.microcycles
+          };
+          this.planning.set(updated);
+          this.isEditingPlanning.set(false);
+          this.alertService.showSuccess(response.message || 'Planificación actualizada exitosamente');
+        } else {
+          this.alertService.showError(response.message || 'Error al actualizar la planificación');
+        }
+      },
+      error: (error) => {
+        const errorMessage = error?.error?.message || error?.message || 'Error al actualizar la planificación';
+        this.alertService.showError(errorMessage);
+      }
+    });
+  }
+
   addSession(): void {
     const week = this.activeWeek();
     const sessions = this.sessionsByWeek().get(week) || [];
@@ -191,6 +286,7 @@ export class DetailsPlanifications implements OnInit {
 
   saveAllSessions(): void {
     const microcycleId = this.activeMicrocycleId();
+    const currentMicrocycle = this.planning()?.microcycles.find(m => m.id === microcycleId);
     
     if (!microcycleId) {
       this.alertService.showError('No se ha encontrado el microciclo');
@@ -200,19 +296,20 @@ export class DetailsPlanifications implements OnInit {
     // Recolectar todas las sesiones de los componentes hijos
     const trainingSessions = this.sessionItems
       .map(item => item.getTrainingSessionDto())
-      .filter(dto => dto !== null);
+      .filter((dto): dto is TrainingSession => dto !== null);
 
     if (trainingSessions.length === 0) {
       this.alertService.showError('No hay sesiones válidas para guardar');
       return;
     }
 
-    const payload: CreateTrainingSessions = {
-      microcycleId,
-      trainingSessions: trainingSessions as any[]
+    const payload: Microcycle = {
+      id: microcycleId,
+      notes: currentMicrocycle?.notes,
+      trainingSessions
     };
 
-    this.trainingSessionService.createBulkTrainingSessions(payload).subscribe({
+    this.microcycleService.updateMicrocycle(microcycleId, payload).subscribe({
       next: (response) => {
         if (response.success) {
           this.alertService.showSuccess(response.message || 'Sesiones guardadas exitosamente');

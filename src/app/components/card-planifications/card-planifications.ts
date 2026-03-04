@@ -10,13 +10,8 @@ import { PlanningWithMicrocyclesDto } from '../../models/planning-with-microcycl
 })
 export class CardPlanificationsComponent {
   @Input() planning!: PlanningWithMicrocyclesDto;
-  @Output() edit = new EventEmitter<PlanningWithMicrocyclesDto>();
   @Output() delete = new EventEmitter<PlanningWithMicrocyclesDto>();
   @Output() viewDetails = new EventEmitter<PlanningWithMicrocyclesDto>();
-
-  onEdit(): void {
-    this.edit.emit(this.planning);
-  }
 
   onDelete(): void {
     this.delete.emit(this.planning);

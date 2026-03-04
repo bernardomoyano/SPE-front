@@ -102,11 +102,6 @@ export class Planifications implements OnInit {
     }
   }
 
-  onEditPlanning(planning: PlanningWithMicrocyclesDto): void {
-    console.log('Editar planificación:', planning);
-    // TODO: Implementar edición
-    this.alertService.showSuccess('Función en desarrollo');
-  }
 
   onDeletePlanning(planning: PlanningWithMicrocyclesDto): void {
     console.log('Eliminar planificación:', planning);

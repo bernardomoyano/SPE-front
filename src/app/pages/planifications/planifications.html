@@ -74,7 +74,6 @@
           *ngFor="let planning of plannings()"
           [planning]="planning"
           (viewDetails)="onViewDetails($event)"
-          (edit)="onEditPlanning($event)"
           (delete)="onDeletePlanning($event)">
         </app-card-planifications>
       </div>

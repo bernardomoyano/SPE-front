@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
-import { CreateTrainingSessions } from '../models/training-session/create-training-sessions.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +16,7 @@ export class TrainingSessionService {
    * @param request Datos de las sesiones de entrenamiento a crear
    * @returns Observable con el array de IDs creados
    */
-  createBulkTrainingSessions(request: CreateTrainingSessions): Observable<ApiResponse<number[]>> {
-    return this.http.post<ApiResponse<number[]>>(`${this.url}/bulk`, request);
-  }
+  // createBulkTrainingSessions(request: CreateTrainingSessions): Observable<ApiResponse<number[]>> {
+  //   return this.http.post<ApiResponse<number[]>>(`${this.url}/bulk`, request);
+  // }
 }
