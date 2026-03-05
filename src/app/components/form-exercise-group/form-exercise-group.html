@@ -1,0 +1,53 @@
+<div class="feg-overlay" (click)="onOverlayClick()">
+  <div class="feg" (click)="$event.stopPropagation()" role="dialog" [attr.aria-label]="'Crear ' + groupLabel">
+
+    <div class="feg__header">
+      <div class="feg__badge">{{ groupIcon }}</div>
+      <div class="feg__header-text">
+        <h3 class="feg__title">Crear {{ groupLabel }}</h3>
+        <p class="feg__subtitle">
+          {{ exerciseCount }} ejercicios seleccionados
+        </p>
+      </div>
+      <button class="feg__close-btn" type="button" (click)="onCancel()" aria-label="Cerrar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSave()" class="feg__body" novalidate>
+
+      <app-input
+        label="Rondas / Series"
+        type="number"
+        placeholder="Ej: 3"
+        [control]="roundsControl"
+      ></app-input>
+
+      <app-input
+        label="Descanso entre rondas (seg)"
+        type="number"
+        placeholder="Ej: 60"
+        [control]="restControl"
+      ></app-input>
+
+      <div class="feg__actions">
+        <app-button
+          label="Cancelar"
+          variant="secondary"
+          type="button"
+          (click)="onCancel()"
+        ></app-button>
+        <app-button
+          label="Guardar"
+          variant="primary"
+          type="submit"
+        ></app-button>
+      </div>
+
+    </form>
+
+  </div>
+</div>

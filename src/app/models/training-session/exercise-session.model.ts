@@ -1,3 +1,5 @@
+import { ExerciseGroupDto } from "../exerciseGroup/exercise-group-dto.model";
+
 export interface ExerciseSession {
   id?: number;  // Opcional para crear nuevos
   exerciseId: number;
@@ -8,4 +10,5 @@ export interface ExerciseSession {
   sets: number;
   reps: string;
   restSec: number;
+  group?: ExerciseGroupDto | null;
 }

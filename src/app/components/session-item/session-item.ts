@@ -1,11 +1,20 @@
-import { Component, Input, Output, EventEmitter, signal, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, OnInit, OnChanges, SimpleChanges, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ExerciseService } from '../../services/exercise.service';
 import { TrainingSessionService } from '../../services/microcycle.service';
+import { ExerciseGroupService } from '../../services/exercise-group.service';
+import { AlertService } from '../../services/alert.service';
 import { ExerciseSelectDto } from '../../models/exercise-select-dto.model';
 import { TrainingSession } from '../../models/training-session/training-session.model';
 import { ExerciseSession } from '../../models/training-session/exercise-session.model';
+import { CreateExerciseGroupDto } from '../../models/exerciseGroup/create-exercise-group-dto.model';
+import {
+  FormExerciseGroupComponent,
+  ExerciseGroupType,
+  ExerciseGroupFormData,
+} from '../form-exercise-group/form-exercise-group';
+import { ExerciseGroupDto } from '../../models/exerciseGroup/exercise-group-dto.model';
 
 export interface TrainingSessionData {
   id?: number;
@@ -16,21 +25,42 @@ export interface TrainingSessionData {
 }
 
 export interface ExerciseRow {
+  id?: number;
   exerciseId: number | null;
   sets: number;
   reps: string;
   restSec: number;
   isEditing: boolean;
   sortOrder: number;
+  isSelected?: boolean;
+  group?: ExerciseGroupDto | null;
 }
+
+// ─── Display row types (rendered table rows) ─────────────────────────────────
+export interface ExerciseDisplayRow {
+  type: 'exercise';
+  exercise: ExerciseRow;
+  exerciseIndex: number;
+  isInGroup: boolean;
+  isFirstInGroup: boolean;
+  isLastInGroup: boolean;
+}
+
+export interface GroupSeparatorRow {
+  type: 'group-separator';
+  group: ExerciseGroupDto;
+  separatorIndex: number; // unique key within the group
+}
+
+export type DisplayRow = ExerciseDisplayRow | GroupSeparatorRow;
 
 @Component({
   selector: 'app-session-item',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FormExerciseGroupComponent],
   templateUrl: './session-item.html',
   styleUrl: './session-item.scss',
 })
-export class SessionItemComponent implements OnInit {
+export class SessionItemComponent implements OnInit, OnChanges {
   @Input() session!: TrainingSessionData;
   @Input() sessionNumber: number = 1;
   @Input() microcycleId!: number;
@@ -39,13 +69,13 @@ export class SessionItemComponent implements OnInit {
 
   isCollapsed = signal<boolean>(false);
   isEditing = signal<boolean>(true); // Nuevo siempre en modo edición
-  
+
   // Valores temporales mientras se edita
   editedSession = signal<TrainingSessionData>({
     heating: '',
     title: '',
     notes: '',
-    numberSession: 1
+    numberSession: 1,
   });
 
   // Lista de ejercicios disponibles desde el backend
@@ -55,10 +85,103 @@ export class SessionItemComponent implements OnInit {
   // Lista de ejercicios de esta sesión
   exercises = signal<ExerciseRow[]>([]);
 
+  // ─── Selección multiple ────────────────────────────────────────────────────
+  selectionMode = signal<boolean>(false);
+
+  // ─── Estado del form de grupo ──────────────────────────────────────────────
+  showGroupForm = signal<boolean>(false);
+  groupType = signal<ExerciseGroupType | null>(null);
+  savingGroup = signal<boolean>(false);
+
+  // Selected exercises (computed)
+  selectedExercises = computed(() => this.exercises().filter((ex) => ex.isSelected));
+
+  // Tipo de grupo según cantidad seleccionada
+  currentGroupType = computed<ExerciseGroupType | null>(() => {
+    const count = this.selectedExercises().length;
+    if (count === 2) return 'superserie';
+    if (count === 3) return 'triserie';
+    if (count > 3)  return 'circuito';
+    return null;
+  });
+
+  // Label del botón de acción de grupo
+  groupButtonLabel = computed<string>(() => {
+    const labels: Record<ExerciseGroupType, string> = {
+      superserie: 'Crear Superserie',
+      triserie:   'Crear Triserie',
+      circuito:   'Crear Circuito',
+    };
+    const type = this.currentGroupType();
+    return type ? labels[type] : '';
+  });
+
+  // ─── Display rows: intercala separadores de grupo entre ejercicios agrupados
+  displayRows = computed<DisplayRow[]>(() => {
+    const exercises = this.exercises();
+    const processedGroups = new Set<number>();
+    const rows: DisplayRow[] = [];
+
+    for (let i = 0; i < exercises.length; i++) {
+      const ex = exercises[i];
+      const groupId = ex.group?.id;
+
+      if (!groupId) {
+        rows.push({
+          type: 'exercise',
+          exercise: ex,
+          exerciseIndex: i,
+          isInGroup: false,
+          isFirstInGroup: false,
+          isLastInGroup: false,
+        });
+      } else if (!processedGroups.has(groupId)) {
+        processedGroups.add(groupId);
+
+        const groupExercises = exercises
+          .map((e, idx) => ({ e, idx }))
+          .filter(({ e }) => e.group?.id === groupId);
+
+        const group = ex.group!;
+        let sepIdx = 0;
+
+        for (let k = 0; k < groupExercises.length; k++) {
+          const { e: gEx, idx: gIdx } = groupExercises[k];
+          rows.push({
+            type: 'exercise',
+            exercise: gEx,
+            exerciseIndex: gIdx,
+            isInGroup: true,
+            isFirstInGroup: k === 0,
+            isLastInGroup: k === groupExercises.length - 1,
+          });
+          if (k < groupExercises.length - 1) {
+            rows.push({ type: 'group-separator', group, separatorIndex: sepIdx++ });
+          }
+        }
+      }
+      // Si el grupo ya fue procesado, omitir (ya está en rows)
+    }
+
+    return rows;
+  });
+
   constructor(
     private exerciseService: ExerciseService,
-    private trainingSessionService: TrainingSessionService
+    private trainingSessionService: TrainingSessionService,
+    private exerciseGroupService: ExerciseGroupService,
+    private alertService: AlertService,
   ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Cuando cambia el microcycleId (cambio de semana) resetear y recargar
+    if (changes['microcycleId'] && !changes['microcycleId'].firstChange) {
+      this.resetState();
+      if (this.microcycleId) {
+        this.loadMicrocycleData();
+      }
+    }
+  }
 
   ngOnInit(): void {
     // Cargar datos del microciclo si existe el ID
@@ -76,18 +199,28 @@ export class SessionItemComponent implements OnInit {
     this.loadExercises();
   }
 
+  private resetState(): void {
+    this.exercises.set([]);
+    this.selectionMode.set(false);
+    this.showGroupForm.set(false);
+    this.groupType.set(null);
+    this.isEditing.set(false);
+    this.editedSession.set({ ...this.session });
+  }
+
   private loadMicrocycleData(): void {
     this.trainingSessionService.getMicrocycleById(this.microcycleId).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           const microcycle = response.data;
-          
+
           // Buscar la sesión correspondiente por numberSession
           const trainingSession = microcycle.trainingSessions.find(
             ts => ts.numberSession === this.session.numberSession
           );
 
           if (trainingSession) {
+            
             // Precargar datos de la sesión
             const sessionData: TrainingSessionData = {
               id: trainingSession.id,
@@ -103,14 +236,15 @@ export class SessionItemComponent implements OnInit {
             // Precargar ejercicios de la sesión
             if (trainingSession.exerciseSessions && trainingSession.exerciseSessions.length > 0) {
               const exerciseRows: ExerciseRow[] = trainingSession.exerciseSessions.map(es => ({
+                id: es.id,
                 exerciseId: es.exerciseId,
                 sets: es.sets,
                 reps: es.reps,
                 restSec: es.restSec,
                 isEditing: false,
-                sortOrder: es.sortOrder
+                sortOrder: es.sortOrder,
+                group: es.group ? es.group : null
               }));
-
               this.exercises.set(exerciseRows);
             }
 
@@ -232,12 +366,107 @@ export class SessionItemComponent implements OnInit {
     return exercise?.name || 'Desconocido';
   }
 
+  // ─── Selección múltiple de ejercicios ─────────────────────────────────────
+
+  toggleExerciseSelection(index: number): void {
+    const exercises = [...this.exercises()];
+    exercises[index] = {
+      ...exercises[index],
+      isSelected: !exercises[index].isSelected,
+    };
+    this.exercises.set(exercises);
+    // Auto-apagar modo selección si no quedan seleccionados
+    if (!exercises.some(ex => ex.isSelected)) {
+      this.selectionMode.set(false);
+    }
+  }
+
+  clearSelection(): void {
+    this.exercises.set(
+      this.exercises().map(ex => ({ ...ex, isSelected: false })),
+    );
+    this.selectionMode.set(false);
+  }
+
+  /** Activa el modo selección al hacer clic en una fila (no en botones) */
+  onExerciseRowClick(index: number): void {
+    if (!this.selectionMode()) {
+      this.selectionMode.set(true);
+    }
+    this.toggleExerciseSelection(index);
+  }
+
+  /** Devuelve el label legible para un tipo de grupo (viene como string del backend) */
+  getGroupTypeLabel(type: string): string {
+    const map: Record<string, string> = {
+      superserie: 'Superserie',
+      triserie:   'Triserie',
+      circuito:   'Circuito',
+    };
+    return map[type?.toLowerCase()] ?? type;
+  }
+
+  trackByDisplayRow(_: number, row: DisplayRow): string {
+    if (row.type === 'exercise') return `ex-${row.exerciseIndex}`;
+    return `sep-${row.group.id}-${row.separatorIndex}`;
+  }
+
+  openGroupForm(): void {
+    const type = this.currentGroupType();
+    if (!type) return;
+    this.groupType.set(type);
+    this.showGroupForm.set(true);
+  }
+
+  onCancelGroup(): void {
+    this.showGroupForm.set(false);
+    this.groupType.set(null);
+  }
+
+  onSaveGroup(formData: ExerciseGroupFormData): void {
+    const type = this.currentGroupType();
+    if (!type || !this.session.id) return;
+
+    const selectedIds = this.selectedExercises()
+      .filter(ex => ex.id != null)
+      .map(ex => ex.id!);
+
+    if (selectedIds.length < 2) return;
+
+    const dto: CreateExerciseGroupDto = {
+      trainingSessionId: this.session.id,
+      rounds: formData.rounds,
+      restBetweenRoundsSec: formData.restBetweenRoundsSec,
+      exerciseSessionIds: selectedIds,
+    };
+    
+
+    this.savingGroup.set(true);
+    this.exerciseGroupService.createExerciseGroup(dto).subscribe({
+      next: (response) => {
+        this.savingGroup.set(false);
+        this.showGroupForm.set(false);
+        this.clearSelection();
+        this.alertService.showSuccess(response.message || 'Grupo creado correctamente');
+      },
+      error: (err) => {
+        this.savingGroup.set(false);
+        const message: string =
+          err?.error?.message ||
+          err?.error?.errors?.[0] ||
+          'Error al crear el grupo de ejercicios';
+        this.alertService.showError(message);
+      },
+    });
+  }
+
   // Método público para obtener los datos de la sesión en formato DTO
   getTrainingSessionDto(): TrainingSession | null {
     // Construir ejercicios de la sesión
     const exerciseSessions: ExerciseSession[] = this.exercises()
       .filter(ex => ex.exerciseId !== null) // Solo ejercicios con ejercicio seleccionado
       .map(ex => ({
+        ...(ex.id !== undefined && { id: ex.id }),
         exerciseId: ex.exerciseId!,
         sortOrder: ex.sortOrder,
         observation: undefined,
@@ -249,6 +478,7 @@ export class SessionItemComponent implements OnInit {
 
     // Construir sesión de entrenamiento
     const trainingSession: TrainingSession = {
+      ...(this.session.id !== undefined && { id: this.session.id }),
       heating: this.editedSession().heating || undefined,
       title: this.editedSession().title,
       numberSession: this.session.numberSession,

@@ -268,10 +268,148 @@
     }
   }
 
+  // Control de columna de check según modo selección
   &__exercises-table {
     display: flex;
     flex-direction: column;
     gap: $spacing-xs;
+
+    .exercise-row__cell--check { display: none; }
+    .exercise-group-separator__check { display: none; }
+
+    .exercise-row:not(.exercise-row--header) {
+      cursor: pointer;
+    }
+
+    &--selecting {
+      .exercise-row__cell--check { display: flex; }
+      .exercise-group-separator__check { display: block; width: 32px; flex-shrink: 0; }
+
+      .exercise-row {
+        grid-template-columns: 32px 2fr 70px 90px 90px 100px;
+
+        @media (max-width: $breakpoint-md) {
+          grid-template-columns: 32px 1fr 60px 70px 70px 80px;
+        }
+
+        @media (max-width: $breakpoint-sm) {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .exercise-group-separator {
+        grid-template-columns: 32px 2fr 70px 90px 90px 100px;
+
+        @media (max-width: $breakpoint-md) {
+          grid-template-columns: 32px 1fr 60px 70px 70px 80px;
+        }
+
+        @media (max-width: $breakpoint-sm) {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+
+  // Barra de acción de grupos de ejercicios
+  &__group-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+    padding: $spacing-sm $spacing-md;
+    background-color: rgba($color-primary, 0.06);
+    border: 1px solid rgba($color-primary, 0.2);
+    border-radius: $radius-md;
+    animation: group-bar-in $transition-fast forwards;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__group-bar-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-primary;
+    min-width: 0;
+
+    svg {
+      flex-shrink: 0;
+      stroke: $color-primary;
+    }
+
+    span {
+      white-space: nowrap;
+    }
+  }
+
+  &__group-bar-actions {
+    display: flex;
+    gap: $spacing-sm;
+    align-items: center;
+    flex-shrink: 0;
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+    }
+  }
+
+  &__group-bar-clear {
+    background: none;
+    border: none;
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    cursor: pointer;
+    border-radius: $radius-sm;
+    transition: all $transition-fast;
+    white-space: nowrap;
+
+    &:hover {
+      color: $text-primary;
+      background-color: $color-gray-100;
+    }
+  }
+
+  &__group-bar-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-md;
+    background-color: $color-primary;
+    color: $color-white;
+    border: none;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: all $transition-fast;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: $color-primary-dark;
+      transform: translateY(-1px);
+      box-shadow: $shadow-sm;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      flex: 1;
+      justify-content: center;
+    }
   }
 
   &__edit-actions {
@@ -340,7 +478,8 @@
   padding: $spacing-sm;
   background-color: $bg-secondary;
   border-radius: $radius-sm;
-  transition: background-color $transition-fast;
+  transition: background-color $transition-fast, border-left $transition-fast;
+  border-left: 3px solid transparent;
 
   &:not(&--header):hover {
     background-color: $color-gray-50;
@@ -350,6 +489,37 @@
     background-color: $color-gray-100;
     font-weight: $font-weight-semibold;
     margin-bottom: $spacing-xs;
+    cursor: default !important;
+  }
+
+  &--selected {
+    background-color: rgba($color-primary, 0.04) !important;
+    border-left-color: $color-primary;
+  }
+
+  // ─── Estilos para ejercicios agrupados ──────────────────────────────
+  &--in-group {
+    background-color: rgba($color-accent, 0.03);
+    border-left: 3px solid $color-accent;
+    cursor: default !important;
+
+    &:hover {
+      background-color: rgba($color-accent, 0.07) !important;
+    }
+
+    &.exercise-row--selected {
+      background-color: rgba($color-accent, 0.1) !important;
+    }
+  }
+
+  &--in-group-first {
+    border-top: 1.5px solid rgba($color-accent, 0.35);
+    border-top-right-radius: $radius-sm;
+  }
+
+  &--in-group-last {
+    border-bottom: 1.5px solid rgba($color-accent, 0.35);
+    border-bottom-right-radius: $radius-sm;
   }
 
   @media (max-width: $breakpoint-md) {
@@ -374,6 +544,15 @@
       justify-content: space-between;
       gap: $spacing-xs;
 
+      &--check {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      &--hidden {
+        display: none !important;
+      }
+
       &::before {
         content: attr(data-label);
         font-weight: $font-weight-semibold;
@@ -381,6 +560,8 @@
         font-size: $font-size-xs;
         text-transform: uppercase;
       }
+
+      &--check::before { content: ''; }
 
       &--exercise::before {
         content: 'Ejercicio:';
@@ -452,6 +633,47 @@
     word-break: break-word;
   }
 
+  &__cell--check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__check-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: $radius-sm;
+    border: 2px solid $border-color-medium;
+    background-color: $color-white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all $transition-fast;
+    color: $color-white;
+
+    &:hover {
+      border-color: $color-primary;
+      background-color: rgba($color-primary, 0.08);
+    }
+
+    &--active {
+      background-color: $color-primary;
+      border-color: $color-primary;
+
+      &:hover {
+        background-color: $color-primary-dark;
+        border-color: $color-primary-dark;
+      }
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
   &__cell--actions {
     display: flex;
     gap: $spacing-xs;
@@ -500,5 +722,103 @@
         background-color: rgba($color-error, 0.1);
       }
     }
+  }
+}
+
+@keyframes group-bar-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+
+// ─── Separador visual entre ejercicios de un grupo ────────────────────────────
+.exercise-group-separator {
+  display: grid;
+  grid-template-columns: 2fr 70px 90px 90px 100px;
+  gap: $spacing-sm;
+  align-items: center;
+  padding: $spacing-xs $spacing-sm;
+  background-color: rgba($color-accent, 0.07);
+  border-left: 3px solid $color-accent;
+  border-top: 1px dashed rgba($color-accent, 0.3);
+  border-bottom: 1px dashed rgba($color-accent, 0.3);
+  margin: 0;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr 60px 70px 70px 80px;
+    gap: $spacing-xs;
+    padding: $spacing-xs;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr 1fr;
+    padding: $spacing-xs $spacing-sm;
+    gap: $spacing-xs;
+  }
+
+  &__label {
+    display: flex;
+    align-items: center;
+
+    @media (max-width: $breakpoint-sm) {
+      grid-column: 1 / -1;
+      margin-bottom: $spacing-xs;
+    }
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px $spacing-sm;
+    background-color: $color-accent;
+    color: $color-white;
+    border-radius: $radius-round;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    letter-spacing: $letter-spacing-wide;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  &__rounds,
+  &__rest {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: row;
+      gap: $spacing-xs;
+      justify-content: flex-start;
+    }
+  }
+
+  &__value {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $color-accent;
+    line-height: 1.1;
+  }
+
+  &__unit {
+    font-size: $font-size-xs;
+    color: $text-secondary;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  &__reps {
+    font-size: $font-size-base;
+    color: rgba($color-accent, 0.4);
+    text-align: center;
+
+    @media (max-width: $breakpoint-sm) {
+      display: none;
+    }
+  }
+
+  &__actions {
+    // empty placeholder para alinear con columna de acciones
   }
 }
