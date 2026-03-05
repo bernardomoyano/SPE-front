@@ -730,45 +730,43 @@
   to   { opacity: 1; transform: translateY(0);     }
 }
 
-// ─── Separador visual entre ejercicios de un grupo ────────────────────────────
-.exercise-group-separator {
-  display: grid;
-  grid-template-columns: 2fr 70px 90px 90px 100px;
-  gap: $spacing-sm;
-  align-items: center;
-  padding: $spacing-xs $spacing-sm;
-  background-color: rgba($color-accent, 0.07);
-  border-left: 3px solid $color-accent;
-  border-top: 1px dashed rgba($color-accent, 0.3);
-  border-bottom: 1px dashed rgba($color-accent, 0.3);
-  margin: 0;
+// ─── Tarjeta de grupo (superserie / triserie / circuito) ──────────────────────
+.exercise-group-card {
+  border: 1.5px solid rgba($color-accent, 0.3);
+  border-radius: $radius-md;
+  overflow: hidden;
+  background-color: $bg-secondary;
+  animation: group-bar-in $transition-fast forwards;
 
-  @media (max-width: $breakpoint-md) {
-    grid-template-columns: 1fr 60px 70px 70px 80px;
-    gap: $spacing-xs;
-    padding: $spacing-xs;
-  }
-
-  @media (max-width: $breakpoint-sm) {
-    grid-template-columns: 1fr 1fr;
-    padding: $spacing-xs $spacing-sm;
-    gap: $spacing-xs;
-  }
-
-  &__label {
+  &__header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: $spacing-sm;
+    padding: $spacing-xs $spacing-md;
+    background: linear-gradient(135deg, rgba($color-accent, 0.1) 0%, rgba($color-accent, 0.04) 100%);
+    border-bottom: 1px solid rgba($color-accent, 0.2);
+    flex-wrap: wrap;
 
     @media (max-width: $breakpoint-sm) {
-      grid-column: 1 / -1;
-      margin-bottom: $spacing-xs;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: $spacing-sm $spacing-md;
     }
+  }
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    flex-wrap: wrap;
+    min-width: 0;
   }
 
   &__badge {
     display: inline-flex;
     align-items: center;
-    padding: 2px $spacing-sm;
+    padding: 3px $spacing-sm;
     background-color: $color-accent;
     color: $color-white;
     border-radius: $radius-round;
@@ -777,48 +775,171 @@
     letter-spacing: $letter-spacing-wide;
     text-transform: uppercase;
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
-  &__rounds,
-  &__rest {
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    flex-wrap: wrap;
+
+    svg {
+      stroke: $color-accent;
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+
+    strong {
+      color: $color-accent;
+      font-weight: $font-weight-semibold;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-xs;
+    }
+  }
+
+  &__dot {
+    color: $border-color-medium;
+    user-select: none;
+  }
+
+  &__ungroup-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px $spacing-sm;
+    background: none;
+    border: 1px solid rgba($color-error, 0.3);
+    border-radius: $radius-sm;
+    color: $color-error;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all $transition-fast;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    svg {
+      stroke: currentColor;
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background-color: rgba($color-error, 0.08);
+      border-color: $color-error;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+      justify-content: center;
+      padding: $spacing-xs $spacing-md;
+    }
+  }
+
+  &__body {
     display: flex;
     flex-direction: column;
+    padding: $spacing-xs 0;
+  }
+
+  // ─── Filas dentro de la tarjeta de grupo ────────────────────────────────────
+  &__row {
+    display: grid;
+    grid-template-columns: 2fr 90px 80px;
+    gap: $spacing-sm;
     align-items: center;
-    justify-content: center;
-    gap: 1px;
+    padding: $spacing-xs $spacing-md;
+    border-left: 3px solid transparent;
+    transition: background-color $transition-fast;
+
+    &:not(&--header):hover {
+      background-color: rgba($color-accent, 0.04);
+    }
+
+    &--header {
+      border-left-color: transparent !important;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      background-color: rgba($color-accent, 0.04);
+      border-bottom: 1px solid rgba($color-accent, 0.12);
+    }
+
+    &--first {
+      border-left: 3px solid rgba($color-accent, 0.5);
+    }
+
+    &:not(&--header):not(&--first) {
+      border-left: 3px solid rgba($color-accent, 0.25);
+      border-top: 1px dashed rgba($color-accent, 0.15);
+    }
+
+    @media (max-width: $breakpoint-md) {
+      grid-template-columns: 1fr 70px 70px;
+      padding: $spacing-xs $spacing-sm;
+    }
 
     @media (max-width: $breakpoint-sm) {
-      flex-direction: row;
+      grid-template-columns: 1fr;
       gap: $spacing-xs;
-      justify-content: flex-start;
+      padding: $spacing-sm $spacing-md;
+
+      &--header {
+        display: none; // el data-label en móvil reemplaza el header
+      }
     }
   }
 
-  &__value {
+  &__cell {
     font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-    color: $color-accent;
-    line-height: 1.1;
-  }
+    color: $text-primary;
+    min-width: 0;
 
-  &__unit {
-    font-size: $font-size-xs;
-    color: $text-secondary;
-    line-height: 1;
-    white-space: nowrap;
-  }
+    &--header {
+      font-size: $font-size-xs;
+      font-weight: $font-weight-semibold;
+      color: $text-secondary;
+      text-transform: uppercase;
+      letter-spacing: $letter-spacing-wide;
+    }
 
-  &__reps {
-    font-size: $font-size-base;
-    color: rgba($color-accent, 0.4);
-    text-align: center;
+    &--actions {
+      display: flex;
+      gap: $spacing-xs;
+      justify-content: flex-end;
+    }
 
     @media (max-width: $breakpoint-sm) {
-      display: none;
-    }
-  }
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: $spacing-xs;
 
-  &__actions {
-    // empty placeholder para alinear con columna de acciones
+      &::before {
+        content: attr(data-label);
+        font-weight: $font-weight-semibold;
+        color: $text-secondary;
+        font-size: $font-size-xs;
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+
+      &--actions::before {
+        content: 'Acciones:';
+        flex: 1;
+      }
+
+      &--actions {
+        justify-content: flex-start;
+      }
+    }
   }
 }

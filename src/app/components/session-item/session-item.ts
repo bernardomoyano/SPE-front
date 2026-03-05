@@ -46,13 +46,13 @@ export interface ExerciseDisplayRow {
   isLastInGroup: boolean;
 }
 
-export interface GroupSeparatorRow {
-  type: 'group-separator';
+export interface GroupCardRow {
+  type: 'group-card';
   group: ExerciseGroupDto;
-  separatorIndex: number; // unique key within the group
+  exercises: Array<{ exercise: ExerciseRow; exerciseIndex: number }>;
 }
 
-export type DisplayRow = ExerciseDisplayRow | GroupSeparatorRow;
+export type DisplayRow = ExerciseDisplayRow | GroupCardRow;
 
 @Component({
   selector: 'app-session-item',
@@ -116,7 +116,7 @@ export class SessionItemComponent implements OnInit, OnChanges {
     return type ? labels[type] : '';
   });
 
-  // ─── Display rows: intercala separadores de grupo entre ejercicios agrupados
+  // ─── Display rows: agrupa ejercicios en tarjetas de grupo
   displayRows = computed<DisplayRow[]>(() => {
     const exercises = this.exercises();
     const processedGroups = new Set<number>();
@@ -137,28 +137,14 @@ export class SessionItemComponent implements OnInit, OnChanges {
         });
       } else if (!processedGroups.has(groupId)) {
         processedGroups.add(groupId);
-
         const groupExercises = exercises
-          .map((e, idx) => ({ e, idx }))
-          .filter(({ e }) => e.group?.id === groupId);
-
-        const group = ex.group!;
-        let sepIdx = 0;
-
-        for (let k = 0; k < groupExercises.length; k++) {
-          const { e: gEx, idx: gIdx } = groupExercises[k];
-          rows.push({
-            type: 'exercise',
-            exercise: gEx,
-            exerciseIndex: gIdx,
-            isInGroup: true,
-            isFirstInGroup: k === 0,
-            isLastInGroup: k === groupExercises.length - 1,
-          });
-          if (k < groupExercises.length - 1) {
-            rows.push({ type: 'group-separator', group, separatorIndex: sepIdx++ });
-          }
-        }
+          .map((e, idx) => ({ exercise: e, exerciseIndex: idx }))
+          .filter(({ exercise }) => exercise.group?.id === groupId);
+        rows.push({
+          type: 'group-card',
+          group: ex.group!,
+          exercises: groupExercises,
+        });
       }
       // Si el grupo ya fue procesado, omitir (ya está en rows)
     }
@@ -407,8 +393,24 @@ export class SessionItemComponent implements OnInit, OnChanges {
   }
 
   trackByDisplayRow(_: number, row: DisplayRow): string {
-    if (row.type === 'exercise') return `ex-${row.exerciseIndex}`;
-    return `sep-${row.group.id}-${row.separatorIndex}`;
+    if (row.type === 'exercise') return `ex-${(row as ExerciseDisplayRow).exerciseIndex}`;
+    return `group-${(row as GroupCardRow).group.id}`;
+  }
+
+  ungroupExercises(groupId: number): void {
+    this.exerciseGroupService.deleteExerciseGroup(groupId).subscribe({
+      next: (response) => {
+        this.alertService.showSuccess(response.message || 'Grupo eliminado correctamente');
+        this.loadMicrocycleData();
+      },
+      error: (err) => {
+        const message: string =
+          err?.error?.message ||
+          err?.error?.errors?.[0] ||
+          'Error al desagrupar los ejercicios';
+        this.alertService.showError(message);
+      },
+    });
   }
 
   openGroupForm(): void {
@@ -448,6 +450,7 @@ export class SessionItemComponent implements OnInit, OnChanges {
         this.showGroupForm.set(false);
         this.clearSelection();
         this.alertService.showSuccess(response.message || 'Grupo creado correctamente');
+        this.loadMicrocycleData();
       },
       error: (err) => {
         this.savingGroup.set(false);

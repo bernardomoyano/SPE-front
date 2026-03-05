@@ -313,6 +313,7 @@ export class DetailsPlanifications implements OnInit {
       next: (response) => {
         if (response.success) {
           this.alertService.showSuccess(response.message || 'Sesiones guardadas exitosamente');
+          this.loadMicrocycleSessions(microcycleId, this.activeWeek());
         } else {
           this.alertService.showError(response.message || 'Error al guardar las sesiones');
         }
