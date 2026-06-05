@@ -74,7 +74,8 @@
           *ngFor="let planning of plannings()"
           [planning]="planning"
           (viewDetails)="onViewDetails($event)"
-          (delete)="onDeletePlanning($event)">
+          (delete)="onDeletePlanning($event)"
+          (goToPayment)="onGoToPayment($event)">
         </app-card-planifications>
       </div>
     </div>
@@ -93,3 +94,11 @@
     </div>
   </div>
 }
+
+<!-- Modal de método de pago -->
+<!-- @if (showPaymentDialog()) {
+  <app-payment-method-dialog
+    (close)="closePaymentDialog()"
+    (mercadoPagoSelected)="onMercadoPagoSelected()"
+  ></app-payment-method-dialog>
+} -->

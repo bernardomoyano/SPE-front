@@ -10,10 +10,15 @@ import { PlanningWithMicrocyclesDto } from '../../models/planning-with-microcycl
 import { Button } from '../../components/button/button';
 import { FormPlanningComponent } from '../../components/form-planning/form-planning';
 import { CardPlanificationsComponent } from '../../components/card-planifications/card-planifications';
+import { StorageService } from '../../services/storage.service';
+import { PaymentMethodDialogComponent } from '../../../payments/components/payment-method-dialog/payment-method-dialog';
+import { PlanPurchaseService } from '../../services/plan-purchase.service';
+import { CreatePlanPurchase } from '../../models/plan-purchase/create-plan-purchase.model';
+import { CreatePlanPurchaseResult } from '../../models/plan-purchase/create-plan-purchase-result.model';
 
 @Component({
   selector: 'app-planifications',
-  imports: [CommonModule, Button, FormPlanningComponent, CardPlanificationsComponent],
+  imports: [CommonModule, Button, FormPlanningComponent, CardPlanificationsComponent, PaymentMethodDialogComponent],
   templateUrl: './planifications.html',
   styleUrl: './planifications.scss',
 })
@@ -23,32 +28,50 @@ export class Planifications implements OnInit {
   plannings = signal<PlanningWithMicrocyclesDto[]>([]);
   loadingPlannings = signal<boolean>(true);
   showFormModal = signal<boolean>(false);
+  showPaymentDialog = signal<boolean>(false);
+  selectedPlanningForPayment = signal<PlanningWithMicrocyclesDto | null>(null);
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private studentService: StudentService,
     private alertService: AlertService,
-    private planificationsService: PlanificationsService
+    private planificationsService: PlanificationsService,
+    private storageService: StorageService,
+    private planPurchaseService: PlanPurchaseService
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadStudent(+id);
+    const userData = this.storageService.getUserData();
+    const role = userData?.roleName;
+
+    if (role === 'STUDENT') {
+      const userId = userData?.userId;
+      if (userId) {
+        this.loadStudentByUserId(userId, role);
+      } else {
+        this.alertService.showError('No se encontró el ID del usuario');
+        this.loading.set(false);
+      }
     } else {
-      this.alertService.showError('ID del estudiante no encontrado');
-      this.loading.set(false);
+      const id = this.route.snapshot.paramMap.get('id');
+      if (id) {
+        this.loadStudentByUserId(+id, role);
+      } else {
+        this.alertService.showError('ID del estudiante no encontrado');
+        this.loading.set(false);
+      }
     }
   }
 
-  private loadStudent(id: number): void {
-    this.studentService.getStudentById(id).subscribe({
+  private loadStudentByUserId(userId: number, role: string): void {
+    let result = role === 'STUDENT' ? this.studentService.getStudentByUserId(userId) : this.studentService.getStudentById(userId);
+    result.subscribe({
       next: (response: ApiResponse<StudentDto>) => {
         this.loading.set(false);
         if (response.success && response.data) {
           this.student.set(response.data);
-          this.loadPlannings(id);
+          this.loadPlannings(response.data.id);
         } else {
           this.alertService.showError(response.message || 'Error al cargar el estudiante');
         }
@@ -68,6 +91,8 @@ export class Planifications implements OnInit {
         this.loadingPlannings.set(false);
         if (response.success && response.data) {
           this.plannings.set(response.data);
+          console.log('plnings', response.data);
+          
         } else {
           this.alertService.showError(response.message || 'Error al cargar las planificaciones');
         }
@@ -116,5 +141,51 @@ export class Planifications implements OnInit {
         state: { planning }
       });
     }
+  }
+
+  onGoToPayment(planning: PlanningWithMicrocyclesDto): void {
+    this.selectedPlanningForPayment.set(planning);
+    this.showPaymentDialog.set(true);
+  }
+
+  closePaymentDialog(): void {
+    this.showPaymentDialog.set(false);
+    this.selectedPlanningForPayment.set(null);
+  }
+
+  onMercadoPagoSelected(): void {
+    const planning = this.selectedPlanningForPayment();
+    const userData = this.storageService.getUserData();
+    if (!planning || !userData?.userId) {
+      this.alertService.showError('No se pudo obtener la información necesaria para el pago');
+      return;
+    }
+
+    const request: CreatePlanPurchase = {
+      studentUserId: userData.userId,
+      coachId: planning.coachId,
+      planningId: planning.id,
+      paymentMethod: 'MERCADO_PAGO'
+    };
+
+    const newTab = window.open('', '_blank');
+
+this.planPurchaseService.create(request).subscribe({
+  next: (response: ApiResponse<CreatePlanPurchaseResult>) => {
+    this.closePaymentDialog();
+    if (response.success && response.data?.checkoutUrl) {
+      if (newTab) {
+        newTab.location.href = response.data.checkoutUrl;
+      }
+    } else {
+      newTab?.close();
+      this.alertService.showError(response.message || 'Error al iniciar el pago');
+    }
+  },
+  error: () => {
+    newTab?.close();
+    this.alertService.showError('Error de conexión al iniciar el pago');
+  }
+});
   }
 }

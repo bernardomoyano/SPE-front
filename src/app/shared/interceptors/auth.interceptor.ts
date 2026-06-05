@@ -5,6 +5,11 @@ import { StorageService } from '../../services/storage.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const storageService = inject(StorageService);
 
+  // No agregar token a peticiones externas (ej: Cloudinary)
+  if (req.url.startsWith('https://api.cloudinary.com')) {
+    return next(req);
+  }
+
   // Obtener el token del localStorage
   const token = storageService.getToken();
 

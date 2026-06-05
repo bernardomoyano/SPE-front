@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlanningWithMicrocyclesDto } from '../../models/planning-with-microcycles.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-card-planifications',
@@ -12,6 +13,17 @@ export class CardPlanificationsComponent {
   @Input() planning!: PlanningWithMicrocyclesDto;
   @Output() delete = new EventEmitter<PlanningWithMicrocyclesDto>();
   @Output() viewDetails = new EventEmitter<PlanningWithMicrocyclesDto>();
+  @Output() goToPayment = new EventEmitter<PlanningWithMicrocyclesDto>();
+
+  constructor(private authService: AuthService) {}
+
+  get isStudent(): boolean {
+    return this.authService.getUserRole() === 'STUDENT';
+  }
+
+  // get hasPurchase(): boolean {
+  //   return this.planning?.purchase != null;
+  // }
 
   onDelete(): void {
     this.delete.emit(this.planning);
@@ -19,6 +31,10 @@ export class CardPlanificationsComponent {
 
   onViewDetails(): void {
     this.viewDetails.emit(this.planning);
+  }
+
+  onGoToPayment(): void {
+    this.goToPayment.emit(this.planning);
   }
 
   formatDate(date: Date | string): string {

@@ -34,7 +34,13 @@ export class MenuService {
       label: 'Mi Perfil',
       icon: 'pi pi-user',
       route: '/mi-perfil',
-      roles: ['COACH', 'STUDENT'] // Preparado para futuro rol STUDENT
+      roles: ['COACH', 'STUDENT']
+    },
+    {
+      label: 'Mis Planificaciones',
+      icon: 'pi pi-calendar',
+      route: '/mis-planificaciones',
+      roles: ['STUDENT']
     }
   ];
 

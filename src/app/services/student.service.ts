@@ -47,8 +47,17 @@ export class StudentService {
     return this.http.get<ApiResponse<StudentDto>>(`${this.url}/${id}`);
   }
 
-    /**
-     * Crea un nuevo estudiante
+  /**
+   * Obtiene un estudiante por su ID de usuario
+   * @param userId ID del usuario asociado al estudiante
+   * @returns Observable con ApiResponse<StudentDto>
+   */
+  getStudentByUserId(userId: number): Observable<ApiResponse<StudentDto>> {
+    return this.http.get<ApiResponse<StudentDto>>(`${this.url}/by-user/${userId}`);
+  }
+
+  /**
+   * Crea un nuevo estudiante
      * @param request Datos del estudiante a crear
      * @returns Observable con ApiResponse
      */
