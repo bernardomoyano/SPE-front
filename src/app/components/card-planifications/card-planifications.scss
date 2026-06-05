@@ -198,6 +198,20 @@
       }
     }
 
+    &--payment {
+      background-color: #16a34a;
+      color: $color-white;
+
+      &:hover {
+        background-color: #15803d;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
     @media (max-width: $breakpoint-sm) {
       padding: $spacing-sm;
       font-size: $font-size-xs;

@@ -23,6 +23,7 @@ export const routes: Routes = [
             { path: 'atletas', component: MyStudents },
             { path: 'atletas/planificaciones/:id', component: Planifications },
             { path: 'atletas/planificaciones/:id/detalles', component: DetailsPlanifications },
+            { path: 'mis-planificaciones', component: Planifications },
             // Aquí irán las demás rutas protegidas
             { path: '', redirectTo: 'dashboard-coach', pathMatch: 'full' }
         ]

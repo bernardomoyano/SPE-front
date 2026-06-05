@@ -1,3 +1,5 @@
+import { PlanPurchaseDto } from './plan-purchase.model';
+
 export interface MicrocycleDto {
   id: number;
   planningId: number;
@@ -20,5 +22,7 @@ export interface PlanningWithMicrocyclesDto {
   status: 'active' | 'paused' | 'finished';
   type: 'training' | 'nutrition' | 'complete';
   notes?: string;
+  price: number;
+  //purchase?: PlanPurchaseDto;
   microcycles: MicrocycleDto[];
 }

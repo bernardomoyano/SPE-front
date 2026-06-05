@@ -1,0 +1,58 @@
+<div class="upload-page">
+  <div class="upload-card">
+    <h2>Subir archivo a Cloudinary</h2>
+    <p class="subtitle">Imágenes (JPG, PNG, WEBP, GIF) o PDF</p>
+
+    <div class="drop-zone" [class.has-file]="selectedFile()">
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/*,application/pdf"
+        (change)="onFileSelected($event)"
+        hidden
+      />
+      <label for="fileInput" class="drop-label">
+        @if (!selectedFile()) {
+          <span class="icon">📂</span>
+          <span>Hacé clic para seleccionar un archivo</span>
+        } @else {
+          <span class="icon">✅</span>
+          <span>{{ selectedFile()!.name }}</span>
+          <small>{{ (selectedFile()!.size / 1024).toFixed(1) }} KB</small>
+        }
+      </label>
+    </div>
+
+    @if (previewUrl()) {
+      <div class="preview">
+        <img [src]="previewUrl()!" alt="Preview" />
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="error-msg">{{ errorMessage() }}</div>
+    }
+
+    @if (uploadResult()) {
+      <div class="result">
+        <p><strong>¡Subido con éxito!</strong></p>
+        <p>URL: <a [href]="uploadResult()!.secure_url" target="_blank">{{ uploadResult()!.secure_url }}</a></p>
+        <p>Tipo: {{ uploadResult()!.resource_type }} / {{ uploadResult()!.format }}</p>
+        <p>Tamaño: {{ (uploadResult()!.bytes / 1024).toFixed(1) }} KB</p>
+      </div>
+    }
+
+    <div class="actions">
+      <button
+        class="btn-upload"
+        (click)="upload()"
+        [disabled]="!selectedFile() || uploading()"
+      >
+        {{ uploading() ? 'Subiendo...' : 'Subir a Cloudinary' }}
+      </button>
+      @if (selectedFile()) {
+        <button class="btn-reset" (click)="reset()">Limpiar</button>
+      }
+    </div>
+  </div>
+</div>
