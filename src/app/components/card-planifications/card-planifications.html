@@ -1,4 +1,4 @@
-<div class="planning-card">
+﻿<div class="planning-card">
   <div class="planning-card__header">
     <h3 class="planning-card__title">{{ planning.name || 'Sin nombre' }}</h3>
     <span class="planning-card__badge planning-card__badge--{{ planning.status }}">
@@ -32,7 +32,7 @@
     <div class="planning-card__actions">
       <!-- Ver Detalles: siempre para coach; para student solo si ya tiene compra -->
       <button
-        *ngIf="!isStudent || hasPurchase"
+        *ngIf="!isStudent"
         class="planning-card__action planning-card__action--details"
         (click)="onViewDetails()"
         aria-label="Ver detalles de planificación"
@@ -44,9 +44,8 @@
         <span>Ver Detalles</span>
       </button>
 
-      <!-- Ir a Pago: solo para student cuando no tiene compra -->
-      <!-- <button
-        *ngIf="isStudent && !hasPurchase"
+      <button
+        *ngIf="isStudent"
         class="planning-card__action planning-card__action--payment"
         (click)="onGoToPayment()"
         aria-label="Ir a pago de planificación"
@@ -56,7 +55,7 @@
           <line x1="1" y1="10" x2="23" y2="10"></line>
         </svg>
         <span>Ir a Pago</span>
-      </button> -->
+      </button>
 
       <!-- Eliminar: solo para coach -->
       <button
@@ -74,3 +73,4 @@
     </div>
   </div>
 </div>
+

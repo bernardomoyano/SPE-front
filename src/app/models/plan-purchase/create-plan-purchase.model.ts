@@ -1,6 +1,6 @@
-export interface CreatePlanPurchase {
-  studentUserId: number;
+﻿export interface CreatePlanPurchase {
+  studentId: number;
   coachId: number;
-  planningId: number;
+  planId: number;
   paymentMethod: string;
 }

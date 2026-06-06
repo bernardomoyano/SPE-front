@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+﻿import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StudentService } from '../../services/student.service';
@@ -11,14 +11,13 @@ import { Button } from '../../components/button/button';
 import { FormPlanningComponent } from '../../components/form-planning/form-planning';
 import { CardPlanificationsComponent } from '../../components/card-planifications/card-planifications';
 import { StorageService } from '../../services/storage.service';
-import { PaymentMethodDialogComponent } from '../../../payments/components/payment-method-dialog/payment-method-dialog';
 import { PlanPurchaseService } from '../../services/plan-purchase.service';
 import { CreatePlanPurchase } from '../../models/plan-purchase/create-plan-purchase.model';
 import { CreatePlanPurchaseResult } from '../../models/plan-purchase/create-plan-purchase-result.model';
 
 @Component({
   selector: 'app-planifications',
-  imports: [CommonModule, Button, FormPlanningComponent, CardPlanificationsComponent, PaymentMethodDialogComponent],
+  imports: [CommonModule, Button, FormPlanningComponent, CardPlanificationsComponent],
   templateUrl: './planifications.html',
   styleUrl: './planifications.scss',
 })
@@ -28,8 +27,6 @@ export class Planifications implements OnInit {
   plannings = signal<PlanningWithMicrocyclesDto[]>([]);
   loadingPlannings = signal<boolean>(true);
   showFormModal = signal<boolean>(false);
-  showPaymentDialog = signal<boolean>(false);
-  selectedPlanningForPayment = signal<PlanningWithMicrocyclesDto | null>(null);
 
   constructor(
     private route: ActivatedRoute,
@@ -65,7 +62,10 @@ export class Planifications implements OnInit {
   }
 
   private loadStudentByUserId(userId: number, role: string): void {
-    let result = role === 'STUDENT' ? this.studentService.getStudentByUserId(userId) : this.studentService.getStudentById(userId);
+    const result = role === 'STUDENT'
+      ? this.studentService.getStudentByUserId(userId)
+      : this.studentService.getStudentById(userId);
+
     result.subscribe({
       next: (response: ApiResponse<StudentDto>) => {
         this.loading.set(false);
@@ -91,8 +91,6 @@ export class Planifications implements OnInit {
         this.loadingPlannings.set(false);
         if (response.success && response.data) {
           this.plannings.set(response.data);
-          console.log('plnings', response.data);
-          
         } else {
           this.alertService.showError(response.message || 'Error al cargar las planificaciones');
         }
@@ -120,17 +118,14 @@ export class Planifications implements OnInit {
 
   closeFormModal(): void {
     this.showFormModal.set(false);
-    // Recargar planificaciones después de cerrar el modal
     const studentId = this.student()?.id;
     if (studentId) {
       this.loadPlannings(studentId);
     }
   }
 
-
   onDeletePlanning(planning: PlanningWithMicrocyclesDto): void {
     console.log('Eliminar planificación:', planning);
-    // TODO: Implementar eliminación
     this.alertService.showSuccess('Función en desarrollo');
   }
 
@@ -144,17 +139,6 @@ export class Planifications implements OnInit {
   }
 
   onGoToPayment(planning: PlanningWithMicrocyclesDto): void {
-    this.selectedPlanningForPayment.set(planning);
-    this.showPaymentDialog.set(true);
-  }
-
-  closePaymentDialog(): void {
-    this.showPaymentDialog.set(false);
-    this.selectedPlanningForPayment.set(null);
-  }
-
-  onMercadoPagoSelected(): void {
-    const planning = this.selectedPlanningForPayment();
     const userData = this.storageService.getUserData();
     if (!planning || !userData?.userId) {
       this.alertService.showError('No se pudo obtener la información necesaria para el pago');
@@ -162,30 +146,23 @@ export class Planifications implements OnInit {
     }
 
     const request: CreatePlanPurchase = {
-      studentUserId: userData.userId,
+      studentId: userData.userId,
       coachId: planning.coachId,
-      planningId: planning.id,
+      planId: planning.id,
       paymentMethod: 'MERCADO_PAGO'
     };
 
-    const newTab = window.open('', '_blank');
-
-this.planPurchaseService.create(request).subscribe({
-  next: (response: ApiResponse<CreatePlanPurchaseResult>) => {
-    this.closePaymentDialog();
-    if (response.success && response.data?.checkoutUrl) {
-      if (newTab) {
-        newTab.location.href = response.data.checkoutUrl;
+    this.planPurchaseService.create(request).subscribe({
+      next: (response: ApiResponse<CreatePlanPurchaseResult>) => {
+        if (response.success) {
+          this.alertService.showSuccess('Compra registrada exitosamente');
+        } else {
+          this.alertService.showError(response.message || 'Error al registrar la compra');
+        }
+      },
+      error: () => {
+        this.alertService.showError('Error de conexión al registrar la compra');
       }
-    } else {
-      newTab?.close();
-      this.alertService.showError(response.message || 'Error al iniciar el pago');
-    }
-  },
-  error: () => {
-    newTab?.close();
-    this.alertService.showError('Error de conexión al iniciar el pago');
-  }
-});
+    });
   }
 }
