@@ -10,14 +10,17 @@ import { PlanningWithMicrocyclesDto } from '../../models/planning-with-microcycl
 import { Button } from '../../components/button/button';
 import { FormPlanningComponent } from '../../components/form-planning/form-planning';
 import { CardPlanificationsComponent } from '../../components/card-planifications/card-planifications';
+import { ManualPaymentEvidenceDialogComponent } from '../../components/manual-payment-evidence-dialog/manual-payment-evidence-dialog';
 import { StorageService } from '../../services/storage.service';
 import { PlanPurchaseService } from '../../services/plan-purchase.service';
 import { CreatePlanPurchase } from '../../models/plan-purchase/create-plan-purchase.model';
 import { CreatePlanPurchaseResult } from '../../models/plan-purchase/create-plan-purchase-result.model';
 
+type PaymentMethod = 'MERCADO_PAGO' | 'MANUAL';
+
 @Component({
   selector: 'app-planifications',
-  imports: [CommonModule, Button, FormPlanningComponent, CardPlanificationsComponent],
+  imports: [CommonModule, Button, FormPlanningComponent, CardPlanificationsComponent, ManualPaymentEvidenceDialogComponent],
   templateUrl: './planifications.html',
   styleUrl: './planifications.scss',
 })
@@ -27,6 +30,10 @@ export class Planifications implements OnInit {
   plannings = signal<PlanningWithMicrocyclesDto[]>([]);
   loadingPlannings = signal<boolean>(true);
   showFormModal = signal<boolean>(false);
+  showPaymentMethodDialog = signal<boolean>(false);
+  selectedPaymentPlanning = signal<PlanningWithMicrocyclesDto | null>(null);
+  selectedEvidencePlanning = signal<PlanningWithMicrocyclesDto | null>(null);
+  creatingPayment = signal<boolean>(false);
   role = signal<string>('');
 
   constructor(
@@ -117,12 +124,22 @@ export class Planifications implements OnInit {
     return `${day}/${month}/${year}`;
   }
 
+  getCurrentUserId(): string {
+    return this.storageService.getUserData()?.userId?.toString() || '';
+  }
+
   closeFormModal(): void {
     this.showFormModal.set(false);
     const studentId = this.student()?.id;
     if (studentId) {
       this.loadPlannings(studentId);
     }
+  }
+
+  closePaymentMethodDialog(): void {
+    if (this.creatingPayment()) return;
+    this.showPaymentMethodDialog.set(false);
+    this.selectedPaymentPlanning.set(null);
   }
 
   onDeletePlanning(planning: PlanningWithMicrocyclesDto): void {
@@ -146,6 +163,34 @@ export class Planifications implements OnInit {
   }
 
   onGoToPayment(planning: PlanningWithMicrocyclesDto): void {
+    this.selectedPaymentPlanning.set(planning);
+    this.showPaymentMethodDialog.set(true);
+  }
+
+  onUploadEvidence(planning: PlanningWithMicrocyclesDto): void {
+    if (!planning.purchase?.paymentId) {
+      this.alertService.showError('No se encontró el pago asociado para subir el comprobante');
+      return;
+    }
+
+    this.selectedEvidencePlanning.set(planning);
+  }
+
+  closeEvidenceDialog(): void {
+    this.selectedEvidencePlanning.set(null);
+  }
+
+  onEvidenceUploaded(): void {
+    this.selectedEvidencePlanning.set(null);
+    this.alertService.showSuccess('Comprobante subido correctamente. El pago quedó bajo revisión.');
+    const studentId = this.student()?.id;
+    if (studentId) {
+      this.loadPlannings(studentId);
+    }
+  }
+
+  onPaymentMethodSelected(paymentMethod: PaymentMethod): void {
+    const planning = this.selectedPaymentPlanning();
     const userData = this.storageService.getUserData();
     if (!planning || !userData?.userId) {
       this.alertService.showError('No se pudo obtener la información necesaria para el pago');
@@ -156,18 +201,31 @@ export class Planifications implements OnInit {
       studentId: userData.userId,
       coachId: planning.coachId,
       planId: planning.id,
-      paymentMethod: 'MERCADO_PAGO'
+      paymentMethod
     };
 
-    const checkoutTab = window.open('', '_blank');
+    const checkoutTab = paymentMethod === 'MERCADO_PAGO' ? window.open('', '_blank') : null;
+    this.creatingPayment.set(true);
 
     this.planPurchaseService.create(request).subscribe({
       next: (response: ApiResponse<CreatePlanPurchaseResult>) => {
-        if (response.success && response.data?.checkoutUrl) {
+        this.creatingPayment.set(false);
+
+        if (paymentMethod === 'MERCADO_PAGO' && response.success && response.data?.checkoutUrl) {
           if (checkoutTab) {
             checkoutTab.location.href = response.data.checkoutUrl;
           } else {
             window.location.href = response.data.checkoutUrl;
+          }
+          this.showPaymentMethodDialog.set(false);
+          this.selectedPaymentPlanning.set(null);
+        } else if (paymentMethod === 'MANUAL' && response.success && response.data?.paymentId) {
+          this.showPaymentMethodDialog.set(false);
+          this.selectedPaymentPlanning.set(null);
+          this.alertService.showSuccess('Pago manual creado. Ya podés subir el comprobante.');
+          const studentId = this.student()?.id;
+          if (studentId) {
+            this.loadPlannings(studentId);
           }
         } else {
           checkoutTab?.close();
@@ -175,11 +233,11 @@ export class Planifications implements OnInit {
         }
       },
       error: () => {
+        this.creatingPayment.set(false);
         checkoutTab?.close();
         this.alertService.showError('Error de conexión al iniciar el pago');
       }
     });
   }
 }
-
 

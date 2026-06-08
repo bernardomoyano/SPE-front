@@ -135,6 +135,131 @@
   }
 }
 
+.payment-method-modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: $spacing-md;
+
+  &__content {
+    position: relative;
+    width: min(560px, 100%);
+    background: $color-white;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-lg;
+    padding: $spacing-xl;
+  }
+
+  &__close {
+    position: absolute;
+    top: $spacing-sm;
+    right: $spacing-sm;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: $radius-round;
+    background: $color-gray-100;
+    color: $color-text-dark;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  &__title {
+    margin: 0 0 $spacing-xs;
+    color: $color-primary;
+    font-size: $font-size-xl;
+  }
+
+  &__subtitle {
+    margin: 0 0 $spacing-lg;
+    color: $color-text-muted;
+  }
+
+  &__options {
+    display: grid;
+    gap: $spacing-md;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    width: 100%;
+    padding: $spacing-md;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-lg;
+    background: $color-white;
+    color: $color-text-dark;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    strong,
+    small {
+      display: block;
+    }
+
+    strong {
+      font-size: $font-size-base;
+      margin-bottom: 2px;
+    }
+
+    small {
+      color: $color-text-muted;
+    }
+
+    &:hover:not(:disabled) {
+      border-color: $color-primary;
+      box-shadow: $shadow-md;
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  }
+
+  &__icon {
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-lg;
+    font-weight: $font-weight-bold;
+
+    &--mercado-pago {
+      background: #e0f2fe;
+      color: #009ee3;
+      font-size: 1.15rem;
+      letter-spacing: -1px;
+    }
+
+    &--manual {
+      background: #fef3c7;
+      color: #d97706;
+    }
+  }
+
+  &__loading {
+    margin: $spacing-md 0 0;
+    color: $color-text-muted;
+    text-align: center;
+  }
+}
+
 // Mobile adjustments
 @media (max-width: 767px) {
   .planifications-container {
