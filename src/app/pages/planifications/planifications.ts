@@ -27,6 +27,7 @@ export class Planifications implements OnInit {
   plannings = signal<PlanningWithMicrocyclesDto[]>([]);
   loadingPlannings = signal<boolean>(true);
   showFormModal = signal<boolean>(false);
+  role = signal<string>('');
 
   constructor(
     private route: ActivatedRoute,
@@ -40,12 +41,12 @@ export class Planifications implements OnInit {
 
   ngOnInit(): void {
     const userData = this.storageService.getUserData();
-    const role = userData?.roleName;
+    this.role.set(userData?.roleName || '');
 
-    if (role === 'STUDENT') {
+    if (this.role() === 'STUDENT') {
       const userId = userData?.userId;
       if (userId) {
-        this.loadStudentByUserId(userId, role);
+        this.loadStudentByUserId(userId, this.role());
       } else {
         this.alertService.showError('No se encontró el ID del usuario');
         this.loading.set(false);
@@ -53,7 +54,7 @@ export class Planifications implements OnInit {
     } else {
       const id = this.route.snapshot.paramMap.get('id');
       if (id) {
-        this.loadStudentByUserId(+id, role);
+        this.loadStudentByUserId(+id, this.role());
       } else {
         this.alertService.showError('ID del estudiante no encontrado');
         this.loading.set(false);
@@ -132,9 +133,15 @@ export class Planifications implements OnInit {
   onViewDetails(planning: PlanningWithMicrocyclesDto): void {
     const studentId = this.student()?.id;
     if (studentId) {
-      this.router.navigate([`/atletas/planificaciones/${studentId}/detalles`], {
-        state: { planning }
-      });
+      if (this.role() === 'STUDENT') {
+        this.router.navigate([`/mis-planificaciones/detalles`], {
+          state: { planning }
+        });
+      } else {
+        this.router.navigate([`/atletas/planificaciones/${studentId}/detalles`], {
+          state: { planning }
+        });
+      }
     }
   }
 
