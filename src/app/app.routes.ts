@@ -7,6 +7,7 @@ import { MyStudents } from './pages/my-students/my-students';
 import { Planifications } from './pages/planifications/planifications';
 import { DetailsPlanifications } from './pages/details-planifications/details-planifications';
 import { MainLayout } from './shared/layout/main-layout/main-layout';
+import { PendingPayments } from './pages/pending-payments/pending-payments';
 
 export const routes: Routes = [
     // Rutas públicas (sin layout)
@@ -20,6 +21,7 @@ export const routes: Routes = [
         children: [
             { path: 'dashboard-coach', component: DashboardCoach },
             { path: 'ejercicios', component: MyExercises },
+            { path: 'pagos-pendientes', component: PendingPayments },
             { path: 'atletas', component: MyStudents },
             { path: 'atletas/planificaciones/:id', component: Planifications },
             { path: 'atletas/planificaciones/:id/detalles', component: DetailsPlanifications },

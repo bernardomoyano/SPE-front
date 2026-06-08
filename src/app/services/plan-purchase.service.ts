@@ -8,6 +8,11 @@ import {
   UploadManualPaymentEvidenceRequest,
   UploadManualPaymentEvidenceResult
 } from '../models/plan-purchase/upload-manual-payment-evidence.model';
+import {
+  ManualPaymentReviewItem,
+  ReviewManualPaymentRequest
+} from '../models/plan-purchase/manual-payment-review.model';
+import { PlanPurchaseDto } from '../models/plan-purchase.model';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +32,33 @@ export class PlanPurchaseService {
   ): Observable<ApiResponse<UploadManualPaymentEvidenceResult>> {
     return this.http.post<ApiResponse<UploadManualPaymentEvidenceResult>>(
       `${this.url}/${paymentId}/manual/evidences`,
+      request
+    );
+  }
+
+  getManualReviewQueue(payeeId: string): Observable<ApiResponse<ManualPaymentReviewItem[]>> {
+    return this.http.get<ApiResponse<ManualPaymentReviewItem[]>>(
+      `${this.url}/manual/review-queue`,
+      { params: { payeeId } }
+    );
+  }
+
+  approveManualPayment(
+    paymentId: string,
+    request: ReviewManualPaymentRequest
+  ): Observable<ApiResponse<PlanPurchaseDto>> {
+    return this.http.post<ApiResponse<PlanPurchaseDto>>(
+      `${this.url}/${paymentId}/manual/approve`,
+      request
+    );
+  }
+
+  rejectManualPayment(
+    paymentId: string,
+    request: ReviewManualPaymentRequest
+  ): Observable<ApiResponse<PlanPurchaseDto>> {
+    return this.http.post<ApiResponse<PlanPurchaseDto>>(
+      `${this.url}/${paymentId}/manual/reject`,
       request
     );
   }
