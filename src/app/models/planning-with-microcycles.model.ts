@@ -1,4 +1,4 @@
-import { PlanPurchaseDto } from './plan-purchase.model';
+﻿import { PlanPurchaseDto } from './plan-purchase.model';
 
 export interface MicrocycleDto {
   id: number;
@@ -23,6 +23,7 @@ export interface PlanningWithMicrocyclesDto {
   type: 'training' | 'nutrition' | 'complete';
   notes?: string;
   price: number;
-  //purchase?: PlanPurchaseDto;
+  purchase?: PlanPurchaseDto;
   microcycles: MicrocycleDto[];
 }
+

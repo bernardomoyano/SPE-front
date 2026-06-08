@@ -152,17 +152,27 @@ export class Planifications implements OnInit {
       paymentMethod: 'MERCADO_PAGO'
     };
 
+    const checkoutTab = window.open('', '_blank');
+
     this.planPurchaseService.create(request).subscribe({
       next: (response: ApiResponse<CreatePlanPurchaseResult>) => {
-        if (response.success) {
-          this.alertService.showSuccess('Compra registrada exitosamente');
+        if (response.success && response.data?.checkoutUrl) {
+          if (checkoutTab) {
+            checkoutTab.location.href = response.data.checkoutUrl;
+          } else {
+            window.location.href = response.data.checkoutUrl;
+          }
         } else {
-          this.alertService.showError(response.message || 'Error al registrar la compra');
+          checkoutTab?.close();
+          this.alertService.showError(response.message || 'Error al iniciar el pago');
         }
       },
       error: () => {
-        this.alertService.showError('Error de conexión al registrar la compra');
+        checkoutTab?.close();
+        this.alertService.showError('Error de conexión al iniciar el pago');
       }
     });
   }
 }
+
+

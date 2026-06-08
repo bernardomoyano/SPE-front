@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlanningWithMicrocyclesDto } from '../../models/planning-with-microcycles.model';
 import { AuthService } from '../../services/auth.service';
@@ -21,9 +21,9 @@ export class CardPlanificationsComponent {
     return this.authService.getUserRole() === 'STUDENT';
   }
 
-  // get hasPurchase(): boolean {
-  //   return this.planning?.purchase != null;
-  // }
+  get hasPaidPurchase(): boolean {
+    return this.planning?.purchase?.status === 'PAID';
+  }
 
   onDelete(): void {
     this.delete.emit(this.planning);
@@ -59,9 +59,10 @@ export class CardPlanificationsComponent {
   getTypeLabel(type: string): string {
     const labels: { [key: string]: string } = {
       'training': 'Entrenamiento',
-      'nutrition': 'Nutrición',
+      'nutrition': 'NutriciÃ³n',
       'complete': 'Completo'
     };
     return labels[type] || type;
   }
 }
+

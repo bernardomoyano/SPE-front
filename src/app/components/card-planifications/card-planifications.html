@@ -32,7 +32,7 @@
     <div class="planning-card__actions">
       <!-- Ver Detalles: siempre para coach; para student solo si ya tiene compra -->
       <button
-        *ngIf="!isStudent"
+        *ngIf="!isStudent || hasPaidPurchase"
         class="planning-card__action planning-card__action--details"
         (click)="onViewDetails()"
         aria-label="Ver detalles de planificación"
@@ -45,7 +45,7 @@
       </button>
 
       <button
-        *ngIf="isStudent"
+        *ngIf="isStudent && !hasPaidPurchase"
         class="planning-card__action planning-card__action--payment"
         (click)="onGoToPayment()"
         aria-label="Ir a pago de planificación"
@@ -73,4 +73,6 @@
     </div>
   </div>
 </div>
+
+
 
