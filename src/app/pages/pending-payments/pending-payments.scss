@@ -1,0 +1,253 @@
+﻿@import '../../../styles/variables.scss';
+@import '../../../styles/typography.scss';
+
+.pending-payments {
+
+  &__header {
+    margin-bottom: $spacing-xl;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h1 {
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: $color-primary;
+      margin: 0;
+    }
+
+    p {
+      margin: 0;
+      color: $color-gray-600;
+    }
+  }
+
+  &__refresh,
+  &__approve,
+  &__reject,
+  &__link {
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    font-weight: $font-weight-semibold;
+  }
+
+  &__refresh {
+    padding: $spacing-sm $spacing-md;
+    background: $color-primary;
+    color: $color-white;
+  }
+
+  &__state {
+    padding: $spacing-xl;
+    border-radius: $radius-lg;
+    background: $color-white;
+    box-shadow: $shadow-sm;
+    color: $color-gray-600;
+    text-align: center;
+  }
+
+  &__table-wrapper {
+    overflow-x: auto;
+    border-radius: $radius-lg;
+    background: $color-white;
+    box-shadow: $shadow-md;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: $spacing-md;
+      border-bottom: 1px solid $color-gray-200;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: $color-gray-50;
+      color: $color-gray-700;
+      font-size: $font-size-sm;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      color: $color-text-dark;
+    }
+
+    strong,
+    small {
+      display: block;
+    }
+
+    small {
+      margin-top: 2px;
+      color: $color-gray-600;
+    }
+  }
+
+  &__badge {
+    display: inline-flex;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $radius-round;
+    background: #fffbeb;
+    color: #b45309;
+    border: 1px solid #f59e0b;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+  }
+
+  &__link {
+    background: transparent;
+    color: $color-accent;
+    text-decoration: underline;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-sm;
+  }
+
+  &__approve,
+  &__reject {
+    padding: $spacing-sm $spacing-md;
+    color: $color-white;
+  }
+
+  &__approve {
+    background: #16a34a;
+  }
+
+  &__reject {
+    background: #dc2626;
+  }
+}
+
+.pending-payments-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-md;
+  background: rgba(0, 0, 0, 0.6);
+
+  &__content {
+    position: relative;
+    width: min(520px, 100%);
+    padding: $spacing-xl;
+    border-radius: $radius-lg;
+    background: $color-white;
+    box-shadow: $shadow-lg;
+
+    &--large {
+      width: min(900px, 100%);
+    }
+
+    h3 {
+      margin: 0 0 $spacing-xs;
+      color: $color-primary;
+    }
+
+    p {
+      margin: 0 0 $spacing-md;
+      color: $color-gray-600;
+    }
+
+    img,
+    iframe {
+      display: block;
+      width: 100%;
+      max-height: 70vh;
+      border: 1px solid $color-gray-200;
+      border-radius: $radius-md;
+      object-fit: contain;
+      background: $color-gray-50;
+    }
+
+    iframe {
+      height: 70vh;
+    }
+  }
+
+  &__close {
+    position: absolute;
+    top: $spacing-sm;
+    right: $spacing-sm;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: $radius-round;
+    background: $color-gray-100;
+    color: $color-text-dark;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: $spacing-xs;
+    color: $color-gray-700;
+    font-weight: $font-weight-semibold;
+  }
+
+  textarea {
+    width: 100%;
+    resize: vertical;
+    padding: $spacing-sm;
+    border: 1px solid $color-gray-300;
+    border-radius: $radius-md;
+    font-family: inherit;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-sm;
+    margin-top: $spacing-lg;
+  }
+
+  &__secondary,
+  &__approve,
+  &__reject {
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-md;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+  }
+
+  &__secondary {
+    border: 1px solid $color-gray-300;
+    background: $color-white;
+    color: $color-text-dark;
+  }
+
+  &__approve,
+  &__reject {
+    border: none;
+    color: $color-white;
+  }
+
+  &__approve {
+    background: #16a34a;
+  }
+
+  &__reject {
+    background: #dc2626;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .pending-payments {
+    padding: $spacing-md;
+
+    &__header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+}

@@ -25,6 +25,12 @@ export class MenuService {
       roles: ['COACH']
     },
     {
+      label: 'Pagos pendientes',
+      icon: 'pi pi-wallet',
+      route: '/pagos-pendientes',
+      roles: ['COACH']
+    },
+    {
       label: 'Ejercicios',
       icon: 'pi pi-list',
       route: '/ejercicios',
