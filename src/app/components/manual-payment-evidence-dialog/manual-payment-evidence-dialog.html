@@ -1,0 +1,60 @@
+﻿<div class="manual-evidence-dialog" (click)="onOverlayClick($event)">
+  <div class="manual-evidence-dialog__content">
+    <button
+      type="button"
+      class="manual-evidence-dialog__close"
+      [disabled]="uploading()"
+      (click)="onClose()"
+      aria-label="Cerrar carga de comprobante"
+    >
+      ×
+    </button>
+
+    <h3 class="manual-evidence-dialog__title">Subir comprobante</h3>
+    <p class="manual-evidence-dialog__subtitle">
+      Cargá una imagen o PDF del comprobante de transferencia. Después quedará bajo revisión.
+    </p>
+
+    <label class="manual-evidence-dialog__dropzone">
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
+        [disabled]="uploading()"
+        (change)="onFileSelected($event)"
+      />
+      <span class="manual-evidence-dialog__dropzone-icon">↑</span>
+      <strong>Seleccionar comprobante</strong>
+      <small>JPG, PNG, WEBP, GIF o PDF</small>
+    </label>
+
+    @if (selectedFile()) {
+      <div class="manual-evidence-dialog__file">
+        @if (previewUrl()) {
+          <img [src]="previewUrl()" alt="Vista previa del comprobante" />
+        } @else {
+          <div class="manual-evidence-dialog__pdf">PDF</div>
+        }
+
+        <div>
+          <strong>{{ selectedFile()?.name }}</strong>
+          <small>{{ ((selectedFile()?.size || 0) / 1024 / 1024).toFixed(2) }} MB</small>
+        </div>
+
+        <button type="button" [disabled]="uploading()" (click)="removeFile()">Quitar</button>
+      </div>
+    }
+
+    @if (error()) {
+      <p class="manual-evidence-dialog__error">{{ error() }}</p>
+    }
+
+    <div class="manual-evidence-dialog__actions">
+      <button type="button" class="manual-evidence-dialog__secondary" [disabled]="uploading()" (click)="onClose()">
+        Cancelar
+      </button>
+      <button type="button" class="manual-evidence-dialog__primary" [disabled]="!canSubmit" (click)="submit()">
+        {{ uploading() ? 'Subiendo...' : 'Subir comprobante' }}
+      </button>
+    </div>
+  </div>
+</div>

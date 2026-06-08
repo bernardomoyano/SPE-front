@@ -14,6 +14,7 @@ export class CardPlanificationsComponent {
   @Output() delete = new EventEmitter<PlanningWithMicrocyclesDto>();
   @Output() viewDetails = new EventEmitter<PlanningWithMicrocyclesDto>();
   @Output() goToPayment = new EventEmitter<PlanningWithMicrocyclesDto>();
+  @Output() uploadEvidence = new EventEmitter<PlanningWithMicrocyclesDto>();
 
   constructor(private authService: AuthService) {}
 
@@ -23,6 +24,16 @@ export class CardPlanificationsComponent {
 
   get hasPaidPurchase(): boolean {
     return this.planning?.purchase?.status === 'PAID';
+  }
+
+  get hasPendingManualPurchase(): boolean {
+    return this.planning?.purchase?.status === 'PENDING_PAYMENT'
+      && this.planning?.purchase?.paymentMethodSelected === 'MANUAL';
+  }
+
+  get hasManualPurchaseUnderReview(): boolean {
+    return this.planning?.purchase?.status === 'UNDER_REVIEW'
+      && this.planning?.purchase?.paymentMethodSelected === 'MANUAL';
   }
 
   onDelete(): void {
@@ -35,6 +46,10 @@ export class CardPlanificationsComponent {
 
   onGoToPayment(): void {
     this.goToPayment.emit(this.planning);
+  }
+
+  onUploadEvidence(): void {
+    this.uploadEvidence.emit(this.planning);
   }
 
   formatDate(date: Date | string): string {
@@ -59,7 +74,7 @@ export class CardPlanificationsComponent {
   getTypeLabel(type: string): string {
     const labels: { [key: string]: string } = {
       'training': 'Entrenamiento',
-      'nutrition': 'NutriciÃ³n',
+      'nutrition': 'Nutrición',
       'complete': 'Completo'
     };
     return labels[type] || type;

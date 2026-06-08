@@ -212,9 +212,42 @@
       }
     }
 
+    &--evidence {
+      background-color: #f59e0b;
+      color: $color-white;
+
+      &:hover {
+        background-color: #d97706;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
     @media (max-width: $breakpoint-sm) {
       padding: $spacing-sm;
       font-size: $font-size-xs;
+    }
+  }
+
+  &__review-status {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid #f59e0b;
+    border-radius: $radius-md;
+    background: #fffbeb;
+    color: #b45309;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+
+    svg {
+      flex-shrink: 0;
     }
   }
 }

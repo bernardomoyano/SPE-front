@@ -1,0 +1,169 @@
+﻿@import '../../../styles/variables.scss';
+@import '../../../styles/typography.scss';
+
+.manual-evidence-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-md;
+  background: rgba(0, 0, 0, 0.6);
+
+  &__content {
+    position: relative;
+    width: min(560px, 100%);
+    padding: $spacing-xl;
+    border-radius: $radius-lg;
+    background: $color-white;
+    box-shadow: $shadow-lg;
+  }
+
+  &__close {
+    position: absolute;
+    top: $spacing-sm;
+    right: $spacing-sm;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: $radius-round;
+    background: $color-gray-100;
+    color: $color-text-dark;
+    font-size: 1.5rem;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  &__title {
+    margin: 0 0 $spacing-xs;
+    color: $color-primary;
+    font-size: $font-size-xl;
+  }
+
+  &__subtitle {
+    margin: 0 0 $spacing-lg;
+    color: $color-gray-600;
+  }
+
+  &__dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xl;
+    border: 2px dashed $color-gray-300;
+    border-radius: $radius-lg;
+    background: $color-gray-50;
+    color: $color-text-dark;
+    cursor: pointer;
+    text-align: center;
+
+    input {
+      display: none;
+    }
+
+    small {
+      color: $color-gray-600;
+    }
+  }
+
+  &__dropzone-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-round;
+    background: #fef3c7;
+    color: #d97706;
+    font-size: 1.5rem;
+    font-weight: $font-weight-bold;
+  }
+
+  &__file {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    align-items: center;
+    gap: $spacing-md;
+    margin-top: $spacing-md;
+    padding: $spacing-sm;
+    border: 1px solid $color-gray-200;
+    border-radius: $radius-md;
+
+    img,
+    & > .manual-evidence-dialog__pdf {
+      width: 64px;
+      height: 64px;
+      border-radius: $radius-md;
+      object-fit: cover;
+    }
+
+    small {
+      display: block;
+      color: $color-gray-600;
+    }
+
+    button {
+      border: none;
+      background: transparent;
+      color: $color-error;
+      cursor: pointer;
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  &__pdf {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fee2e2;
+    color: #dc2626;
+    font-weight: $font-weight-bold;
+  }
+
+  &__error {
+    margin: $spacing-md 0 0;
+    color: $color-error;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-sm;
+    margin-top: $spacing-lg;
+  }
+
+  &__secondary,
+  &__primary {
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-md;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  }
+
+  &__secondary {
+    border: 1px solid $color-gray-300;
+    background: $color-white;
+    color: $color-text-dark;
+  }
+
+  &__primary {
+    border: none;
+    background: #f59e0b;
+    color: $color-white;
+
+    &:hover:not(:disabled) {
+      background: #d97706;
+    }
+  }
+}
