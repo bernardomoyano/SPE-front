@@ -1,0 +1,67 @@
+﻿<section class="mp-receipt-page">
+  @if (loading()) {
+    <div class="mp-receipt-page__state">Cargando comprobante...</div>
+  } @else if (receipt(); as receiptData) {
+    <article class="mp-receipt">
+      <header class="mp-receipt__header">
+        <div class="mp-receipt__brand">
+          <span class="mp-receipt__logo">mp</span>
+          <span>Mercado Pago</span>
+        </div>
+        <div class="mp-receipt__title">
+          <h1>Comprobante de pago</h1>
+          <p>N° de operación {{ receiptData.mercadoPagoPaymentId || '-' }}</p>
+        </div>
+      </header>
+
+      <dl class="mp-receipt__details">
+        <div>
+          <dt>N° de operación</dt>
+          <dd>{{ receiptData.mercadoPagoPaymentId || '-' }}</dd>
+        </div>
+        <div>
+          <dt>Concepto</dt>
+          <dd>{{ receiptData.description || '-' }}</dd>
+        </div>
+        <div>
+          <dt>Estado</dt>
+          <dd>{{ receiptData.status || '-' }}</dd>
+        </div>
+        <div>
+          <dt>Fecha de pago</dt>
+          <dd>{{ receiptData.dateApproved | dateArg }}</dd>
+        </div>
+        <div>
+          <dt>Monto</dt>
+          <dd>{{ receiptData.transactionAmount | moneyArg:(receiptData.currencyId || 'ARS') }}</dd>
+        </div>
+        <div>
+          <dt>Moneda</dt>
+          <dd>{{ receiptData.currencyId || '-' }}</dd>
+        </div>
+        <div>
+          <dt>Tarjeta</dt>
+          <dd>{{ receiptData.paymentMethodId || '-' }}</dd>
+        </div>
+        <div>
+          <dt>Tipo de pago</dt>
+          <dd>{{ receiptData.paymentTypeId || '-' }}</dd>
+        </div>
+        <div>
+          <dt>Cuotas</dt>
+          <dd>{{ receiptData.installments || '-' }}</dd>
+        </div>
+        <div>
+          <dt>Referencia interna</dt>
+          <dd>{{ receiptData.externalReference || '-' }}</dd>
+        </div>
+        <div>
+          <dt>Pagador</dt>
+          <dd>{{ receiptData.payerEmail || '-' }}</dd>
+        </div>
+      </dl>
+    </article>
+  } @else {
+    <div class="mp-receipt-page__state">No se pudo cargar el comprobante.</div>
+  }
+</section>

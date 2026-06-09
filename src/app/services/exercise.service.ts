@@ -7,6 +7,7 @@ import { CreateExerciseRequest } from '../models/create-exercise-request.model';
 import { PaginatedResponse } from '../models/paginated-response.model';
 import { ExerciseFilters } from '../models/exercise-filters.model';
 import { UpdateExerciseRequest } from '../models/update-exercise-request.model';
+import { ExerciseSelectDto } from '../models/exercise-select-dto.model';
 
 @Injectable({
   providedIn: 'root'
@@ -69,5 +70,13 @@ export class ExerciseService {
    */
   deleteExercise(id: number): Observable<ApiResponse<any>> {
     return this.http.delete<ApiResponse<any>>(`${this.url}/${id}`);
+  }
+
+  /**
+   * Obtiene la lista de ejercicios para usar en selects
+   * @returns Observable con la lista de ejercicios simplificada
+   */
+  getExercisesForSelect(): Observable<ApiResponse<ExerciseSelectDto[]>> {
+    return this.http.get<ApiResponse<ExerciseSelectDto[]>>(`${this.url}/for-select`);
   }
 }

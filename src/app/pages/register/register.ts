@@ -64,6 +64,8 @@ export class Register {
             // Redirigir según el rol del usuario
             if (response.data?.roleName === 'COACH') {
               this.router.navigate(['/dashboard-coach']);
+            } else if (response.data?.roleName === 'STUDENT') {
+              this.router.navigate(['/mis-planificaciones']);
             } else {
               this.router.navigate(['/dashboard']);
             }

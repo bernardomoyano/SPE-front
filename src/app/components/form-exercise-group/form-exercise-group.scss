@@ -1,0 +1,132 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/typography.scss';
+
+.feg-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba($color-black, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-modal;
+  padding: $spacing-md;
+  animation: feg-overlay-in $transition-fast forwards;
+
+  @media (max-width: $breakpoint-sm) {
+    align-items: flex-end;
+    padding: 0;
+  }
+}
+
+@keyframes feg-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.feg {
+  background-color: $color-white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-xl;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  animation: feg-in $transition-base forwards;
+
+  @media (max-width: $breakpoint-sm) {
+    max-width: 100%;
+    border-radius: $radius-lg $radius-lg 0 0;
+    animation: feg-in-mobile $transition-base forwards;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-lg $spacing-lg $spacing-md;
+    border-bottom: 1px solid $border-color-light;
+    background-color: $color-gray-50;
+  }
+
+  &__badge {
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-round;
+    background-color: $color-primary;
+    color: $color-white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    flex-shrink: 0;
+    letter-spacing: -1px;
+  }
+
+  &__header-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0 0 $spacing-xs 0;
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    margin: 0;
+  }
+
+  &__close-btn {
+    background: none;
+    border: none;
+    padding: $spacing-xs;
+    cursor: pointer;
+    color: $text-secondary;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all $transition-fast;
+
+    &:hover {
+      color: $text-primary;
+      background-color: $color-gray-200;
+    }
+  }
+
+  &__body {
+    padding: $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: $spacing-sm;
+
+    app-button {
+      flex: 1;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column-reverse;
+    }
+  }
+}
+
+@keyframes feg-in {
+  from { opacity: 0; transform: translateY(-12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)     scale(1);    }
+}
+
+@keyframes feg-in-mobile {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}

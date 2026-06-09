@@ -1,0 +1,121 @@
+﻿<section class="pending-payments">
+  <div class="pending-payments__header">
+  <h1 class="pending-payments__title">Pagos pendientes</h1>
+    <app-button
+      label="Actualizar"
+      variant="primary"
+      (click)="loadPendingPayments()"
+      [disabled]="loading()"
+    ></app-button>
+  </div>
+
+  @if (loading()) {
+    <div class="pending-payments__state">Cargando pagos pendientes...</div>
+  } @else if (payments().length === 0) {
+    <div class="pending-payments__state">No tenés pagos pendientes de revisión.</div>
+  } @else {
+    <div class="pending-payments__table-wrapper">
+      <table class="pending-payments__table">
+        <thead>
+          <tr>
+            <th>Estudiante</th>
+            <th>Planificación</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Comprobante</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let payment of payments()">
+            <td>
+              <strong>{{ payment.studentName || 'Sin nombre' }}</strong>
+              <small>ID: {{ payment.studentId }}</small>
+            </td>
+            <td>
+              <strong>{{ payment.planningName || 'Sin planificación' }}</strong>
+              <small>
+                {{ payment.planningType || 'Tipo no informado' }} ·
+                {{ payment.planningDurationWeeks || '-' }} semanas
+              </small>
+            </td>
+            <td>{{ payment.amount | moneyArg:payment.currency }}</td>
+            <td>{{ payment.updatedAt | dateArg }}</td>
+            <td>
+              <span class="pending-payments__badge">Bajo revisión</span>
+            </td>
+            <td>
+              <button type="button" class="pending-payments__link" (click)="openEvidence(payment)">
+                Ver comprobante
+              </button>
+            </td>
+            <td>
+              <div class="pending-payments__actions">
+                <button type="button" class="pending-payments__approve" (click)="openReview(payment, 'approve')">
+                  Aceptar
+                </button>
+                <button type="button" class="pending-payments__reject" (click)="openReview(payment, 'reject')">
+                  Rechazar
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+@if (selectedEvidence()) {
+  <div class="pending-payments-modal" (click)="closeEvidence()">
+    <div class="pending-payments-modal__content pending-payments-modal__content--large" (click)="$event.stopPropagation()">
+      <button type="button" class="pending-payments-modal__close" (click)="closeEvidence()">×</button>
+      <h3>Comprobante</h3>
+      <p>{{ selectedEvidence()?.fileName }}</p>
+
+      @if (isPdf(selectedEvidence())) {
+        <iframe [src]="getSafeEvidenceUrl(selectedEvidence())" title="Comprobante PDF"></iframe>
+        <a [href]="selectedEvidence()?.fileUrl" target="_blank" rel="noopener noreferrer">Abrir PDF en otra pestaña</a>
+      } @else {
+        <img [src]="selectedEvidence()?.fileUrl" alt="Comprobante de pago" />
+      }
+    </div>
+  </div>
+}
+
+@if (selectedPayment() && reviewAction()) {
+  <div class="pending-payments-modal" (click)="closeReview()">
+    <div class="pending-payments-modal__content" (click)="$event.stopPropagation()">
+      <button type="button" class="pending-payments-modal__close" [disabled]="reviewing()" (click)="closeReview()">×</button>
+      <h3>{{ reviewAction() === 'approve' ? 'Aceptar pago' : 'Rechazar pago' }}</h3>
+      <p>
+        {{ selectedPayment()?.studentName }} · {{ selectedPayment()?.planningName }} ·
+        {{ selectedPayment()?.amount | moneyArg:selectedPayment()?.currency }}
+      </p>
+
+      <label class="pending-payments-modal__label" for="review-comment">Comentario</label>
+      <textarea
+        id="review-comment"
+        rows="4"
+        [value]="reviewComment()"
+        [disabled]="reviewing()"
+        (input)="updateComment($event)"
+        placeholder="Agregá un comentario para dejar trazabilidad">
+      </textarea>
+
+      <div class="pending-payments-modal__actions">
+        <button type="button" class="pending-payments-modal__secondary" [disabled]="reviewing()" (click)="closeReview()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          [class]="reviewAction() === 'approve' ? 'pending-payments-modal__approve' : 'pending-payments-modal__reject'"
+          [disabled]="reviewing()"
+          (click)="submitReview()">
+          {{ reviewing() ? 'Procesando...' : (reviewAction() === 'approve' ? 'Aceptar pago' : 'Rechazar pago') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,164 @@
+﻿<div class="planifications-container">
+
+  <div class="content">
+    <div *ngIf="loading()" class="loading">
+      <p>Cargando estudiante...</p>
+    </div>
+
+    <div *ngIf="!loading() && student()" class="student-info">
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Nombre:</span>
+          <span class="value">{{ student()?.userName }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Email:</span>
+          <span class="value">{{ student()?.email }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Fecha de Nacimiento:</span>
+          <span class="value">{{ formatDate(student()?.dateOfBirth) }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Género:</span>
+          <span class="value">{{ student()?.gender }}</span>
+        </div>
+
+        <div class="info-item" *ngIf="student()?.heightCm">
+          <span class="label">Altura:</span>
+          <span class="value">{{ student()?.heightCm }} cm</span>
+        </div>
+
+        <div class="info-item" *ngIf="student()?.weightKg">
+          <span class="label">Peso:</span>
+          <span class="value">{{ student()?.weightKg }} kg</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Nivel:</span>
+          <span class="value">{{ student()?.trainingLevel }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Teléfono:</span>
+          <span class="value">{{ student()?.phone }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Paí­s:</span>
+          <span class="value">{{ student()?.country }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!loading() && student()" class="plannings-section">
+      <div class="section-header">
+        <h2 class="section-title">Planificaciones</h2>
+        <app-button label="Nueva Planificación" color="primary" (click)="openFormModal()"></app-button>
+      </div>
+
+      <div *ngIf="loadingPlannings()" class="loading">
+        <p>Cargando planificaciones...</p>
+      </div>
+
+      <div *ngIf="!loadingPlannings()" class="plannings-grid">
+        <div *ngIf="plannings().length === 0" class="empty-state">
+          <p>No hay planificaciones creadas aún.</p>
+        </div>
+
+        <app-card-planifications
+          *ngFor="let planning of plannings()"
+          [planning]="planning"
+          (viewDetails)="onViewDetails($event)"
+          (delete)="onDeletePlanning($event)"
+          (goToPayment)="onGoToPayment($event)"
+          (uploadEvidence)="onUploadEvidence($event)">
+        </app-card-planifications>
+      </div>
+    </div>
+
+    <div *ngIf="!loading() && !student()" class="error">
+      <p>No se pudo cargar la información del estudiante.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear planificación -->
+@if (showFormModal()) {
+  <div class="planifications-container__modal-overlay" (click)="closeFormModal()">
+    <div class="planifications-container__modal-content" (click)="$event.stopPropagation()">
+      <app-form-planning [studentId]="student()?.id || null" (close)="closeFormModal()"></app-form-planning>
+    </div>
+  </div>
+}
+
+@if (showPaymentMethodDialog()) {
+  <div class="payment-method-modal" (click)="closePaymentMethodDialog()">
+    <div class="payment-method-modal__content" (click)="$event.stopPropagation()">
+      <button
+        type="button"
+        class="payment-method-modal__close"
+        [disabled]="creatingPayment()"
+        (click)="closePaymentMethodDialog()"
+        aria-label="Cerrar selector de método de pago"
+      >
+        ×
+      </button>
+
+      <h3 class="payment-method-modal__title">Elegí tu método de pago</h3>
+      <p class="payment-method-modal__subtitle">
+        Podés pagar ahora con Mercado Pago o crear un pago manual para subir el comprobante.
+      </p>
+
+      <div class="payment-method-modal__options">
+        <button
+          type="button"
+          class="payment-method-modal__option payment-method-modal__option--mercado-pago"
+          [disabled]="creatingPayment()"
+          (click)="onPaymentMethodSelected('MERCADO_PAGO')"
+        >
+          <span class="payment-method-modal__icon payment-method-modal__icon--mercado-pago">MP</span>
+          <span>
+            <strong>Mercado Pago</strong>
+            <small>Pago online con checkout seguro.</small>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="payment-method-modal__option payment-method-modal__option--manual"
+          [disabled]="creatingPayment()"
+          (click)="onPaymentMethodSelected('MANUAL')"
+        >
+          <span class="payment-method-modal__icon payment-method-modal__icon--manual">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="6" width="18" height="12" rx="2"></rect>
+              <path d="M7 10h10M7 14h6"></path>
+            </svg>
+          </span>
+          <span>
+            <strong>Transferencia manual</strong>
+            <small>Creá el pago y subí el comprobante después.</small>
+          </span>
+        </button>
+      </div>
+
+      @if (creatingPayment()) {
+        <p class="payment-method-modal__loading">Creando pago...</p>
+      }
+    </div>
+  </div>
+}
+
+@if (selectedEvidencePlanning()?.purchase?.paymentId) {
+  <app-manual-payment-evidence-dialog
+    [paymentId]="selectedEvidencePlanning()?.purchase?.paymentId || ''"
+    [uploadedBy]="getCurrentUserId()"
+    (close)="closeEvidenceDialog()"
+    (uploaded)="onEvidenceUploaded()">
+  </app-manual-payment-evidence-dialog>
+}
