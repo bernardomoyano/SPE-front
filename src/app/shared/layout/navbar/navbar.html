@@ -1,4 +1,4 @@
-<nav class="navbar">
+﻿<nav class="navbar">
   <div class="navbar__container">
     <!-- Logo y Brand -->
     <div class="navbar__brand">
@@ -45,10 +45,29 @@
     <nav class="mobile-menu__nav">
       <ul class="mobile-menu__list">
         <li class="mobile-menu__item" *ngFor="let item of menuItems()">
-          <a (click)="navigateTo(item.route)" class="mobile-menu__link">
-            <i [class]="item.icon"></i>
-            <span>{{ item.label }}</span>
-          </a>
+          <ng-container *ngIf="item.children?.length; else mobileSingleItem">
+            <div class="mobile-menu__group">
+              <div class="mobile-menu__group-label">
+                <i [class]="item.icon"></i>
+                <span>{{ item.label }}</span>
+              </div>
+              <a
+                *ngFor="let child of item.children"
+                (click)="navigateTo(child.route)"
+                class="mobile-menu__link mobile-menu__link--child"
+              >
+                <i [class]="child.icon"></i>
+                <span>{{ child.label }}</span>
+              </a>
+            </div>
+          </ng-container>
+
+          <ng-template #mobileSingleItem>
+            <a (click)="navigateTo(item.route)" class="mobile-menu__link">
+              <i [class]="item.icon"></i>
+              <span>{{ item.label }}</span>
+            </a>
+          </ng-template>
         </li>
       </ul>
     </nav>

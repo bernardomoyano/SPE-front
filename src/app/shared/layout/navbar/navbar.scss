@@ -279,6 +279,32 @@
     }
   }
 
+  &__group {
+    padding: $spacing-xs 0;
+  }
+
+  &__group-label {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-sm $spacing-md;
+    color: $color-gray-500;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    i {
+      width: 20px;
+      text-align: center;
+    }
+  }
+
+  &__link--child {
+    margin-left: $spacing-lg;
+    padding: $spacing-sm $spacing-md;
+    font-size: 0.875rem;
+  }
+
   &__footer {
     padding: $spacing-lg;
     border-top: 1px solid $border-color-light;

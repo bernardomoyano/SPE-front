@@ -1,0 +1,115 @@
+<section class="payments">
+  <div class="payments__header">
+    <div>
+      <h1 class="payments__title">{{ getTitle() }}</h1>
+      <p class="payments__subtitle">Historial de pagos de planificaciones.</p>
+    </div>
+    <app-button
+      label="Actualizar"
+      variant="primary"
+      (click)="loadPayments()"
+      [disabled]="loading()"
+    ></app-button>
+  </div>
+
+  @if (loading()) {
+    <div class="payments__state">Cargando pagos...</div>
+  } @else if (payments().length === 0) {
+    <div class="payments__state">No hay pagos para mostrar.</div>
+  } @else {
+    <div class="payments__table-wrapper">
+      <table class="payments__table">
+        <thead>
+          <tr>
+            <th>{{ getCounterpartyLabel() }}</th>
+            <th>Planificación</th>
+            <th>Método</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Detalle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let payment of payments()">
+            <td>
+              <strong>{{ getCounterpartyName(payment) }}</strong>
+            </td>
+            <td>
+              <strong>{{ payment.planningName || 'Sin planificación' }}</strong>
+              <small>
+                {{ payment.planningType || 'Tipo no informado' }} ·
+                {{ payment.planningDurationWeeks || '-' }} semanas
+              </small>
+            </td>
+            <td>{{ formatPaymentMethod(payment.paymentMethodSelected) }}</td>
+            <td>{{ payment.amount | moneyArg }}</td>
+            <td>{{ payment.updatedAt | dateArg }}</td>
+            <td>
+              <span class="payments__badge" [ngClass]="'payments__badge--' + payment.status.toLowerCase()">
+                {{ formatStatus(payment.status) }}
+              </span>
+            </td>
+            <td>
+              <button type="button" class="payments__link" (click)="openDetail(payment)">
+                Ver detalle
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+@if (selectedPayment()) {
+  <div class="payments-modal" (click)="closeDetail()">
+    <div class="payments-modal__content" (click)="$event.stopPropagation()">
+      <button type="button" class="payments-modal__close" (click)="closeDetail()">×</button>
+      <h3>Detalle del pago</h3>
+
+      <dl class="payments-modal__grid">
+        <div>
+          <dt>{{ getCounterpartyLabel() }}</dt>
+          <dd>{{ getCounterpartyName(selectedPayment()!) }}</dd>
+        </div>
+        <div>
+          <dt>Planificación</dt>
+          <dd>{{ selectedPayment()?.planningName || 'Sin planificación' }}</dd>
+        </div>
+        <div>
+          <dt>Tipo</dt>
+          <dd>{{ selectedPayment()?.planningType || '-' }}</dd>
+        </div>
+        <div>
+          <dt>Inicio</dt>
+          <dd>{{ selectedPayment()?.planningStartDate | dateArg }}</dd>
+        </div>
+        <div>
+          <dt>Duración</dt>
+          <dd>{{ selectedPayment()?.planningDurationWeeks || '-' }} semanas</dd>
+        </div>
+        <div>
+          <dt>Método</dt>
+          <dd>{{ formatPaymentMethod(selectedPayment()?.paymentMethodSelected || '') }}</dd>
+        </div>
+        <div>
+          <dt>Monto</dt>
+          <dd>{{ selectedPayment()?.amount | moneyArg }}</dd>
+        </div>
+        <div>
+          <dt>Estado</dt>
+          <dd>{{ formatStatus(selectedPayment()?.status || '') }}</dd>
+        </div>
+      </dl>
+
+      @if (canViewDocument(selectedPayment())) {
+        <div class="payments-modal__actions">
+          <button type="button" class="payments-modal__primary" (click)="openDocument(selectedPayment())">
+            {{ getDocumentButtonLabel(selectedPayment()) }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}

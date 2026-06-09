@@ -51,7 +51,9 @@ export class Navbar implements OnInit {
     this.isMobileMenuOpen.set(false);
   }
 
-  navigateTo(route: string): void {
+  navigateTo(route?: string): void {
+    if (!route) return;
+
     this.closeMobileMenu();
     this.router.navigate([route]);
   }

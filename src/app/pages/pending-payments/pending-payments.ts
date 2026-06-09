@@ -7,10 +7,12 @@ import { AlertService } from '../../services/alert.service';
 import { PlanPurchaseService } from '../../services/plan-purchase.service';
 import { StorageService } from '../../services/storage.service';
 import { Button } from "../../components/button/button";
+import { DateArgPipe } from '../../shared/pipes/date-arg.pipe';
+import { MoneyArgPipe } from '../../shared/pipes/money-arg.pipe';
 
 @Component({
   selector: 'app-pending-payments',
-  imports: [CommonModule, Button],
+  imports: [CommonModule, Button, DateArgPipe, MoneyArgPipe],
   templateUrl: './pending-payments.html',
   styleUrl: './pending-payments.scss',
 })
@@ -138,20 +140,6 @@ export class PendingPayments implements OnInit {
 
   getSafeEvidenceUrl(evidence: ManualPaymentEvidence | null): SafeResourceUrl | null {
     return evidence ? this.sanitizer.bypassSecurityTrustResourceUrl(evidence.fileUrl) : null;
-  }
-
-  formatMoney(amount: number, currency: string): string {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: currency || 'ARS'
-    }).format(amount);
-  }
-
-  formatDate(date: Date | string | null | undefined): string {
-    if (!date) return '-';
-    const parsed = typeof date === 'string' ? new Date(date) : date;
-    if (isNaN(parsed.getTime())) return '-';
-    return parsed.toLocaleDateString('es-AR');
   }
 }
 
