@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+﻿import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 
@@ -15,6 +15,7 @@ export class InputComponent {
   @Input() icon: string = '';
   @Input() control: FormControl | null = null;
   @Input() backendError: string = '';
+  @Input() step: string | number | null = null;
 
   showPassword: boolean = false;
 
@@ -53,17 +54,29 @@ export class InputComponent {
 
     const errors = this.control.errors;
 
-    // Errores estándar
+    // Errores estÃ¡ndar
     if (errors['required']) {
       return 'Este campo es obligatorio';
     }
 
     if (errors['maxlength']) {
-      return `Máximo ${errors['maxlength'].requiredLength} caracteres`;
+      return `MÃ¡ximo ${errors['maxlength'].requiredLength} caracteres`;
+    }
+
+    if (errors['min']) {
+      return `El valor debe ser mayor o igual a ${errors['min'].min}`;
+    }
+
+    if (errors['max']) {
+      return `El valor debe ser menor o igual a ${errors['max'].max}`;
+    }
+
+    if (errors['pattern']) {
+      return 'Formato inválido';
     }
 
     if (errors['minlength']) {
-      return `Mínimo ${errors['minlength'].requiredLength} caracteres`;
+      return `MÃ­nimo ${errors['minlength'].requiredLength} caracteres`;
     }
 
     // Errores personalizados
@@ -72,36 +85,36 @@ export class InputComponent {
     }
 
     if (errors['invalidEmail']) {
-      return 'Ingresa un correo electrónico válido';
+      return 'Ingresa un correo electrÃ³nico vÃ¡lido';
     }
 
     if (errors['invalidPhone']) {
-      return 'Ingresa un teléfono válido (7-15 dígitos)';
+      return 'Ingresa un telÃ©fono vÃ¡lido (7-15 dÃ­gitos)';
     }
 
-    // Errores de contraseña
+    // Errores de contraseÃ±a
     if (errors['minLength']) {
-      return 'La contraseña debe tener al menos 8 caracteres';
+      return 'La contraseÃ±a debe tener al menos 8 caracteres';
     }
 
     if (errors['maxLength']) {
-      return 'La contraseña no debe superar 16 caracteres';
+      return 'La contraseÃ±a no debe superar 16 caracteres';
     }
 
     if (errors['noUpperCase']) {
-      return 'Debe contener al menos una letra mayúscula';
+      return 'Debe contener al menos una letra mayÃºscula';
     }
 
     if (errors['noLowerCase']) {
-      return 'Debe contener al menos una letra minúscula';
+      return 'Debe contener al menos una letra minÃºscula';
     }
 
     if (errors['noSpecialChar']) {
-      return 'Debe contener al menos un carácter especial';
+      return 'Debe contener al menos un carÃ¡cter especial';
     }
 
     if (errors['passwordMismatch']) {
-      return 'Las contraseñas no coinciden';
+      return 'Las contraseÃ±as no coinciden';
     }
     // Errores de altura
     if (errors['minHeight']) {
@@ -109,7 +122,7 @@ export class InputComponent {
     }
 
     if (errors['maxHeight']) {
-      return 'La altura debe tener como máximo 3 cifras (999 cm)';
+      return 'La altura debe tener como mÃ¡ximo 3 cifras (999 cm)';
     }
 
     // Errores de peso
@@ -118,24 +131,24 @@ export class InputComponent {
     }
 
     if (errors['maxWeight']) {
-      return 'El peso máximo es 999.99 kg';
+      return 'El peso mÃ¡ximo es 999.99 kg';
     }
 
     if (errors['maxDecimals']) {
-      return 'El peso puede tener como máximo 2 decimales';
+      return 'El peso puede tener como mÃ¡ximo 2 decimales';
     }
 
-    // Errores de teléfono
+    // Errores de telÃ©fono
     if (errors['notNumeric']) {
-      return 'Solo se permiten números';
+      return 'Solo se permiten nÃºmeros';
     }
 
     if (errors['minPhoneLength']) {
-      return 'El teléfono debe tener entre 7 y 15 dígitos';
+      return 'El telÃ©fono debe tener entre 7 y 15 dÃ­gitos';
     }
 
     if (errors['maxPhoneLength']) {
-      return 'El teléfono debe tener entre 7 y 15 dígitos';
+      return 'El telÃ©fono debe tener entre 7 y 15 dÃ­gitos';
     }
 
     // Errores de fecha
@@ -145,3 +158,4 @@ export class InputComponent {
     return '';
   }
 }
+

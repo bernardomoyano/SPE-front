@@ -6,6 +6,7 @@ export interface CreatePlanningRequest {
   phase?: string;
   startDate: Date;
   durationWeeks: number;
+  price: number;
   status: 'active' | 'paused' | 'finished';
   type: 'training' | 'nutrition' | 'complete';
   notes?: string;

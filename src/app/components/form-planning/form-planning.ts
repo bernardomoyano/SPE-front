@@ -45,6 +45,7 @@ export class FormPlanningComponent implements OnInit {
       phase: ['', [Validators.maxLength(255)]],
       startDate: ['', [Validators.required]],
       durationWeeks: [null, [Validators.required, Validators.min(1), Validators.max(104)]],
+      price: [null, [Validators.required, Validators.min(0.01), Validators.max(9999999999.99), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       status: ['active', [Validators.required]],
       type: ['', [Validators.required]],
       notes: ['', [Validators.maxLength(2000)]]
@@ -78,6 +79,10 @@ export class FormPlanningComponent implements OnInit {
     return this.form.get('durationWeeks') as FormControl;
   }
 
+  get priceControl(): FormControl {
+    return this.form.get('price') as FormControl;
+  }
+
   get statusControl(): FormControl {
     return this.form.get('status') as FormControl;
   }
@@ -103,6 +108,7 @@ export class FormPlanningComponent implements OnInit {
         phase: formData.phase,
         startDate: new Date(formData.startDate),
         durationWeeks: formData.durationWeeks,
+        price: Number(formData.price),
         status: formData.status,
         type: formData.type,
         notes: formData.notes

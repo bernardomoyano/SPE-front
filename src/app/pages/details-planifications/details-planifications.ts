@@ -214,6 +214,7 @@ export class DetailsPlanifications implements OnInit {
       phase: v.phase || undefined,
       startDate: v.startDate ? new Date(v.startDate) : current.startDate,
       durationWeeks: Number(v.durationWeeks),
+      price: current.price,
       goals: v.goals || undefined,
       notes: v.notes || undefined
     };

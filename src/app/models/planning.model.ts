@@ -9,6 +9,7 @@ export interface PlanningDto {
   phase?: string;
   startDate: Date;
   durationWeeks: number;
+  price: number;
   endDate?: Date; // Calculated as StartDate + DurationWeeks * 7 days
   status: 'active' | 'paused' | 'finished';
   type: 'training' | 'nutrition' | 'complete';
