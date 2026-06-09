@@ -40,8 +40,8 @@
                 {{ payment.planningDurationWeeks || '-' }} semanas
               </small>
             </td>
-            <td>{{ formatMoney(payment.amount, payment.currency) }}</td>
-            <td>{{ formatDate(payment.updatedAt) }}</td>
+            <td>{{ payment.amount | moneyArg:payment.currency }}</td>
+            <td>{{ payment.updatedAt | dateArg }}</td>
             <td>
               <span class="pending-payments__badge">Bajo revisión</span>
             </td>
@@ -91,7 +91,7 @@
       <h3>{{ reviewAction() === 'approve' ? 'Aceptar pago' : 'Rechazar pago' }}</h3>
       <p>
         {{ selectedPayment()?.studentName }} · {{ selectedPayment()?.planningName }} ·
-        {{ formatMoney(selectedPayment()?.amount || 0, selectedPayment()?.currency || 'ARS') }}
+        {{ selectedPayment()?.amount | moneyArg:selectedPayment()?.currency }}
       </p>
 
       <label class="pending-payments-modal__label" for="review-comment">Comentario</label>

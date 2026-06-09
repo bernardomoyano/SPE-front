@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 
 export interface MenuItem {
   label: string;
   icon: string;
-  route: string;
-  roles?: string[]; // Roles que pueden ver este item (opcional)
+  route?: string;
+  roles?: string[];
+  children?: MenuItem[];
 }
 
 @Injectable({
@@ -25,10 +26,29 @@ export class MenuService {
       roles: ['COACH']
     },
     {
-      label: 'Pagos pendientes',
-      icon: 'pi pi-wallet',
-      route: '/pagos-pendientes',
-      roles: ['COACH']
+      label: 'Pagos',
+      icon: 'pi pi-credit-card',
+      roles: ['COACH'],
+      children: [
+        {
+          label: 'Pagos pendientes',
+          icon: 'pi pi-clock',
+          route: '/pagos-pendientes',
+          roles: ['COACH']
+        },
+        {
+          label: 'Todos los pagos',
+          icon: 'pi pi-list',
+          route: '/pagos',
+          roles: ['COACH']
+        }
+      ]
+    },
+    {
+      label: 'Pagos',
+      icon: 'pi pi-credit-card',
+      route: '/pagos',
+      roles: ['STUDENT']
     },
     {
       label: 'Ejercicios',
@@ -52,32 +72,24 @@ export class MenuService {
 
   constructor() {}
 
-  /**
-   * Obtiene los items del menú según el rol del usuario
-   * @param userRole Rol del usuario actual
-   * @returns Array de items del menú filtrados por rol
-   */
   getMenuItems(userRole?: string): MenuItem[] {
     if (!userRole) {
       return [];
     }
 
-    return this.menuItems.filter(item => {
-      // Si no tiene roles definidos, es visible para todos
-      if (!item.roles || item.roles.length === 0) {
-        return true;
-      }
-
-      // Si tiene roles definidos, verificar si el usuario tiene acceso
-      return item.roles.includes(userRole);
-    });
+    return this.menuItems
+      .filter(item => this.canShow(item, userRole))
+      .map(item => ({
+        ...item,
+        children: item.children?.filter(child => this.canShow(child, userRole))
+      }));
   }
 
-  /**
-   * Obtiene todos los items del menú (para administradores o configuración)
-   * @returns Array completo de items del menú
-   */
   getAllMenuItems(): MenuItem[] {
     return [...this.menuItems];
+  }
+
+  private canShow(item: MenuItem, userRole: string): boolean {
+    return !item.roles || item.roles.length === 0 || item.roles.includes(userRole);
   }
 }

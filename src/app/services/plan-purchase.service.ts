@@ -12,7 +12,12 @@ import {
   ManualPaymentReviewItem,
   ReviewManualPaymentRequest
 } from '../models/plan-purchase/manual-payment-review.model';
-import { PlanPurchaseDto } from '../models/plan-purchase.model';
+import {
+  MercadoPagoReceipt,
+  PaymentDocumentLink,
+  PlanPurchaseDto,
+  PlanPurchaseHistoryItem
+} from '../models/plan-purchase.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +29,25 @@ export class PlanPurchaseService {
 
   create(request: CreatePlanPurchase): Observable<ApiResponse<CreatePlanPurchaseResult>> {
     return this.http.post<ApiResponse<CreatePlanPurchaseResult>>(this.url, request);
+  }
+
+  getHistory(userId: number, role: string): Observable<ApiResponse<PlanPurchaseHistoryItem[]>> {
+    return this.http.get<ApiResponse<PlanPurchaseHistoryItem[]>>(
+      this.url,
+      { params: { userId, role } }
+    );
+  }
+
+  getPaymentDocumentLink(paymentId: string): Observable<ApiResponse<PaymentDocumentLink>> {
+    return this.http.get<ApiResponse<PaymentDocumentLink>>(
+      `${this.url}/${paymentId}/document-link`
+    );
+  }
+
+  getMercadoPagoReceipt(paymentId: string): Observable<ApiResponse<MercadoPagoReceipt>> {
+    return this.http.get<ApiResponse<MercadoPagoReceipt>>(
+      `${this.url}/${paymentId}/mercado-pago/receipt`
+    );
   }
 
   uploadManualEvidence(
