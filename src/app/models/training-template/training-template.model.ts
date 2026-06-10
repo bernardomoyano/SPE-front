@@ -1,3 +1,8 @@
+﻿export interface TrainingTemplateSummary {
+  id: number;
+  name: string;
+}
+
 export interface TrainingTemplate {
   id: number;
   coachId: number;
@@ -64,3 +69,4 @@ export interface UpsertExerciseGroupTrainingTemplate {
   restBetweenExercisesSec?: number;
   restBetweenRoundsSec: number;
 }
+

@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
-import { TrainingTemplate, UpsertTrainingTemplate } from '../models/training-template/training-template.model';
+import { TrainingTemplate, TrainingTemplateSummary, UpsertTrainingTemplate } from '../models/training-template/training-template.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,10 @@ export class TrainingTemplateService {
   private readonly url = 'https://localhost:7281/api/TrainingTemplates';
 
   constructor(private http: HttpClient) {}
+
+  getSummaries(): Observable<ApiResponse<TrainingTemplateSummary[]>> {
+    return this.http.get<ApiResponse<TrainingTemplateSummary[]>>(`${this.url}/summaries`);
+  }
 
   getAll(): Observable<ApiResponse<TrainingTemplate[]>> {
     return this.http.get<ApiResponse<TrainingTemplate[]>>(this.url);
@@ -32,3 +36,5 @@ export class TrainingTemplateService {
     return this.http.delete<ApiResponse<object>>(`${this.url}/${id}`);
   }
 }
+
+

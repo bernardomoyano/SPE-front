@@ -1,4 +1,4 @@
-<div class="session-item">
+﻿<div class="session-item">
   <div class="session-item__header" (click)="toggleCollapse()">
     <div class="session-item__title-section">
       <button class="session-item__collapse-btn" [attr.aria-label]="isCollapsed() ? 'Expandir' : 'Colapsar'">
@@ -21,6 +21,12 @@
     </div>
 
     <div class="session-item__actions" (click)="$event.stopPropagation()">
+      <app-button
+        *ngIf="!isEditing()"
+        label="Cargar plantilla"
+        variant="secondary"
+        (click)="openTemplateDialog()"
+      ></app-button>
       <button 
         *ngIf="!isEditing()"
         class="session-item__action-btn session-item__action-btn--edit"
@@ -454,3 +460,38 @@
   (save)="onSaveGroup($event)"
   (cancel)="onCancelGroup()"
 ></app-form-exercise-group>
+
+<!-- Modal: Selección de plantilla de entrenamiento -->
+<div *ngIf="showTemplateDialog()" class="template-dialog-overlay" (click)="closeTemplateDialog()">
+  <div class="template-dialog" (click)="$event.stopPropagation()">
+    <div class="template-dialog__header">
+      <h3 class="template-dialog__title">Cargar plantilla</h3>
+      <button type="button" class="template-dialog__close" (click)="closeTemplateDialog()" aria-label="Cerrar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="template-dialog__body">
+      <p *ngIf="loadingTemplates()" class="template-dialog__state">Cargando plantillas...</p>
+      <p *ngIf="!loadingTemplates() && templateSummaries().length === 0" class="template-dialog__state">
+        Todavía no hay plantillas cargadas.
+      </p>
+
+      <button
+        *ngFor="let template of templateSummaries()"
+        type="button"
+        class="template-dialog__item"
+        [disabled]="loadingTemplateDetails()"
+        (click)="loadTemplate(template.id)"
+      >
+        <span>{{ template.name }}</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
