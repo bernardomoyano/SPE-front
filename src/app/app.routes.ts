@@ -27,6 +27,11 @@ export const routes: Routes = [
             { path: 'pagos-pendientes', component: PendingPayments },
             { path: 'pagos/:paymentId/comprobante', component: PaymentDocument },
             { path: 'pagos', component: Payments },
+            {
+                path: 'plantillas-entrenamiento',
+                loadComponent: () => import('./pages/training-templates/training-templates')
+                    .then(m => m.TrainingTemplates)
+            },
             { path: 'atletas', component: MyStudents },
             { path: 'atletas/planificaciones/:id', component: Planifications },
             { path: 'atletas/planificaciones/:id/detalles', component: DetailsPlanifications },

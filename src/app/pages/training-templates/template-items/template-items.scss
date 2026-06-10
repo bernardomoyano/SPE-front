@@ -1,0 +1,946 @@
+﻿@import '../../../../styles/variables.scss';
+@import '../../../../styles/typography.scss';
+
+.session-item {
+  background-color: $bg-secondary;
+  border: 1px solid $border-color-light;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-md;
+  overflow: hidden;
+  transition: all $transition-base;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md $spacing-lg;
+    background-color: $color-gray-50;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color $transition-base;
+
+    &:hover {
+      background-color: $color-gray-100;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-sm $spacing-md;
+    }
+  }
+
+  &__title-section {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    flex: 1;
+  }
+
+  &__collapse-btn {
+    background: none;
+    border: none;
+    padding: $spacing-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-secondary;
+    transition: transform $transition-base;
+
+    svg {
+      transition: transform $transition-base;
+
+      &.rotated {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  &__title {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-sm;
+    }
+  }
+
+  &__subtitle {
+    font-weight: $font-weight-regular;
+    color: $text-secondary;
+    font-size: $font-size-sm;
+
+    @media (max-width: $breakpoint-sm) {
+      display: none;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-xs;
+    align-items: center;
+  }
+
+  &__action-btn {
+    background: none;
+    border: none;
+    padding: $spacing-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-sm;
+    transition: all $transition-fast;
+
+    &--edit {
+      color: $color-accent;
+
+      &:hover {
+        background-color: rgba($color-accent, 0.1);
+      }
+    }
+
+    &--delete {
+      color: $color-error;
+
+      &:hover {
+        background-color: rgba($color-error, 0.1);
+      }
+    }
+  }
+
+  &__content {
+    max-height: 2000px;
+    overflow: hidden;
+    transition: max-height $transition-base, opacity $transition-base;
+    opacity: 1;
+
+    &.collapsed {
+      max-height: 0;
+      opacity: 0;
+    }
+  }
+
+  &__body {
+    padding: $spacing-lg;
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-md;
+    }
+  }
+
+  &__field {
+    margin-bottom: $spacing-lg;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  &__label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $text-secondary;
+    margin-bottom: $spacing-xs;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+  }
+
+  &__input,
+  &__textarea {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    font-size: $font-size-base;
+    font-family: $font-family-primary;
+    color: $text-primary;
+    background-color: $input-background;
+    border: 2px solid $input-border;
+    border-radius: $radius-sm;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $input-border-focus;
+    }
+
+    &::placeholder {
+      color: $text-muted;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-sm;
+      padding: $spacing-xs $spacing-sm;
+    }
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  &__text {
+    font-size: $font-size-base;
+    color: $text-primary;
+    line-height: $line-height-relaxed;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-sm;
+    }
+  }
+
+  &__exercises {
+    margin-top: $spacing-lg;
+    padding-top: $spacing-lg;
+    border-top: 1px solid $border-color-light;
+  }
+
+  &__exercises-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+    gap: $spacing-sm;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__add-exercise-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-md;
+    background-color: $color-primary;
+    color: $color-white;
+    border: none;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+      background-color: $color-primary-dark;
+      transform: translateY(-1px);
+      box-shadow: $shadow-sm;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+      justify-content: center;
+      padding: $spacing-sm $spacing-md;
+    }
+  }
+
+  &__exercises-empty {
+    text-align: center;
+    padding: $spacing-xl;
+    color: $text-muted;
+    font-size: $font-size-sm;
+    font-style: italic;
+    background-color: $color-gray-50;
+    border-radius: $radius-sm;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  // Control de columna de check segÃºn modo selecciÃ³n
+  &__exercises-table {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    .exercise-row__cell--check { display: none; }
+    .exercise-group-separator__check { display: none; }
+
+    .exercise-row:not(.exercise-row--header) {
+      cursor: pointer;
+    }
+
+    &--selecting {
+      .exercise-row__cell--check { display: flex; }
+      .exercise-group-separator__check { display: block; width: 32px; flex-shrink: 0; }
+
+      .exercise-row {
+        grid-template-columns: 32px 2fr 70px 90px 90px 100px;
+
+        @media (max-width: $breakpoint-md) {
+          grid-template-columns: 32px 1fr 60px 70px 70px 80px;
+        }
+
+        @media (max-width: $breakpoint-sm) {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .exercise-group-separator {
+        grid-template-columns: 32px 2fr 70px 90px 90px 100px;
+
+        @media (max-width: $breakpoint-md) {
+          grid-template-columns: 32px 1fr 60px 70px 70px 80px;
+        }
+
+        @media (max-width: $breakpoint-sm) {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+
+  // Barra de acciÃ³n de grupos de ejercicios
+  &__group-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+    padding: $spacing-sm $spacing-md;
+    background-color: rgba($color-primary, 0.06);
+    border: 1px solid rgba($color-primary, 0.2);
+    border-radius: $radius-md;
+    animation: group-bar-in $transition-fast forwards;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  &__group-bar-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-primary;
+    min-width: 0;
+
+    svg {
+      flex-shrink: 0;
+      stroke: $color-primary;
+    }
+
+    span {
+      white-space: nowrap;
+    }
+  }
+
+  &__group-bar-actions {
+    display: flex;
+    gap: $spacing-sm;
+    align-items: center;
+    flex-shrink: 0;
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+    }
+  }
+
+  &__group-bar-clear {
+    background: none;
+    border: none;
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    cursor: pointer;
+    border-radius: $radius-sm;
+    transition: all $transition-fast;
+    white-space: nowrap;
+
+    &:hover {
+      color: $text-primary;
+      background-color: $color-gray-100;
+    }
+  }
+
+  &__group-bar-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-md;
+    background-color: $color-primary;
+    color: $color-white;
+    border: none;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    cursor: pointer;
+    transition: all $transition-fast;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: $color-primary-dark;
+      transform: translateY(-1px);
+      box-shadow: $shadow-sm;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+
+  &__edit-actions {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: $spacing-lg;
+    padding-top: $spacing-lg;
+    border-top: 1px solid $border-color-light;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+    }
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-lg;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: all $transition-base;
+    flex: 1;
+
+    &--save {
+      background-color: $color-success;
+      color: $color-white;
+
+      &:hover {
+        background-color: darken($color-success, 10%);
+        transform: translateY(-1px);
+        box-shadow: $shadow-sm;
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    &--cancel {
+      background-color: transparent;
+      color: $text-secondary;
+      border: 2px solid $border-color-medium;
+
+      &:hover {
+        background-color: $color-gray-100;
+        border-color: $border-color-dark;
+      }
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      padding: $spacing-sm $spacing-md;
+    }
+  }
+}
+
+.exercise-row {
+  display: grid;
+  grid-template-columns: 2fr 70px 90px 90px 100px;
+  gap: $spacing-sm;
+  align-items: center;
+  padding: $spacing-sm;
+  background-color: $bg-secondary;
+  border-radius: $radius-sm;
+  transition: background-color $transition-fast, border-left $transition-fast;
+  border-left: 3px solid transparent;
+
+  &:not(&--header):hover {
+    background-color: $color-gray-50;
+  }
+
+  &--header {
+    background-color: $color-gray-100;
+    font-weight: $font-weight-semibold;
+    margin-bottom: $spacing-xs;
+    cursor: default !important;
+  }
+
+  &--selected {
+    background-color: rgba($color-primary, 0.04) !important;
+    border-left-color: $color-primary;
+  }
+
+  // â”€â”€â”€ Estilos para ejercicios agrupados â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  &--in-group {
+    background-color: rgba($color-accent, 0.03);
+    border-left: 3px solid $color-accent;
+    cursor: default !important;
+
+    &:hover {
+      background-color: rgba($color-accent, 0.07) !important;
+    }
+
+    &.exercise-row--selected {
+      background-color: rgba($color-accent, 0.1) !important;
+    }
+  }
+
+  &--in-group-first {
+    border-top: 1.5px solid rgba($color-accent, 0.35);
+    border-top-right-radius: $radius-sm;
+  }
+
+  &--in-group-last {
+    border-bottom: 1.5px solid rgba($color-accent, 0.35);
+    border-bottom-right-radius: $radius-sm;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr 60px 70px 70px 80px;
+    gap: $spacing-xs;
+    padding: $spacing-xs;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+    gap: $spacing-sm;
+    padding: $spacing-sm;
+  }
+
+  &__cell {
+    font-size: $font-size-sm;
+    color: $text-primary;
+
+    @media (max-width: $breakpoint-sm) {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: $spacing-xs;
+
+      &--check {
+        display: flex;
+        justify-content: flex-start;
+      }
+
+      &--hidden {
+        display: none !important;
+      }
+
+      &::before {
+        content: attr(data-label);
+        font-weight: $font-weight-semibold;
+        color: $text-secondary;
+        font-size: $font-size-xs;
+        text-transform: uppercase;
+      }
+
+      &--check::before { content: ''; }
+
+      &--exercise::before {
+        content: 'Ejercicio:';
+      }
+
+      &--sets::before {
+        content: 'Series:';
+      }
+
+      &--reps::before {
+        content: 'Reps:';
+      }
+
+      &--rest::before {
+        content: 'Descanso:';
+      }
+
+      &--actions::before {
+        content: 'Acciones:';
+      }
+    }
+  }
+
+  &__select,
+  &__input {
+    width: 100%;
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+    font-family: $font-family-primary;
+    color: $text-primary;
+    background-color: $input-background;
+    border: 1px solid $input-border;
+    border-radius: $radius-sm;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $input-border-focus;
+    }
+
+    &:disabled {
+      background-color: $color-gray-100;
+      color: $text-muted;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    &--small {
+      padding: $spacing-xs;
+      font-size: $font-size-xs;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      flex: 1;
+    }
+  }
+
+  &__select {
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &__text {
+    font-size: $font-size-sm;
+    color: $text-primary;
+    word-break: break-word;
+  }
+
+  &__cell--check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__check-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: $radius-sm;
+    border: 2px solid $border-color-medium;
+    background-color: $color-white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all $transition-fast;
+    color: $color-white;
+
+    &:hover {
+      border-color: $color-primary;
+      background-color: rgba($color-primary, 0.08);
+    }
+
+    &--active {
+      background-color: $color-primary;
+      border-color: $color-primary;
+
+      &:hover {
+        background-color: $color-primary-dark;
+        border-color: $color-primary-dark;
+      }
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__cell--actions {
+    display: flex;
+    gap: $spacing-xs;
+    justify-content: flex-end;
+
+    @media (max-width: $breakpoint-sm) {
+      justify-content: flex-start;
+
+      &::before {
+        flex: 1;
+      }
+    }
+  }
+
+  &__action-btn {
+    background: none;
+    border: none;
+    padding: $spacing-xs;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-sm;
+    transition: all $transition-fast;
+
+    &--save {
+      color: $color-success;
+
+      &:hover {
+        background-color: rgba($color-success, 0.1);
+      }
+    }
+
+    &--edit {
+      color: $color-accent;
+
+      &:hover {
+        background-color: rgba($color-accent, 0.1);
+      }
+    }
+
+    &--delete {
+      color: $color-error;
+
+      &:hover {
+        background-color: rgba($color-error, 0.1);
+      }
+    }
+  }
+}
+
+@keyframes group-bar-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+
+// â”€â”€â”€ Tarjeta de grupo (superserie / triserie / circuito) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+.exercise-group-card {
+  border: 1.5px solid rgba($color-accent, 0.3);
+  border-radius: $radius-md;
+  overflow: hidden;
+  background-color: $bg-secondary;
+  animation: group-bar-in $transition-fast forwards;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-sm;
+    padding: $spacing-xs $spacing-md;
+    background: linear-gradient(135deg, rgba($color-accent, 0.1) 0%, rgba($color-accent, 0.04) 100%);
+    border-bottom: 1px solid rgba($color-accent, 0.2);
+    flex-wrap: wrap;
+
+    @media (max-width: $breakpoint-sm) {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: $spacing-sm $spacing-md;
+    }
+  }
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px $spacing-sm;
+    background-color: $color-accent;
+    color: $color-white;
+    border-radius: $radius-round;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    letter-spacing: $letter-spacing-wide;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    flex-wrap: wrap;
+
+    svg {
+      stroke: $color-accent;
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+
+    strong {
+      color: $color-accent;
+      font-weight: $font-weight-semibold;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      font-size: $font-size-xs;
+    }
+  }
+
+  &__dot {
+    color: $border-color-medium;
+    user-select: none;
+  }
+
+  &__ungroup-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px $spacing-sm;
+    background: none;
+    border: 1px solid rgba($color-error, 0.3);
+    border-radius: $radius-sm;
+    color: $color-error;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all $transition-fast;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    svg {
+      stroke: currentColor;
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background-color: rgba($color-error, 0.08);
+      border-color: $color-error;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+      justify-content: center;
+      padding: $spacing-xs $spacing-md;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-xs 0;
+  }
+
+  // â”€â”€â”€ Filas dentro de la tarjeta de grupo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  &__row {
+    display: grid;
+    grid-template-columns: 2fr 90px 80px;
+    gap: $spacing-sm;
+    align-items: center;
+    padding: $spacing-xs $spacing-md;
+    border-left: 3px solid transparent;
+    transition: background-color $transition-fast;
+
+    &:not(&--header):hover {
+      background-color: rgba($color-accent, 0.04);
+    }
+
+    &--header {
+      border-left-color: transparent !important;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      background-color: rgba($color-accent, 0.04);
+      border-bottom: 1px solid rgba($color-accent, 0.12);
+    }
+
+    &--first {
+      border-left: 3px solid rgba($color-accent, 0.5);
+    }
+
+    &:not(&--header):not(&--first) {
+      border-left: 3px solid rgba($color-accent, 0.25);
+      border-top: 1px dashed rgba($color-accent, 0.15);
+    }
+
+    @media (max-width: $breakpoint-md) {
+      grid-template-columns: 1fr 70px 70px;
+      padding: $spacing-xs $spacing-sm;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      grid-template-columns: 1fr;
+      gap: $spacing-xs;
+      padding: $spacing-sm $spacing-md;
+
+      &--header {
+        display: none; // el data-label en mÃ³vil reemplaza el header
+      }
+    }
+  }
+
+  &__cell {
+    font-size: $font-size-sm;
+    color: $text-primary;
+    min-width: 0;
+
+    &--header {
+      font-size: $font-size-xs;
+      font-weight: $font-weight-semibold;
+      color: $text-secondary;
+      text-transform: uppercase;
+      letter-spacing: $letter-spacing-wide;
+    }
+
+    &--actions {
+      display: flex;
+      gap: $spacing-xs;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: $spacing-xs;
+
+      &::before {
+        content: attr(data-label);
+        font-weight: $font-weight-semibold;
+        color: $text-secondary;
+        font-size: $font-size-xs;
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+
+      &--actions::before {
+        content: 'Acciones:';
+        flex: 1;
+      }
+
+      &--actions {
+        justify-content: flex-start;
+      }
+    }
+  }
+}
+

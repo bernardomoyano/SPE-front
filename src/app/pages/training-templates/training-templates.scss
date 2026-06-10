@@ -1,0 +1,40 @@
+﻿@import '../../../styles/variables.scss';
+
+.my-templates {
+  &__header {
+    margin-bottom: $spacing-xl;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    @media (max-width: $breakpoint-md) {
+      gap: $spacing-md;
+    }
+  }
+
+  &__title {
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: $color-primary;
+    margin: 0;
+
+    @media (max-width: $breakpoint-md) {
+      font-size: 1.3rem;
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  &__empty {
+    padding: $spacing-lg;
+    color: $text-secondary;
+    text-align: center;
+    background-color: $bg-secondary;
+    border: 1px dashed $border-color-medium;
+    border-radius: $radius-md;
+  }
+}

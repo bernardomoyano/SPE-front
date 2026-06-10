@@ -57,6 +57,12 @@ export class MenuService {
       roles: ['COACH']
     },
     {
+      label: 'Plantillas de entrenamiento',
+      icon: 'pi pi-clipboard',
+      route: '/plantillas-entrenamiento',
+      roles: ['COACH']
+    },
+    {
       label: 'Mi Perfil',
       icon: 'pi pi-user',
       route: '/mi-perfil',

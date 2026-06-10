@@ -1,0 +1,34 @@
+﻿<div class="my-templates">
+  <div class="my-templates__header">
+    <h1 class="my-templates__title">Mis plantillas</h1>
+    <app-button
+      label="Nueva Plantilla"
+      variant="primary"
+      (click)="newTemplate()"
+    ></app-button>
+  </div>
+
+  <div class="my-templates__list">
+    <app-template-items
+      *ngIf="creatingTemplate()"
+      [isNew]="true"
+      [availableExercises]="availableExercises()"
+      [loadingExercises]="loadingExercises()"
+      (save)="createTemplate($event)"
+      (cancelNew)="cancelNewTemplate()"
+    ></app-template-items>
+
+    <app-template-items
+      *ngFor="let template of templates()"
+      [template]="template"
+      [availableExercises]="availableExercises()"
+      [loadingExercises]="loadingExercises()"
+      (save)="updateTemplate(template, $event)"
+      (delete)="deleteTemplate(template)"
+    ></app-template-items>
+  </div>
+
+  <p *ngIf="!loading() && !creatingTemplate() && templates().length === 0" class="my-templates__empty">
+    Todavía no hay plantillas cargadas.
+  </p>
+</div>
