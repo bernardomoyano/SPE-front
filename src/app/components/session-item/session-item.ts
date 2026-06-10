@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter, signal, OnInit, OnChanges, SimpleChanges, computed } from '@angular/core';
+﻿import { Component, Input, Output, EventEmitter, signal, OnInit, OnChanges, SimpleChanges, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Button } from '../button/button';
 import { ExerciseService } from '../../services/exercise.service';
 import { TrainingSessionService } from '../../services/microcycle.service';
 import { ExerciseGroupService } from '../../services/exercise-group.service';
@@ -15,6 +16,8 @@ import {
   ExerciseGroupFormData,
 } from '../form-exercise-group/form-exercise-group';
 import { ExerciseGroupDto } from '../../models/exerciseGroup/exercise-group-dto.model';
+import { TrainingTemplate, TrainingTemplateSummary } from '../../models/training-template/training-template.model';
+import { TrainingTemplateService } from '../../services/training-template.service';
 
 export interface TrainingSessionData {
   id?: number;
@@ -33,7 +36,7 @@ export interface ExerciseRow {
   isEditing: boolean;
   sortOrder: number;
   isSelected?: boolean;
-  group?: ExerciseGroupDto | null;
+  group?: (ExerciseGroupDto & { isTemplateGroup?: boolean }) | null;
 }
 
 // ─── Display row types (rendered table rows) ─────────────────────────────────
@@ -56,7 +59,7 @@ export type DisplayRow = ExerciseDisplayRow | GroupCardRow;
 
 @Component({
   selector: 'app-session-item',
-  imports: [CommonModule, FormsModule, FormExerciseGroupComponent],
+  imports: [CommonModule, FormsModule, FormExerciseGroupComponent, Button],
   templateUrl: './session-item.html',
   styleUrl: './session-item.scss',
 })
@@ -85,13 +88,16 @@ export class SessionItemComponent implements OnInit, OnChanges {
   // Lista de ejercicios de esta sesión
   exercises = signal<ExerciseRow[]>([]);
 
-  // ─── Selección multiple ────────────────────────────────────────────────────
   selectionMode = signal<boolean>(false);
 
-  // ─── Estado del form de grupo ──────────────────────────────────────────────
+  
   showGroupForm = signal<boolean>(false);
   groupType = signal<ExerciseGroupType | null>(null);
   savingGroup = signal<boolean>(false);
+  showTemplateDialog = signal<boolean>(false);
+  loadingTemplates = signal<boolean>(false);
+  loadingTemplateDetails = signal<boolean>(false);
+  templateSummaries = signal<TrainingTemplateSummary[]>([]);
 
   // Selected exercises (computed)
   selectedExercises = computed(() => this.exercises().filter((ex) => ex.isSelected));
@@ -156,6 +162,7 @@ export class SessionItemComponent implements OnInit, OnChanges {
     private exerciseService: ExerciseService,
     private trainingSessionService: TrainingSessionService,
     private exerciseGroupService: ExerciseGroupService,
+    private trainingTemplateService: TrainingTemplateService,
     private alertService: AlertService,
   ) {}
 
@@ -189,6 +196,7 @@ export class SessionItemComponent implements OnInit, OnChanges {
     this.exercises.set([]);
     this.selectionMode.set(false);
     this.showGroupForm.set(false);
+    this.showTemplateDialog.set(false);
     this.groupType.set(null);
     this.isEditing.set(false);
     this.editedSession.set({ ...this.session });
@@ -207,7 +215,7 @@ export class SessionItemComponent implements OnInit, OnChanges {
 
           if (trainingSession) {
             
-            // Precargar datos de la sesión
+            // Precargar datos de la sesiÃ³n
             const sessionData: TrainingSessionData = {
               id: trainingSession.id,
               heating: trainingSession.heating || '',
@@ -219,7 +227,7 @@ export class SessionItemComponent implements OnInit, OnChanges {
             this.session = sessionData;
             this.editedSession.set({ ...sessionData });
 
-            // Precargar ejercicios de la sesión
+            // Precargar ejercicios de la sesiÃ³n
             if (trainingSession.exerciseSessions && trainingSession.exerciseSessions.length > 0) {
               const exerciseRows: ExerciseRow[] = trainingSession.exerciseSessions.map(es => ({
                 id: es.id,
@@ -234,7 +242,7 @@ export class SessionItemComponent implements OnInit, OnChanges {
               this.exercises.set(exerciseRows);
             }
 
-            // Si hay datos cargados, no mostrar en modo edición
+            // Si hay datos cargados, no mostrar en modo ediciÃ³n
             if (trainingSession.title || trainingSession.heating || trainingSession.notes) {
               this.isEditing.set(false);
             }
@@ -386,8 +394,11 @@ export class SessionItemComponent implements OnInit, OnChanges {
   getGroupTypeLabel(type: string): string {
     const map: Record<string, string> = {
       superserie: 'Superserie',
+      superset: 'Superserie',
       triserie:   'Triserie',
+      triset: 'Triserie',
       circuito:   'Circuito',
+      circuit: 'Circuito',
     };
     return map[type?.toLowerCase()] ?? type;
   }
@@ -463,7 +474,129 @@ export class SessionItemComponent implements OnInit, OnChanges {
     });
   }
 
-  // Método público para obtener los datos de la sesión en formato DTO
+
+  openTemplateDialog(): void {
+    this.showTemplateDialog.set(true);
+
+    if (this.templateSummaries().length > 0) {
+      return;
+    }
+
+    this.loadingTemplates.set(true);
+    this.trainingTemplateService.getSummaries().subscribe({
+      next: response => {
+        this.templateSummaries.set(response.data ?? []);
+        this.loadingTemplates.set(false);
+      },
+      error: err => {
+        this.loadingTemplates.set(false);
+        this.alertService.showError(this.getErrorMessage(err, 'Error al cargar las plantillas'));
+      },
+    });
+  }
+
+  closeTemplateDialog(): void {
+    this.showTemplateDialog.set(false);
+  }
+
+  loadTemplate(templateId: number): void {
+    this.loadingTemplateDetails.set(true);
+    this.trainingTemplateService.getById(templateId).subscribe({
+      next: response => {
+        if (response.data) {
+          this.applyTemplate(response.data);
+          this.showTemplateDialog.set(false);
+          this.alertService.showSuccess('Plantilla cargada correctamente');
+        }
+        this.loadingTemplateDetails.set(false);
+      },
+      error: err => {
+        this.loadingTemplateDetails.set(false);
+        this.alertService.showError(this.getErrorMessage(err, 'Error al cargar la plantilla'));
+      },
+    });
+  }
+
+  private applyTemplate(template: TrainingTemplate): void {
+    this.editedSession.set({
+      ...this.editedSession(),
+      heating: template.heating || '',
+      title: template.title,
+      notes: template.notes || '',
+    });
+
+    const groups = new Map<number, ExerciseGroupDto & { isTemplateGroup?: boolean }>();
+    template.groups.forEach(group => {
+      groups.set(group.id, {
+        id: group.id,
+        trainingSessionId: this.session.id ?? 0,
+        type: group.type,
+        name: group.name,
+        sortOrder: group.sortOrder,
+        rounds: group.rounds,
+        restBetweenExercisesSec: group.restBetweenExercisesSec,
+        restBetweenRoundsSec: group.restBetweenRoundsSec,
+        isTemplateGroup: true,
+      });
+    });
+
+    this.exercises.set(template.exercises.map((exercise, index) => ({
+      exerciseId: exercise.exerciseId,
+      sets: exercise.sets,
+      reps: exercise.reps,
+      restSec: exercise.restSec,
+      isEditing: false,
+      sortOrder: exercise.sortOrder || index + 1,
+      group: this.resolveTemplateGroup(exercise.groupId, exercise.group, groups),
+    })));
+
+    this.selectionMode.set(false);
+    this.clearSelection();
+    this.isEditing.set(true);
+    this.isCollapsed.set(false);
+  }
+
+  private resolveTemplateGroup(
+    groupId: number | undefined,
+    group: TrainingTemplate['groups'][number] | undefined,
+    groups: Map<number, ExerciseGroupDto & { isTemplateGroup?: boolean }>,
+  ): (ExerciseGroupDto & { isTemplateGroup?: boolean }) | null {
+    if (groupId && groups.has(groupId)) {
+      return groups.get(groupId)!;
+    }
+
+    if (!group) {
+      return null;
+    }
+
+    const mappedGroup = {
+      id: group.id,
+      trainingSessionId: this.session.id ?? 0,
+      type: group.type,
+      name: group.name,
+      sortOrder: group.sortOrder,
+      rounds: group.rounds,
+      restBetweenExercisesSec: group.restBetweenExercisesSec,
+      restBetweenRoundsSec: group.restBetweenRoundsSec,
+      isTemplateGroup: true,
+    };
+    groups.set(group.id, mappedGroup);
+    return mappedGroup;
+  }
+
+  private removeGroupLocally(groupId: number): void {
+    this.exercises.set(this.exercises().map(exercise =>
+      exercise.group?.id === groupId
+        ? { ...exercise, group: null }
+        : exercise,
+    ));
+  }
+
+  private getErrorMessage(err: any, fallback: string): string {
+    return err?.error?.message || err?.error?.errors?.[0] || fallback;
+  }
+
+
   getTrainingSessionDto(): TrainingSession | null {
     // Construir ejercicios de la sesión
     const exerciseSessions: ExerciseSession[] = this.exercises()
@@ -493,3 +626,5 @@ export class SessionItemComponent implements OnInit, OnChanges {
     return trainingSession;
   }
 }
+
+

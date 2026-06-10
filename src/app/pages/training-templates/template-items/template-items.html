@@ -2,12 +2,12 @@
   <div class="session-item__header" (click)="toggleCollapse()">
     <div class="session-item__title-section">
       <button class="session-item__collapse-btn" [attr.aria-label]="isCollapsed() ? 'Expandir' : 'Colapsar'">
-        <svg 
-          width="20" 
-          height="20" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
           stroke-width="2"
           [class.rotated]="!isCollapsed()"
         >
@@ -15,23 +15,17 @@
         </svg>
       </button>
       <h4 class="session-item__title">
-        Sesión {{ sessionNumber }}
-        <span *ngIf="session.title && !isEditing()" class="session-item__subtitle">- {{ session.title }}</span>
+        {{ isNew ? 'Nueva plantilla' : 'Plantilla ' + TemplateNumber }}
+        <span *ngIf="editedTemplate().title && !isEditing()" class="session-item__subtitle">- {{ editedTemplate().name }}</span>
       </h4>
     </div>
 
     <div class="session-item__actions" (click)="$event.stopPropagation()">
-      <app-button
-        *ngIf="!isEditing()"
-        label="Cargar plantilla"
-        variant="secondary"
-        (click)="openTemplateDialog()"
-      ></app-button>
-      <button 
+      <button
         *ngIf="!isEditing()"
         class="session-item__action-btn session-item__action-btn--edit"
         (click)="enableEdit()"
-        aria-label="Editar sesión"
+        aria-label="Editar plantilla"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -39,10 +33,11 @@
         </svg>
       </button>
 
-      <button 
+      <button
+        *ngIf="!isNew"
         class="session-item__action-btn session-item__action-btn--delete"
         (click)="onDelete()"
-        aria-label="Eliminar sesión"
+        aria-label="Eliminar plantilla"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="3 6 5 6 21 6"></polyline>
@@ -54,59 +49,71 @@
 
   <div class="session-item__content" [class.collapsed]="isCollapsed()">
     <div class="session-item__body">
-      <!-- Título -->
+      <div class="session-item__field">
+        <label class="session-item__label">Nombre</label>
+        <input
+          *ngIf="isEditing()"
+          type="text"
+          class="session-item__input"
+          [value]="editedTemplate().name"
+          (input)="updateField('name', $any($event.target).value)"
+          placeholder="Ej: Hipertrofia tren superior"
+        />
+        <p *ngIf="!isEditing()" class="session-item__text">
+          {{ editedTemplate().name || 'Sin nombre' }}
+        </p>
+      </div>
+
       <div class="session-item__field">
         <label class="session-item__label">Título</label>
         <input
           *ngIf="isEditing()"
           type="text"
           class="session-item__input"
-          [value]="editedSession().title"
+          [value]="editedTemplate().title"
           (input)="updateField('title', $any($event.target).value)"
           placeholder="Ej: Día 1 - Fuerza"
         />
         <p *ngIf="!isEditing()" class="session-item__text">
-          {{ session.title || 'Sin título' }}
+          {{ editedTemplate().title || 'Sin título' }}
         </p>
       </div>
 
-      <!-- Calentamiento -->
       <div class="session-item__field">
         <label class="session-item__label">Calentamiento</label>
         <textarea
           *ngIf="isEditing()"
           class="session-item__textarea"
-          [value]="editedSession().heating"
+          [value]="editedTemplate().heating"
           (input)="updateField('heating', $any($event.target).value)"
           placeholder="Describe el calentamiento..."
           rows="3"
         ></textarea>
         <p *ngIf="!isEditing()" class="session-item__text">
-          {{ session.heating || 'Sin calentamiento especificado' }}
+          {{ editedTemplate().heating || 'Sin calentamiento especificado' }}
         </p>
       </div>
 
-      <!-- Notas -->
       <div class="session-item__field">
         <label class="session-item__label">Notas</label>
         <textarea
           *ngIf="isEditing()"
           class="session-item__textarea"
-          [value]="editedSession().notes"
+          [value]="editedTemplate().notes"
           (input)="updateField('notes', $any($event.target).value)"
           placeholder="Notas adicionales..."
           rows="3"
         ></textarea>
         <p *ngIf="!isEditing()" class="session-item__text">
-          {{ session.notes || 'Sin notas' }}
+          {{ editedTemplate().notes || 'Sin notas' }}
         </p>
       </div>
 
-      <!-- Ejercicios -->
       <div class="session-item__exercises">
         <div class="session-item__exercises-header">
           <label class="session-item__label">Ejercicios</label>
-          <button 
+          <button
+            *ngIf="isEditing()"
             class="session-item__add-exercise-btn"
             (click)="addExercise()"
             type="button"
@@ -128,7 +135,6 @@
           class="session-item__exercises-table"
           [class.session-item__exercises-table--selecting]="selectionMode()"
         >
-          <!-- Header -->
           <div class="exercise-row exercise-row--header">
             <div class="exercise-row__cell exercise-row__cell--check"></div>
             <div class="exercise-row__cell exercise-row__cell--exercise">Ejercicio</div>
@@ -139,145 +145,16 @@
           </div>
 
           <ng-container *ngFor="let row of displayRows(); trackBy: trackByDisplayRow">
-
-            <!-- ══ Fila de ejercicio suelto ═══════════════════════════════ -->
             <div
               *ngIf="row.type === 'exercise'"
               class="exercise-row"
               [class.exercise-row--selected]="$any(row).exercise.isSelected"
-              (click)="onExerciseRowClick($any(row).exerciseIndex)"
+              (click)="isEditing() && onExerciseRowClick($any(row).exerciseIndex)"
             >
-              <!-- Checkbox de selección -->
-              <div class="exercise-row__cell exercise-row__cell--check">
-                <button
-                  type="button"
-                  class="exercise-row__check-btn"
-                  [class.exercise-row__check-btn--active]="$any(row).exercise.isSelected"
-                  (click)="$event.stopPropagation(); toggleExerciseSelection($any(row).exerciseIndex)"
-                  [attr.aria-label]="$any(row).exercise.isSelected ? 'Deseleccionar' : 'Seleccionar'"
-                  [attr.aria-pressed]="$any(row).exercise.isSelected"
-                >
-                  <svg
-                    *ngIf="$any(row).exercise.isSelected"
-                    width="12" height="12" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="3"
-                  >
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </button>
-              </div>
-
-              <!-- Ejercicio Select/Text -->
-              <div class="exercise-row__cell exercise-row__cell--exercise" data-label="Ejercicio">
-                <select
-                  *ngIf="$any(row).exercise.isEditing"
-                  class="exercise-row__select"
-                  [value]="$any(row).exercise.exerciseId"
-                  (change)="updateExercise($any(row).exerciseIndex, 'exerciseId', +$any($event.target).value)"
-                  [disabled]="loadingExercises()"
-                  (click)="$event.stopPropagation()"
-                >
-                  <option [value]="null">{{ loadingExercises() ? 'Cargando...' : 'Seleccionar...' }}</option>
-                  <option *ngFor="let opt of availableExercises()" [value]="opt.id">{{ opt.name }}</option>
-                </select>
-                <span *ngIf="!$any(row).exercise.isEditing" class="exercise-row__text">
-                  {{ getExerciseName($any(row).exercise.exerciseId) }}
-                </span>
-              </div>
-
-              <!-- Series -->
-              <div class="exercise-row__cell exercise-row__cell--sets" data-label="Series">
-                <input
-                  *ngIf="$any(row).exercise.isEditing"
-                  type="number"
-                  class="exercise-row__input"
-                  [value]="$any(row).exercise.sets"
-                  (input)="updateExercise($any(row).exerciseIndex, 'sets', +$any($event.target).value)"
-                  min="1" max="20"
-                  (click)="$event.stopPropagation()"
-                />
-                <span *ngIf="!$any(row).exercise.isEditing" class="exercise-row__text">
-                  {{ $any(row).exercise.sets }}
-                </span>
-              </div>
-
-              <!-- Reps -->
-              <div class="exercise-row__cell exercise-row__cell--reps" data-label="Reps">
-                <input
-                  *ngIf="$any(row).exercise.isEditing"
-                  type="text"
-                  class="exercise-row__input"
-                  [value]="$any(row).exercise.reps"
-                  (input)="updateExercise($any(row).exerciseIndex, 'reps', $any($event.target).value)"
-                  placeholder="10-12"
-                  (click)="$event.stopPropagation()"
-                />
-                <span *ngIf="!$any(row).exercise.isEditing" class="exercise-row__text">
-                  {{ $any(row).exercise.reps }}
-                </span>
-              </div>
-
-              <!-- Descanso -->
-              <div class="exercise-row__cell exercise-row__cell--rest" data-label="Descanso">
-                <input
-                  *ngIf="$any(row).exercise.isEditing"
-                  type="number"
-                  class="exercise-row__input exercise-row__input--small"
-                  [value]="$any(row).exercise.restSec"
-                  (input)="updateExercise($any(row).exerciseIndex, 'restSec', +$any($event.target).value)"
-                  min="0" max="600" placeholder="60"
-                  (click)="$event.stopPropagation()"
-                />
-                <span *ngIf="!$any(row).exercise.isEditing" class="exercise-row__text">
-                  {{ $any(row).exercise.restSec }}s
-                </span>
-              </div>
-
-              <!-- Acciones -->
-              <div class="exercise-row__cell exercise-row__cell--actions" data-label="Acciones">
-                <button
-                  *ngIf="$any(row).exercise.isEditing"
-                  class="exercise-row__action-btn exercise-row__action-btn--save"
-                  (click)="$event.stopPropagation(); saveExercise($any(row).exerciseIndex)"
-                  type="button"
-                  aria-label="Guardar ejercicio"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </button>
-                <button
-                  *ngIf="!$any(row).exercise.isEditing"
-                  class="exercise-row__action-btn exercise-row__action-btn--edit"
-                  (click)="$event.stopPropagation(); editExercise($any(row).exerciseIndex)"
-                  type="button"
-                  aria-label="Editar ejercicio"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
-                </button>
-                <button
-                  class="exercise-row__action-btn exercise-row__action-btn--delete"
-                  (click)="$event.stopPropagation(); deleteExercise($any(row).exerciseIndex)"
-                  type="button"
-                  aria-label="Eliminar ejercicio"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  </svg>
-                </button>
-              </div>
+              <ng-container *ngTemplateOutlet="exerciseRow; context: { exercise: $any(row).exercise, index: $any(row).exerciseIndex }"></ng-container>
             </div>
 
-            <!-- ══ Tarjeta de grupo (superserie / triserie / circuito) ════ -->
-            <div
-              *ngIf="row.type === 'group-card'"
-              class="exercise-group-card"
-            >
-              <!-- Encabezado del grupo -->
+            <div *ngIf="row.type === 'group-card'" class="exercise-group-card">
               <div class="exercise-group-card__header">
                 <div class="exercise-group-card__info">
                   <span class="exercise-group-card__badge">
@@ -296,6 +173,7 @@
                   </div>
                 </div>
                 <button
+                  *ngIf="isEditing()"
                   type="button"
                   class="exercise-group-card__ungroup-btn"
                   (click)="ungroupExercises($any(row).group.id)"
@@ -309,10 +187,7 @@
                 </button>
               </div>
 
-              <!-- Ejercicios del grupo -->
               <div class="exercise-group-card__body">
-
-                <!-- Sub-header -->
                 <div class="exercise-group-card__row exercise-group-card__row--header">
                   <div class="exercise-group-card__cell exercise-group-card__cell--exercise">Ejercicio</div>
                   <div class="exercise-group-card__cell exercise-group-card__cell--reps">Reps</div>
@@ -325,24 +200,22 @@
                   [class.exercise-group-card__row--first]="gi === 0"
                   [class.exercise-group-card__row--last]="gi === $any(row).exercises.length - 1"
                 >
-                  <!-- Ejercicio -->
                   <div class="exercise-group-card__cell exercise-group-card__cell--exercise" data-label="Ejercicio">
                     <select
                       *ngIf="item.exercise.isEditing"
                       class="exercise-row__select"
                       [value]="item.exercise.exerciseId"
                       (change)="updateExercise(item.exerciseIndex, 'exerciseId', +$any($event.target).value)"
-                      [disabled]="loadingExercises()"
+                      [disabled]="loadingExercises"
                     >
-                      <option [value]="null">{{ loadingExercises() ? 'Cargando...' : 'Seleccionar...' }}</option>
-                      <option *ngFor="let opt of availableExercises()" [value]="opt.id">{{ opt.name }}</option>
+                      <option [value]="null">{{ loadingExercises ? 'Cargando...' : 'Seleccionar...' }}</option>
+                      <option *ngFor="let opt of availableExercises" [value]="opt.id">{{ opt.name }}</option>
                     </select>
                     <span *ngIf="!item.exercise.isEditing" class="exercise-row__text">
                       {{ getExerciseName(item.exercise.exerciseId) }}
                     </span>
                   </div>
 
-                  <!-- Reps -->
                   <div class="exercise-group-card__cell exercise-group-card__cell--reps" data-label="Reps">
                     <input
                       *ngIf="item.exercise.isEditing"
@@ -357,25 +230,24 @@
                     </span>
                   </div>
 
-                  <!-- Acciones -->
                   <div class="exercise-group-card__cell exercise-group-card__cell--actions" data-label="Acciones">
                     <button
                       *ngIf="item.exercise.isEditing"
                       class="exercise-row__action-btn exercise-row__action-btn--save"
                       (click)="saveExercise(item.exerciseIndex)"
                       type="button"
-                      aria-label="Guardar"
+                      aria-label="Guardar ejercicio"
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
                     </button>
                     <button
-                      *ngIf="!item.exercise.isEditing"
+                      *ngIf="!item.exercise.isEditing && isEditing()"
                       class="exercise-row__action-btn exercise-row__action-btn--edit"
                       (click)="editExercise(item.exerciseIndex)"
                       type="button"
-                      aria-label="Editar"
+                      aria-label="Editar ejercicio"
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -384,18 +256,12 @@
                     </button>
                   </div>
                 </div>
-
               </div>
             </div>
-
           </ng-container>
         </div>
 
-        <!-- Barra de acción para grupos de ejercicios -->
-        <div
-          *ngIf="selectedExercises().length >= 2"
-          class="session-item__group-bar"
-        >
+        <div *ngIf="isEditing() && selectedExercises().length >= 2" class="session-item__group-bar">
           <div class="session-item__group-bar-info">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"></circle>
@@ -405,16 +271,8 @@
             <span>{{ selectedExercises().length }} ejercicios seleccionados</span>
           </div>
           <div class="session-item__group-bar-actions">
-            <button
-              type="button"
-              class="session-item__group-bar-clear"
-              (click)="clearSelection()"
-            >Limpiar</button>
-            <button
-              type="button"
-              class="session-item__group-bar-btn"
-              (click)="openGroupForm()"
-            >
+            <button type="button" class="session-item__group-bar-clear" (click)="clearSelection()">Limpiar</button>
+            <button type="button" class="session-item__group-bar-btn" (click)="openGroupForm()">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -423,24 +281,16 @@
             </button>
           </div>
         </div>
+      </div>
 
-      </div><!-- /session-item__exercises -->
-
-      <!-- Botones de acción en modo edición -->
       <div *ngIf="isEditing()" class="session-item__edit-actions">
-        <button 
-          class="session-item__btn session-item__btn--save"
-          (click)="saveChanges()"
-        >
+        <button class="session-item__btn session-item__btn--save" (click)="saveChanges()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
           Guardar
         </button>
-        <button 
-          class="session-item__btn session-item__btn--cancel"
-          (click)="cancelChanges()"
-        >
+        <button class="session-item__btn session-item__btn--cancel" (click)="cancelChanges()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -452,7 +302,74 @@
   </div>
 </div>
 
-<!-- Modal: Formulario de grupo de ejercicios -->
+<ng-template #exerciseRow let-exercise="exercise" let-index="index">
+  <div class="exercise-row__cell exercise-row__cell--check">
+    <button
+      *ngIf="isEditing()"
+      type="button"
+      class="exercise-row__check-btn"
+      [class.exercise-row__check-btn--active]="exercise.isSelected"
+      (click)="$event.stopPropagation(); toggleExerciseSelection(index)"
+      [attr.aria-label]="exercise.isSelected ? 'Deseleccionar' : 'Seleccionar'"
+      [attr.aria-pressed]="exercise.isSelected"
+    >
+      <svg *ngIf="exercise.isSelected" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <div class="exercise-row__cell exercise-row__cell--exercise" data-label="Ejercicio">
+    <select
+      *ngIf="exercise.isEditing"
+      class="exercise-row__select"
+      [value]="exercise.exerciseId"
+      [disabled]="loadingExercises"
+      (click)="$event.stopPropagation()"
+      (change)="updateExercise(index, 'exerciseId', +$any($event.target).value)"
+    >
+      <option [value]="null">{{ loadingExercises ? 'Cargando...' : 'Seleccionar...' }}</option>
+      <option *ngFor="let option of availableExercises" [value]="option.id">{{ option.name }}</option>
+    </select>
+    <span *ngIf="!exercise.isEditing" class="exercise-row__text">{{ getExerciseName(exercise.exerciseId) }}</span>
+  </div>
+
+  <div class="exercise-row__cell exercise-row__cell--sets" data-label="Series">
+    <input *ngIf="exercise.isEditing" type="number" class="exercise-row__input" min="1" max="50" [value]="exercise.sets" (click)="$event.stopPropagation()" (input)="updateExercise(index, 'sets', +$any($event.target).value)" />
+    <span *ngIf="!exercise.isEditing" class="exercise-row__text">{{ exercise.sets }}</span>
+  </div>
+
+  <div class="exercise-row__cell exercise-row__cell--reps" data-label="Reps">
+    <input *ngIf="exercise.isEditing" type="text" class="exercise-row__input" [value]="exercise.reps" (click)="$event.stopPropagation()" (input)="updateExercise(index, 'reps', $any($event.target).value)" />
+    <span *ngIf="!exercise.isEditing" class="exercise-row__text">{{ exercise.reps }}</span>
+  </div>
+
+  <div class="exercise-row__cell exercise-row__cell--rest" data-label="Descanso">
+    <input *ngIf="exercise.isEditing" type="number" class="exercise-row__input exercise-row__input--small" min="0" max="600" [value]="exercise.restSec" (click)="$event.stopPropagation()" (input)="updateExercise(index, 'restSec', +$any($event.target).value)" />
+    <span *ngIf="!exercise.isEditing" class="exercise-row__text">{{ exercise.restSec }}s</span>
+  </div>
+
+  <div class="exercise-row__cell exercise-row__cell--actions" data-label="Acciones">
+    <button *ngIf="exercise.isEditing" class="exercise-row__action-btn exercise-row__action-btn--save" type="button" (click)="$event.stopPropagation(); saveExercise(index)" aria-label="Guardar ejercicio">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </button>
+    <button *ngIf="!exercise.isEditing && isEditing()" class="exercise-row__action-btn exercise-row__action-btn--edit" type="button" (click)="$event.stopPropagation(); editExercise(index)" aria-label="Editar ejercicio">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+      </svg>
+    </button>
+    <button *ngIf="isEditing()" class="exercise-row__action-btn exercise-row__action-btn--delete" type="button" (click)="$event.stopPropagation(); deleteExercise(index)" aria-label="Eliminar ejercicio">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+    </button>
+  </div>
+</ng-template>
+
 <app-form-exercise-group
   *ngIf="showGroupForm() && groupType()"
   [groupType]="groupType()!"
@@ -460,38 +377,3 @@
   (save)="onSaveGroup($event)"
   (cancel)="onCancelGroup()"
 ></app-form-exercise-group>
-
-<!-- Modal: Selección de plantilla de entrenamiento -->
-<div *ngIf="showTemplateDialog()" class="template-dialog-overlay" (click)="closeTemplateDialog()">
-  <div class="template-dialog" (click)="$event.stopPropagation()">
-    <div class="template-dialog__header">
-      <h3 class="template-dialog__title">Cargar plantilla</h3>
-      <button type="button" class="template-dialog__close" (click)="closeTemplateDialog()" aria-label="Cerrar">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-
-    <div class="template-dialog__body">
-      <p *ngIf="loadingTemplates()" class="template-dialog__state">Cargando plantillas...</p>
-      <p *ngIf="!loadingTemplates() && templateSummaries().length === 0" class="template-dialog__state">
-        Todavía no hay plantillas cargadas.
-      </p>
-
-      <button
-        *ngFor="let template of templateSummaries()"
-        type="button"
-        class="template-dialog__item"
-        [disabled]="loadingTemplateDetails()"
-        (click)="loadTemplate(template.id)"
-      >
-        <span>{{ template.name }}</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </button>
-    </div>
-  </div>
-</div>
