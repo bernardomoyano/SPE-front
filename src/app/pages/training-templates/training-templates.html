@@ -19,8 +19,9 @@
     ></app-template-items>
 
     <app-template-items
-      *ngFor="let template of templates()"
+      *ngFor="let template of templates(); let i = index"
       [template]="template"
+      [TemplateNumber]="i + 1"
       [availableExercises]="availableExercises()"
       [loadingExercises]="loadingExercises()"
       (save)="updateTemplate(template, $event)"

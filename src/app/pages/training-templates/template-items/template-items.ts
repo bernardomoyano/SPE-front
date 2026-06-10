@@ -70,6 +70,7 @@ type DisplayRow = ExerciseDisplayRow | GroupCardRow;
 })
 export class TemplateItems implements OnInit, OnChanges {
   @Input() template: TrainingTemplate | null = null;
+  @Input() TemplateNumber: number = 1;
   @Input() isNew = false;
   @Input() availableExercises: ExerciseSelectDto[] = [];
   @Input() loadingExercises = false;

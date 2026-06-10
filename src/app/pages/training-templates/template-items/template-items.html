@@ -15,8 +15,8 @@
         </svg>
       </button>
       <h4 class="session-item__title">
-        {{ isNew ? 'Nueva plantilla' : editedTemplate().name || 'Plantilla' }}
-        <span *ngIf="editedTemplate().title && !isEditing()" class="session-item__subtitle">- {{ editedTemplate().title }}</span>
+        {{ isNew ? 'Nueva plantilla' : 'Plantilla ' + TemplateNumber }}
+        <span *ngIf="editedTemplate().title && !isEditing()" class="session-item__subtitle">- {{ editedTemplate().name }}</span>
       </h4>
     </div>
 
