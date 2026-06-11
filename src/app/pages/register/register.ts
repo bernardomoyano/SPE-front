@@ -109,4 +109,8 @@ export class Register {
     console.log('Formulario inválido');
   }
 }
+
+loginWithGoogle(): void {
+  this.authService.loginWithGoogle();
+}
 }

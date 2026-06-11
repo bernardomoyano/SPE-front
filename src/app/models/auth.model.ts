@@ -12,6 +12,10 @@ export interface LoginResponse {
   message: string;
 }
 
+export interface ExchangeGoogleCodeRequest {
+  code: string;
+}
+
 export interface UserData {
   userId: number;
   name: string;
