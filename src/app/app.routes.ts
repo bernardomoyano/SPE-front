@@ -10,11 +10,13 @@ import { MainLayout } from './shared/layout/main-layout/main-layout';
 import { PendingPayments } from './pages/pending-payments/pending-payments';
 import { Payments } from './pages/payments/payments';
 import { PaymentDocument } from './pages/payment-document/payment-document';
+import { AuthCallbackComponent } from './pages/auth-callback/auth-callback';
 
 export const routes: Routes = [
     // Rutas públicas (sin layout)
     { path: 'login', component: Register },
     { path: 'registro', component: RegisterCoach },
+    { path: 'auth/callback', component: AuthCallbackComponent },
     { path: 'comprobantes/mercado-pago/:paymentId', component: PaymentDocument },
     
     // Rutas protegidas (con layout)

@@ -10,7 +10,7 @@ import { StorageService } from './storage.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://localhost:7281/api/Auth';
+  private apiUrl = 'https://localhost:7281/api/auth';
   private currentUserSubject = new BehaviorSubject<UserData | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -36,6 +36,25 @@ export class AuthService {
       );
   }
 
+  loginWithGoogle(): void {
+    window.location.href = `${this.apiUrl}/google/login`;
+  }
+
+  completeGoogleLogin(token: string): void {
+    const payload = this.decodeJwtPayload(token);
+    const userData: UserData = {
+      userId: Number(payload['sub'] ?? 0),
+      name: payload['name'] ?? payload['email'] ?? '',
+      email: payload['email'] ?? '',
+      roleName: payload['role'] ?? '',
+      token
+    };
+
+    this.storageService.setToken(token);
+    this.storageService.setUserData(userData);
+    this.currentUserSubject.next(userData);
+  }
+
   /**
    * Guarda la sesión del usuario
    */
@@ -51,6 +70,18 @@ export class AuthService {
     this.storageService.setToken(loginData.token);
     this.storageService.setUserData(userData);
     this.currentUserSubject.next(userData);
+  }
+
+  private decodeJwtPayload(token: string): Record<string, any> {
+    const payload = token.split('.')[1];
+    if (!payload) {
+      return {};
+    }
+
+    const normalizedPayload = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const decodedPayload = atob(normalizedPayload.padEnd(normalizedPayload.length + (4 - normalizedPayload.length % 4) % 4, '='));
+
+    return JSON.parse(decodedPayload);
   }
 
   /**
