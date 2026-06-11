@@ -18,32 +18,47 @@ export class AuthCallbackComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const token = this.route.snapshot.queryParamMap.get('token');
+    const code = this.route.snapshot.queryParamMap.get('code');
+    const error = this.route.snapshot.queryParamMap.get('error');
 
-    if (!token) {
+    if (error) {
       this.alertService.showError('No se pudo iniciar sesión con Google');
       this.router.navigate(['/login']);
       return;
     }
 
-    try {
-      this.authService.completeGoogleLogin(token);
-      const role = this.authService.getUserRole();
-
-      if (role === 'COACH') {
-        this.router.navigate(['/dashboard-coach']);
-        return;
-      }
-
-      if (role === 'STUDENT') {
-        this.router.navigate(['/mis-planificaciones']);
-        return;
-      }
-
-      this.router.navigate(['/dashboard-coach']);
-    } catch {
-      this.alertService.showError('El token de Google no es válido');
+    if (!code) {
+      this.alertService.showError('No se recibió el código de autenticación de Google');
       this.router.navigate(['/login']);
+      return;
     }
+
+    this.authService.exchangeGoogleCode(code).subscribe({
+      next: response => {
+        if (!response.success || !response.data) {
+          this.alertService.showError(response.message || 'No se pudo iniciar sesión con Google');
+          this.router.navigate(['/login']);
+          return;
+        }
+
+        const role = this.authService.getUserRole();
+
+        if (role === 'COACH') {
+          this.router.navigate(['/dashboard-coach']);
+          return;
+        }
+
+        if (role === 'STUDENT') {
+          this.router.navigate(['/mis-planificaciones']);
+          return;
+        }
+
+        this.router.navigate(['/dashboard-coach']);
+      },
+      error: () => {
+        this.alertService.showError('El código de Google es inválido o expiró');
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

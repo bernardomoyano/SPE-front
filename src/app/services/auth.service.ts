@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ApiResponse } from '../models/api-response.model';
-import { LoginRequest, LoginResponse, UserData } from '../models/auth.model';
+import { ExchangeGoogleCodeRequest, LoginRequest, LoginResponse, UserData } from '../models/auth.model';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -38,6 +38,19 @@ export class AuthService {
 
   loginWithGoogle(): void {
     window.location.href = `${this.apiUrl}/google/login`;
+  }
+
+  exchangeGoogleCode(code: string): Observable<ApiResponse<LoginResponse>> {
+    const request: ExchangeGoogleCodeRequest = { code };
+
+    return this.http.post<ApiResponse<LoginResponse>>(`${this.apiUrl}/google/exchange-code`, request)
+      .pipe(
+        tap(response => {
+          if (response.success && response.data) {
+            this.setSession(response.data);
+          }
+        })
+      );
   }
 
   completeGoogleLogin(token: string): void {
